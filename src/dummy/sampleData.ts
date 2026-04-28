@@ -73,6 +73,70 @@ export const SAMPLE_DATA = {
         "Statement-making set for parties and special gatherings",
       ],
     },
+    {
+      id: "5",
+      name: "Asymmetric Ruffle Dress",
+      image: [
+        "https://rntwardrobe.com/cdn/shop/files/Mango_1.webp?v=1727580875&width=720",
+        "https://rntwardrobe.com/cdn/shop/files/47091287_65_R_jpg.webp?v=1727580875&width=720",
+        "https://rntwardrobe.com/cdn/shop/files/Mango_3.webp?v=1727580875&width=720",
+      ],
+      price: 3000,
+      duration: 4, // Rental duration in days
+      description: [
+        "Contemporary 3D floral embellishments on crop top",
+        "Flowing maxi skirt for elegant silhouette",
+        "Statement-making set for parties and special gatherings",
+      ],
+    },
+    {
+      id: "6",
+      name: "Red Ruffle Maxi Dress with Slit",
+      image: [
+        "https://rntwardrobe.com/cdn/shop/files/35BF7D9B-6FF2-40E7-8D57-3150E9AC6B30.jpg?v=1738912918&width=540",
+        "https://rntwardrobe.com/cdn/shop/files/DSC08646_b1013dfd-2b81-4378-8f03-cbdd42b5bc23.jpg?v=1739065449&width=540",
+        "https://rntwardrobe.com/cdn/shop/files/DSC08647_83174394-0347-4aaa-8cb9-bb60b7702b9c.jpg?v=1739065449&width=540",
+      ],
+      price: 3000,
+      duration: 4, // Rental duration in days
+      description: [
+        "Contemporary 3D floral embellishments on crop top",
+        "Flowing maxi skirt for elegant silhouette",
+        "Statement-making set for parties and special gatherings",
+      ],
+    },
+    {
+      id: "7",
+      name: "Chiffon Ruffle Dress",
+      image: [
+        "https://rntwardrobe.com/cdn/shop/files/592031D2-4EE1-4E90-9D92-164D2A696E43.jpg?v=1730562493&width=720",
+        "https://rntwardrobe.com/cdn/shop/files/3E3B2FEB-51D3-4FBF-AAB2-D0744BDB8E92.webp?v=1730562493&width=720",
+        "https://rntwardrobe.com/cdn/shop/files/82DFF738-1289-4B56-93A2-6AB2D64D3714.webp?v=1730562493&width=720",
+      ],
+      price: 3000,
+      duration: 4, // Rental duration in days
+      description: [
+        "Contemporary 3D floral embellishments on crop top",
+        "Flowing maxi skirt for elegant silhouette",
+        "Statement-making set for parties and special gatherings",
+      ],
+    },
+    {
+      id: "8",
+      name: "Silk Chiffon Ruffled Dress",
+      image: [
+        "https://rntwardrobe.com/cdn/shop/files/AnaAguinaldo_UshiSatoSilkChiffonRuffledDress.jpg?v=1762655813&width=540",
+        "https://rntwardrobe.com/cdn/shop/files/AnaAguinaldo_UshiSatoSilkChiffonRuffledDress_1.jpg?v=1762655838&width=540",
+        "https://rntwardrobe.com/cdn/shop/files/AnaAguinaldo_UshiSatoSilkChiffonRuffledDress_2.jpg?v=1762655921&width=540",
+      ],
+      price: 3000,
+      duration: 4, // Rental duration in days
+      description: [
+        "Contemporary 3D floral embellishments on crop top",
+        "Flowing maxi skirt for elegant silhouette",
+        "Statement-making set for parties and special gatherings",
+      ],
+    },
   ],
 
   ClothingRental: {

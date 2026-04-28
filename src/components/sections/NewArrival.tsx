@@ -54,6 +54,15 @@ export function NewArrival() {
             </article>
           ))}
         </div>
+
+        <div className="mt-12 text-center">
+          <Link
+            to="/shop"
+            className="inline-block font-heading text-sm font-bold tracking-tight text-zinc-900 underline underline-offset-4 transition-colors hover:bg-zinc-100"
+          >
+            View all products
+          </Link>
+        </div>
       </div>
     </section>
   )
