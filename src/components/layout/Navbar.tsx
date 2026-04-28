@@ -40,7 +40,7 @@ export function Navbar() {
               to="/"
               className="font-heading text-xl tracking-tight text-white"
             >
-              Shop Selair
+              Rent Selleir
             </Link>
 
             <div className="hidden items-center gap-8 md:flex">

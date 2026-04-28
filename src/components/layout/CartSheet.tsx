@@ -72,9 +72,6 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
             exit={{ x: "100%" }}
             transition={{
               duration: 0.26,
-              type: "spring",
-              stiffness: 300,
-              damping: 25,
             }}
             className="fixed top-0 right-0 z-50 flex h-svh w-full max-w-md flex-col border-l border-black/10 bg-white sm:w-md"
           >

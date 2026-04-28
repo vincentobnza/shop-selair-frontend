@@ -1,9 +1,9 @@
-import { Link, useParams } from "react-router-dom"
+import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom"
 
 import { SAMPLE_DATA } from "@/dummy/sampleData"
-import { ReservationCalendar } from "@/components/ReservationCalendary"
-import { useState } from "react"
+import { ReservationCalendar } from "@/components/ReservationCalendar"
 import { cn } from "@/lib/utils"
+import { useMemo } from "react"
 
 const currencyFormatter = new Intl.NumberFormat("en-PH", {
   style: "currency",
@@ -13,7 +13,33 @@ const currencyFormatter = new Intl.NumberFormat("en-PH", {
 
 export function ProductPage() {
   const { productId } = useParams()
-  const [date, setDate] = useState<Date>()
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  const date = useMemo(() => {
+    const dateParam = searchParams.get("date")
+    return dateParam ? new Date(dateParam) : null
+  }, [searchParams])
+
+  const handleDateChange = (selectedDate: Date | undefined) => {
+    if (selectedDate) {
+      navigate(
+        `/products/${productId}?date=${formatDateForURL(selectedDate)}`,
+        {
+          replace: true,
+        }
+      )
+    } else {
+      navigate(`/products/${productId}`, { replace: true })
+    }
+  }
+
+  const formatDateForURL = (date: Date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, "0")
+    const day = String(date.getDate()).padStart(2, "0")
+    return `${year}-${month}-${day}`
+  }
 
   const product =
     SAMPLE_DATA.NewArrivals.find((item) => item.id === productId) ??
@@ -29,7 +55,7 @@ export function ProductPage() {
         <div className="mb-8 flex items-center justify-between gap-4">
           <Link
             to="/shop"
-            className="text-sm font-medium text-zinc-900 underline transition-colors hover:text-zinc-900"
+            className="text-sm font-medium text-zinc-900 transition-colors hover:text-zinc-900"
           >
             Back to shop
           </Link>
@@ -81,11 +107,14 @@ export function ProductPage() {
             </div>
 
             <div className="mt-8 flex flex-col gap-4">
-              <ReservationCalendar date={date} setDate={setDate} />
+              <ReservationCalendar
+                date={date ?? undefined}
+                setDate={handleDateChange}
+              />
 
               {!date && (
                 <span className="font-heading text-sm font-semibold tracking-tight text-orange-900">
-                  - Please select a date to proceed with booking.
+                  - Please select a date to proceed with reservation.
                 </span>
               )}
               <button
@@ -97,6 +126,21 @@ export function ProductPage() {
               >
                 Book now
               </button>
+
+              {/* DESCRIPTION */}
+              <div className="pt-2">
+                <h1 className="mb-5 font-heading font-medium">Description</h1>
+                <ul className="mt-2">
+                  {product.description.map((item) => (
+                    <li
+                      key={item}
+                      className="mt-2 ml-4 list-disc text-sm font-medium text-zinc-800"
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </div>

@@ -19,6 +19,11 @@ export const SAMPLE_DATA = {
       ],
       price: 2450,
       duration: 4, // Rental duration in days
+      description: [
+        "Elegant off-shoulder design with sophisticated pleating",
+        "Premium blend: 63% cotton, 37% nylon",
+        "Perfect for formal events and special occasions",
+      ],
     },
     {
       id: "2",
@@ -30,6 +35,11 @@ export const SAMPLE_DATA = {
       ],
       price: 3000,
       duration: 4, // Rental duration in days
+      description: [
+        "Traditional Filipino elegance with modern polka dot pattern",
+        "Delicate white fabric with charming details",
+        "Ideal for celebrations, fiestas, and cultural events",
+      ],
     },
     {
       id: "3",
@@ -41,6 +51,11 @@ export const SAMPLE_DATA = {
       ],
       price: 3000,
       duration: 4, // Rental duration in days
+      description: [
+        "Romantic ruffled lace with intricate detailing",
+        "Breathable fabric blend for all-day comfort",
+        "Perfect for weddings, galas, and formal celebrations",
+      ],
     },
     {
       id: "4",
@@ -52,6 +67,11 @@ export const SAMPLE_DATA = {
       ],
       price: 3000,
       duration: 4, // Rental duration in days
+      description: [
+        "Contemporary 3D floral embellishments on crop top",
+        "Flowing maxi skirt for elegant silhouette",
+        "Statement-making set for parties and special gatherings",
+      ],
     },
   ],
 

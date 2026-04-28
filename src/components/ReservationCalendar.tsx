@@ -1,6 +1,4 @@
 "use client"
-
-import * as React from "react"
 import { format } from "date-fns"
 import { CalendarDotsIcon } from "@phosphor-icons/react"
 
@@ -34,7 +32,7 @@ export function ReservationCalendar({
       <PopoverContent className="sm:w-full!" align="center">
         <Calendar
           mode="single"
-          selected={date}
+          selected={date ?? undefined}
           onSelect={setDate}
           defaultMonth={date}
         />
