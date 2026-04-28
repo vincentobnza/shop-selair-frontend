@@ -124,7 +124,7 @@ export function ProductPage() {
                 )}
                 disabled={!date}
               >
-                Book now
+                Reserve now
               </button>
 
               {/* DESCRIPTION */}

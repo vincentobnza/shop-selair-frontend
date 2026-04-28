@@ -25,7 +25,7 @@ export function ReservationCalendar({
           data-empty={!date}
           className="h-12! w-full justify-between rounded-none! text-left text-sm font-medium data-[empty=true]:text-muted-foreground md:text-base!"
         >
-          {date ? format(date, "PPP") : <span>Reserve a date</span>}
+          {date ? format(date, "PPP") : <span>Book a date</span>}
           <CalendarDotsIcon data-icon="inline-end" />
         </Button>
       </PopoverTrigger>
