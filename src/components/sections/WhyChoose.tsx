@@ -48,19 +48,19 @@ const features = [
 
 export function WhyChoose() {
   return (
-    <section id="why-selair" className="bg-white py-16 sm:py-24 lg:py-32">
+    <section id="why-selair" className="bg-white py-14 sm:py-20 lg:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
-          <h2 className="mb-4 font-heading text-3xl leading-tight text-zinc-900 sm:text-4xl">
+        <div className="mb-10 text-center sm:mb-12">
+          <h2 className="mb-4 font-heading text-2xl leading-tight text-zinc-900 sm:text-3xl lg:text-4xl">
             Why Choose Selair?
           </h2>
-          <p className="mx-auto max-w-2xl text-sm text-zinc-600">
+          <p className="mx-auto max-w-2xl text-sm text-zinc-600 sm:text-base">
             Discover what makes Selair the preferred choice for modern fashion
             enthusiasts across the Philippines.
           </p>
         </div>
 
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
           {features.map((feature, idx) => {
             const IconComponent = feature.icon
             return (

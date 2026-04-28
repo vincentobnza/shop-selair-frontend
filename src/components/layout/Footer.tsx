@@ -42,7 +42,7 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:gap-12">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-12">
             <div>
               <h4 className="mb-4 text-sm font-medium text-zinc-800">Shop</h4>
               <ul className="space-y-2 text-sm text-zinc-600">
@@ -98,14 +98,14 @@ export function Footer() {
                 <label htmlFor="email" className="sr-only">
                   Email address
                 </label>
-                <div className="flex">
+                <div className="flex flex-col gap-2 sm:flex-row sm:gap-0">
                   <input
                     id="email"
                     type="email"
                     placeholder="Email address"
-                    className="w-full rounded-l-md border border-zinc-200 px-3 py-2 text-sm text-zinc-700 focus:ring-2 focus:ring-zinc-200"
+                    className="w-full rounded-md border border-zinc-200 px-3 py-2 text-sm text-zinc-700 focus:ring-2 focus:ring-zinc-200 sm:rounded-r-none"
                   />
-                  <button className="rounded-r-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
+                  <button className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 sm:rounded-l-none">
                     Subscribe
                   </button>
                 </div>

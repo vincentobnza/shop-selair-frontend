@@ -52,7 +52,7 @@ export function ProductPage() {
   return (
     <main className="bg-white">
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
-        <div className="mb-8 flex items-center justify-between gap-4">
+        <div className="mb-6 flex items-center justify-between gap-4 sm:mb-8">
           <Link
             to="/shop"
             className="text-sm font-medium text-zinc-900 transition-colors hover:text-zinc-900"
@@ -88,7 +88,7 @@ export function ProductPage() {
             <p className="font-heading text-sm font-medium text-zinc-700 uppercase">
               Selair Collection
             </p>
-            <h1 className="mt-3 font-heading text-4xl leading-tight font-medium tracking-tight text-zinc-900 sm:text-5xl">
+            <h1 className="mt-3 font-heading text-3xl leading-tight font-medium tracking-tight text-zinc-900 sm:text-4xl lg:text-5xl">
               {product.name}
             </h1>
 
@@ -97,16 +97,16 @@ export function ProductPage() {
               feel polished, effortless, and elegant.
             </p>
 
-            <div className="mt-8 flex items-center gap-4">
-              <span className="font-heading text-3xl font-bold text-zinc-900">
+            <div className="mt-6 flex flex-wrap items-center gap-3 sm:mt-8 sm:gap-4">
+              <span className="font-heading text-2xl font-bold text-zinc-900 sm:text-3xl">
                 {currencyFormatter.format(product.price)}
               </span>
-              <span className="px-3 py-1 text-sm tracking-tighter text-zinc-600">
+              <span className="px-2 py-1 text-xs tracking-tight text-zinc-600 sm:px-3 sm:text-sm">
                 {product.duration} day rental
               </span>
             </div>
 
-            <div className="mt-8 flex flex-col gap-4">
+            <div className="mt-6 flex flex-col gap-4 sm:mt-8">
               <ReservationCalendar
                 date={date ?? undefined}
                 setDate={handleDateChange}
@@ -132,10 +132,7 @@ export function ProductPage() {
                 <h1 className="mb-5 font-heading font-medium">Description</h1>
                 <ul className="mt-2">
                   {product.description.map((item) => (
-                    <li
-                      key={item}
-                      className="mt-2 ml-4 list-disc text-sm font-medium text-zinc-800"
-                    >
+                    <li key={item} className="mt-2 ml-4 list-disc text-sm text-zinc-800">
                       {item}
                     </li>
                   ))}
@@ -147,7 +144,7 @@ export function ProductPage() {
 
         {relatedProducts.length > 0 ? (
           <section className="mt-16 border-t border-zinc-200 pt-12">
-            <div className="mb-6 flex items-end justify-between gap-4">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-3 sm:gap-4">
               <div>
                 <h2 className="font-heading text-2xl text-zinc-900">
                   More to explore

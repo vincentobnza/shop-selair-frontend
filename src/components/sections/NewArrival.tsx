@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { SAMPLE_DATA } from "@/dummy/sampleData"
+import useEmblaCarousel from "embla-carousel-react"
 
 const currencyFormatter = new Intl.NumberFormat("en-PH", {
   style: "currency",
@@ -9,6 +10,12 @@ const currencyFormatter = new Intl.NumberFormat("en-PH", {
 
 export function NewArrival() {
   const items = SAMPLE_DATA.NewArrivals || []
+  const [emblaRef] = useEmblaCarousel({ loop: true, align: "start" })
+
+
+
+
+
 
   return (
     <section id="new-arrivals" className="bg-white">
@@ -17,7 +24,44 @@ export function NewArrival() {
           New Arrivals
         </h2>
 
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="sm:hidden">
+          <div ref={emblaRef} className="overflow-hidden">
+            <div className="-ml-3 flex touch-pan-y">
+              {items.map((item) => (
+                <article
+                  key={item.id}
+                  className="min-w-0 shrink-0 basis-[78%] pl-3"
+                >
+                  <Link to={`/products/${item.id}`} className="group block">
+                    <div
+                      className="relative w-full overflow-hidden"
+                      style={{ aspectRatio: "3 / 4" }}
+                    >
+                      <img
+                        src={item.image?.[0]}
+                        alt={item.name}
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                    </div>
+
+                    <div className="mt-4">
+                      <h1 className="font-heading text-sm font-medium text-zinc-900">
+                        {item.name}
+                      </h1>
+                      <p className="mt-2 text-sm font-bold text-orange-900">
+                        From {currencyFormatter.format(item.price)}
+                      </p>
+                    </div>
+                  </Link>
+                </article>
+              ))}
+            </div>
+          </div>
+
+
+        </div>
+
+        <div className="hidden grid-cols-1 gap-8 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {items.map((item) => (
             <article key={item.id} className="group overflow-hidden">
               <Link to={`/products/${item.id}`} className="block">

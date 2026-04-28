@@ -31,7 +31,7 @@ export function HeroSection({
         <div className="absolute inset-0 bg-linear-to-r from-black/60 via-black/40 to-transparent" />
 
         {/* Content */}
-        <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 py-24 sm:px-6 sm:py-32 lg:px-8 lg:py-40">
+        <div className="relative z-10 mx-auto flex min-h-[75svh] w-full max-w-7xl flex-col justify-center px-4 py-16 sm:min-h-screen sm:px-6 sm:py-24 lg:px-8 lg:py-32">
           <div className="max-w-2xl">
             {eyebrow && (
               <p className="mb-4 text-sm font-medium tracking-wide text-white opacity-90">
@@ -39,18 +39,18 @@ export function HeroSection({
               </p>
             )}
 
-            <h1 className="leading-tighter font-heading text-5xl tracking-tight text-white sm:text-6xl lg:text-7xl">
+            <h1 className="leading-tighter font-heading text-4xl tracking-tight text-white sm:text-5xl lg:text-7xl">
               {title}
             </h1>
 
             {description && (
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/60">
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
                 {description}
               </p>
             )}
 
             <div className="mt-10">
-              <button className="inline-flex items-center justify-center bg-white px-8 py-3 text-sm font-medium hover:text-zinc-900">
+              <button className="inline-flex items-center justify-center bg-white px-6 py-3 text-sm font-medium hover:text-zinc-900 sm:px-8">
                 {ctaLabel}
               </button>
             </div>

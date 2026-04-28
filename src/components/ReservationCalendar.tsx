@@ -29,7 +29,7 @@ export function ReservationCalendar({
           <CalendarDotsIcon data-icon="inline-end" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="sm:w-full!" align="center">
+      <PopoverContent className="w-[calc(100vw-2rem)] p-0 sm:w-auto" align="center">
         <Calendar
           mode="single"
           selected={date ?? undefined}

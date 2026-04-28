@@ -4,6 +4,8 @@ import {
   ShoppingBagIcon as CartIcon,
   MagnifyingGlassIcon,
   UserIcon,
+  ListIcon,
+  XIcon,
 } from "@phosphor-icons/react"
 
 import { CartSheet } from "@/components/layout/CartSheet"
@@ -30,17 +32,18 @@ function navLinkClassName(isActive: boolean): string {
 
 export function Navbar() {
   const [isCartOpen, setIsCartOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
     <>
       <header className="sticky top-0 z-50 bg-neutral-900 backdrop-blur-sm">
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center justify-between py-4">
+          <nav className="flex items-center justify-between gap-3 py-3 sm:py-4">
             <Link
               to="/"
-              className="font-heading text-xl tracking-tight text-white"
+              className="shrink-0 font-heading text-lg tracking-tight text-white sm:text-xl"
             >
-              Rent Selleir
+              Rent Selair
             </Link>
 
             <div className="hidden items-center gap-8 md:flex">
@@ -72,11 +75,25 @@ export function Navbar() {
               </ul>
             </div>
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+              <button
+                type="button"
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-nav"
+                onClick={() => setIsMenuOpen((v) => !v)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700 md:hidden"
+              >
+                {isMenuOpen ? (
+                  <XIcon size={20} weight="regular" />
+                ) : (
+                  <ListIcon size={20} weight="regular" />
+                )}
+              </button>
               <button
                 type="button"
                 aria-label="Search"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700"
+                className="hidden h-10 w-10 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700 sm:inline-flex"
               >
                 <MagnifyingGlassIcon size={22} weight="regular" />
               </button>
@@ -86,7 +103,7 @@ export function Navbar() {
                 aria-expanded={isCartOpen}
                 aria-controls="cart-sheet"
                 onClick={() => setIsCartOpen(true)}
-                className="relative inline-flex h-10 w-10 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700"
+                className="relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700 sm:h-10 sm:w-10"
               >
                 <CartIcon size={22} weight="regular" />
                 <span className="absolute -top-0.5 -right-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full border border-zinc-300 bg-white px-1 text-[11px] font-medium text-zinc-800">
@@ -97,38 +114,45 @@ export function Navbar() {
               <button
                 type="button"
                 aria-label="User account"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700 sm:h-10 sm:w-10"
               >
                 <UserIcon size={22} weight="regular" />
               </button>
             </div>
           </nav>
 
-          <div className="flex flex-wrap items-center gap-2 pb-4 md:hidden">
-            {routeLinks.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                end={link.to === "/"}
-                className={({ isActive }) =>
-                  isActive
-                    ? "rounded-full border border-zinc-500 bg-white px-3 py-1.5 text-sm font-medium text-zinc-900"
-                    : "rounded-full border border-zinc-600 bg-zinc-800 px-3 py-1.5 text-sm text-zinc-300 transition-colors hover:border-zinc-500 hover:bg-zinc-700 hover:text-white"
-                }
-              >
-                {link.label}
-              </NavLink>
-            ))}
-            {sectionLinks.map((link) => (
-              <a
-                key={link.to}
-                href={link.to}
-                className="rounded-full border border-zinc-600 bg-zinc-800 px-3 py-1.5 text-sm text-zinc-300 transition-colors hover:border-zinc-500 hover:bg-zinc-700 hover:text-white"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
+          {isMenuOpen ? (
+            <div id="mobile-nav" className="pb-4 md:hidden">
+              <div className="grid gap-2 p-1">
+                {routeLinks.map((link) => (
+                  <NavLink
+                    key={link.to}
+                    to={link.to}
+                    end={link.to === "/"}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={({ isActive }) =>
+                      isActive
+                        ? "rounded-md bg-white px-3 py-2 text-sm font-medium text-zinc-900"
+                        : "rounded-md px-3 py-2 text-sm text-zinc-200 transition-colors hover:bg-zinc-700 hover:text-white"
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+                ))}
+                <div className="my-1 border-t border-zinc-700" />
+                {sectionLinks.map((link) => (
+                  <a
+                    key={link.to}
+                    href={link.to}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="rounded-md px-3 py-2 text-sm text-zinc-200 transition-colors hover:bg-zinc-700 hover:text-white"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
       </header>
 

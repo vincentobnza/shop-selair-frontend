@@ -6,7 +6,7 @@ export function FollowInstagram() {
   return (
     <section
       id="follow-us"
-      className="relative overflow-hidden bg-black py-20 sm:py-28 lg:py-32"
+      className="relative overflow-hidden bg-black py-16 sm:py-24 lg:py-32"
     >
       {/* Video background */}
       <video
@@ -28,11 +28,11 @@ export function FollowInstagram() {
             <InstagramLogo size={32} weight="fill" className="text-white" />
           </div>
 
-          <h2 className="mb-4 font-heading text-4xl leading-tight text-white sm:text-5xl">
+          <h2 className="mb-4 font-heading text-3xl leading-tight text-white sm:text-4xl lg:text-5xl">
             Follow Us on Instagram
           </h2>
 
-          <p className="mx-auto mb-8 max-w-2xl text-base text-white/90 sm:text-lg">
+          <p className="mx-auto mb-8 max-w-2xl text-sm text-white/90 sm:text-base lg:text-lg">
             Stay updated with our latest collections, styling tips, and
             exclusive content. Join our community of fashion enthusiasts.
           </p>
@@ -47,16 +47,7 @@ export function FollowInstagram() {
             </Button>
           </a>
 
-          <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:gap-6">
-            {[1, 2, 3, 4].map((item) => (
-              <div
-                key={item}
-                className="aspect-square overflow-hidden rounded-lg bg-zinc-800"
-              >
-                <div className="h-full w-full bg-linear-to-br from-zinc-700 to-zinc-900" />
-              </div>
-            ))}
-          </div>
+
         </div>
       </div>
     </section>
