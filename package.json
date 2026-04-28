@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.2.10",
     "@fontsource-variable/figtree": "^5.2.10",
     "@fontsource-variable/lora": "^5.2.8",
     "@fontsource-variable/red-hat-display": "^5.2.8",
