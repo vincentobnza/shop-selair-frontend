@@ -4,6 +4,8 @@ import { SAMPLE_DATA } from "@/dummy/sampleData"
 import { ReservationCalendar } from "@/components/ReservationCalendar"
 import { cn } from "@/lib/utils"
 import { useMemo } from "react"
+import { differenceInCalendarDays, format } from "date-fns"
+import type { DateRange } from "react-day-picker"
 
 const currencyFormatter = new Intl.NumberFormat("en-PH", {
   style: "currency",
@@ -16,22 +18,51 @@ export function ProductPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
-  const date = useMemo(() => {
-    const dateParam = searchParams.get("date")
-    return dateParam ? new Date(dateParam) : null
+  const range = useMemo<DateRange | undefined>(() => {
+    const startDateParam = searchParams.get("startDate") ?? searchParams.get("date")
+    const returnDateParam = searchParams.get("returnDate")
+
+    const from = startDateParam ? new Date(startDateParam) : undefined
+    const to = returnDateParam ? new Date(returnDateParam) : undefined
+
+    if (!from && !to) return undefined
+    return { from, to }
   }, [searchParams])
 
-  const handleDateChange = (selectedDate: Date | undefined) => {
-    if (selectedDate) {
-      navigate(
-        `/products/${productId}?date=${formatDateForURL(selectedDate)}`,
-        {
-          replace: true,
-        }
-      )
-    } else {
+  const rentalDays = useMemo(() => {
+    if (!range?.from || !range?.to) return 0
+    return differenceInCalendarDays(range.to, range.from) + 1
+  }, [range])
+
+  const product =
+    SAMPLE_DATA.NewArrivals.find((item) => item.id === productId) ??
+    SAMPLE_DATA.NewArrivals[0]
+
+  const dailyRate = useMemo(() => {
+    return product.price / Math.max(product.duration, 1)
+  }, [product.price, product.duration])
+
+  const totalRate = useMemo(() => {
+    if (!rentalDays) return 0
+    return dailyRate * rentalDays
+  }, [dailyRate, rentalDays])
+
+  const handleRangeChange = (selectedRange: DateRange | undefined) => {
+    if (!selectedRange?.from) {
       navigate(`/products/${productId}`, { replace: true })
+      return
     }
+
+    const params = new URLSearchParams()
+    params.set("startDate", formatDateForURL(selectedRange.from))
+
+    if (selectedRange.to) {
+      params.set("returnDate", formatDateForURL(selectedRange.to))
+    }
+
+    navigate(`/products/${productId}?${params.toString()}`, {
+      replace: true,
+    })
   }
 
   const formatDateForURL = (date: Date) => {
@@ -40,10 +71,6 @@ export function ProductPage() {
     const day = String(date.getDate()).padStart(2, "0")
     return `${year}-${month}-${day}`
   }
-
-  const product =
-    SAMPLE_DATA.NewArrivals.find((item) => item.id === productId) ??
-    SAMPLE_DATA.NewArrivals[0]
 
   const relatedProducts = SAMPLE_DATA.NewArrivals.filter(
     (item) => item.id !== product.id
@@ -106,23 +133,64 @@ export function ProductPage() {
               </span>
             </div>
 
-            <div className="mt-6 flex flex-col gap-4 sm:mt-8">
+            <div className="mt-6 flex flex-col gap-2 sm:mt-8">
               <ReservationCalendar
-                date={date ?? undefined}
-                setDate={handleDateChange}
+                range={range}
+                setRange={handleRangeChange}
               />
 
-              {!date && (
+              <div className="border border-zinc-200 bg-zinc-50/70">
+                <div className="grid gap-3 text-sm text-zinc-700 sm:grid-cols-2 p-4">
+                  <div>
+                    <p className="text-[10px] text-zinc-400 font-semibold uppercase">
+                      Start date
+                    </p>
+                    <p className="font-medium text-sm md:text-base text-zinc-900">
+                      {range?.from ? format(range.from, "PPP") : "-"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-zinc-400 font-semibold uppercase">
+                      Return date
+                    </p>
+                    <p className="font-medium text-sm md:text text-zinc-900">
+                      {range?.to ? format(range.to, "PPP") : "-"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="border-t border-zinc-200 py-2 px-4 bg-neutral-100">
+                  <div className="flex items-baseline justify-between">
+                    <p className="text-[10px] text-zinc-400 font-semibold uppercase">
+                      Rate
+                    </p>
+                    <p className="font-heading text-xl font-semibold text-zinc-900">
+                      {currencyFormatter.format(totalRate)}
+                    </p>
+                  </div>
+                  <p className="text-sm md:text-base  font-semibold text-black">
+                    {currencyFormatter.format(Math.round(dailyRate))} / day
+                    {rentalDays ? ` x ${rentalDays} day${rentalDays > 1 ? "s" : ""}` : ""}
+                  </p>
+                </div>
+              </div>
+
+              {!range?.from && (
                 <span className="font-heading text-sm font-semibold tracking-tight text-orange-900">
-                  - Please select a date to proceed with reservation.
+                  - Please select a start date to proceed with reservation.
+                </span>
+              )}
+              {range?.from && !range?.to && (
+                <span className="font-heading text-sm font-semibold tracking-tight text-orange-900">
+                  - Please select a return date to complete your rental period.
                 </span>
               )}
               <button
                 className={cn(
                   "bg-zinc-900 px-6 py-4 text-sm font-medium text-white transition-colors hover:bg-zinc-800 sm:text-base",
-                  !date && "cursor-not-allowed opacity-20"
+                  (!range?.from || !range?.to) && "cursor-not-allowed opacity-20"
                 )}
-                disabled={!date}
+                disabled={!range?.from || !range?.to}
               >
                 Reserve now
               </button>
