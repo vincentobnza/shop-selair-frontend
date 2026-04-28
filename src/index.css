@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -76,7 +78,7 @@
 }
 
 @theme inline {
-  --font-sans: "Figtree Variable", sans-serif;
+  --font-sans: "DM Sans", sans-serif;
   --font-heading: "Lora Variable", serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
