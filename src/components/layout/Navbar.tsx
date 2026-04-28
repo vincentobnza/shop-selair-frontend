@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Link, NavLink } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, NavLink, useLocation } from "react-router-dom"
 import {
   ShoppingBagIcon as CartIcon,
   MagnifyingGlassIcon,
@@ -31,12 +31,31 @@ function navLinkClassName(isActive: boolean): string {
 }
 
 export function Navbar() {
+  const { pathname } = useLocation()
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const isHome = pathname === "/"
+  const showScrolledBg = isHome && isScrolled
+
+  useEffect(() => {
+    if (!isHome) return
+
+    const onScroll = () => {
+      setIsScrolled(window.scrollY >= 150)
+    }
+
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [isHome])
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-neutral-900 backdrop-blur-sm">
+      <header
+        className={`fixed top-0 z-50 w-full transition-colors duration-500 ${isHome ? (showScrolledBg ? "bg-neutral-900" : "") : "bg-neutral-900"}`}
+      >
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center justify-between gap-3 py-3 sm:py-4">
             <Link
@@ -85,9 +104,9 @@ export function Navbar() {
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700 md:hidden"
               >
                 {isMenuOpen ? (
-                  <XIcon size={20} weight="regular" />
+                  <XIcon size={20} weight="bold" />
                 ) : (
-                  <ListIcon size={20} weight="regular" />
+                  <ListIcon size={20} weight="bold" />
                 )}
               </button>
               <button
@@ -95,7 +114,7 @@ export function Navbar() {
                 aria-label="Search"
                 className="hidden h-10 w-10 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700 sm:inline-flex"
               >
-                <MagnifyingGlassIcon size={22} weight="regular" />
+                <MagnifyingGlassIcon size={22} weight="bold" />
               </button>
               <button
                 type="button"
@@ -105,7 +124,7 @@ export function Navbar() {
                 onClick={() => setIsCartOpen(true)}
                 className="relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700 sm:h-10 sm:w-10"
               >
-                <CartIcon size={22} weight="regular" />
+                <CartIcon size={22} weight="bold" />
                 <span className="absolute -top-0.5 -right-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full border border-zinc-300 bg-white px-1 text-[11px] font-medium text-zinc-800">
                   {cartItemCount}
                 </span>
@@ -116,7 +135,7 @@ export function Navbar() {
                 aria-label="User account"
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700 sm:h-10 sm:w-10"
               >
-                <UserIcon size={22} weight="regular" />
+                <UserIcon size={22} weight="bold" />
               </button>
             </div>
           </nav>

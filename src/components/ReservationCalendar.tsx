@@ -18,6 +18,10 @@ export function ReservationCalendar({
   range: DateRange | undefined
   setRange: (range: DateRange | undefined) => void
 }) {
+  const now = new Date()
+  const startMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+  const endMonth = new Date(now.getFullYear() + 2, 11, 1)
+
   const label = (() => {
     if (range?.from && range?.to) {
       return `${format(range.from, "PPP")} - ${format(range.to, "PPP")}`
@@ -49,6 +53,9 @@ export function ReservationCalendar({
           onSelect={setRange}
           defaultMonth={range?.from}
           numberOfMonths={2}
+          captionLayout="dropdown"
+          startMonth={startMonth}
+          endMonth={endMonth}
         />
       </PopoverContent>
     </Popover>

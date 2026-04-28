@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import { useMemo } from "react"
 import { differenceInCalendarDays, format } from "date-fns"
 import type { DateRange } from "react-day-picker"
+import { BagIcon } from "@phosphor-icons/react"
 
 const currencyFormatter = new Intl.NumberFormat("en-PH", {
   style: "currency",
@@ -82,8 +83,10 @@ export function ProductPage() {
         <div className="mb-6 flex items-center justify-between gap-4 sm:mb-8">
           <Link
             to="/shop"
-            className="text-sm font-medium text-zinc-900 transition-colors hover:text-zinc-900"
+            className="text-sm font-medium text-zinc-900 transition-colors hover:text-zinc-900 flex items-center gap-2 border-b border-zinc-800 pb-0.5"
+
           >
+            <BagIcon size={16} weight="bold" />
             Back to shop
           </Link>
         </div>
