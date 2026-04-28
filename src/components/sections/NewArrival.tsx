@@ -1,4 +1,3 @@
-import React from "react"
 import { Link } from "react-router-dom"
 import { SAMPLE_DATA } from "@/dummy/sampleData"
 
@@ -12,7 +11,7 @@ export function NewArrival() {
   const items = SAMPLE_DATA.NewArrivals || []
 
   return (
-    <section className="bg-white">
+    <section id="new-arrivals" className="bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <h2 className="mb-12 text-center font-heading text-3xl leading-tight text-zinc-900">
           New Arrivals
@@ -22,7 +21,10 @@ export function NewArrival() {
           {items.map((item) => (
             <article key={item.id} className="group overflow-hidden">
               <Link to={`/products/${item.id}`} className="block">
-                <div className="relative aspect-[3/4] w-full overflow-hidden">
+                <div
+                  className="relative w-full overflow-hidden"
+                  style={{ aspectRatio: "3 / 4" }}
+                >
                   {/* front image */}
                   <img
                     src={item.image?.[0]}

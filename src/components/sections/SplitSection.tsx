@@ -1,4 +1,3 @@
-import React from "react"
 import { SAMPLE_DATA } from "@/dummy/sampleData"
 import { Button } from "@/components/ui/button"
 
@@ -16,7 +15,7 @@ export function SplitSection({
   image = SAMPLE_DATA.ClothingRental.image,
 }: SplitSectionProps) {
   return (
-    <section className="overflow-hidden bg-[#1f1c19]">
+    <section id="rent" className="overflow-hidden bg-[#1f1c19]">
       <div className="mx-auto flex max-w-6xl flex-col-reverse gap-8 px-4 py-16 sm:flex-row sm:items-center sm:gap-12 sm:px-6 lg:px-8 lg:py-24">
         <div className="sm:w-1/2">
           <h2 className="mb-6 font-heading text-5xl leading-tight text-white sm:text-6xl">
@@ -35,9 +34,7 @@ export function SplitSection({
         </div>
 
         <div className="sm:w-1/2">
-          <div className="mx-auto max-w-md overflow-hidden shadow-sm sm:max-w-none">
-            <img src={image} alt={title} className="w-full object-cover" />
-          </div>
+          <img src={image} alt={title} className="block h-auto w-full" />
         </div>
       </div>
     </section>

@@ -3,6 +3,7 @@ import { useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { cartItems } from "@/features/cart/data/cartItems"
 import { AnimatePresence, motion } from "motion/react"
+import { XIcon } from "@phosphor-icons/react"
 
 type CartSheetProps = {
   open: boolean
@@ -79,12 +80,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
           >
             <header className="flex items-center justify-between border-b border-black/10 px-4 py-4 sm:px-5">
               <div>
-                <h2 className="font-heading text-2xl text-zinc-950">
-                  Your Cart
-                </h2>
-                <p className="text-sm text-zinc-600">
-                  Review your selected items.
-                </p>
+                <h2 className="text-2xl font-medium text-zinc-950">Cart</h2>
               </div>
 
               <Button
@@ -93,7 +89,8 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                 className="h-9 rounded px-3"
                 onClick={() => onOpenChange(false)}
               >
-                Close
+                <XIcon className="size-7" />
+                <span className="sr-only">Close</span>
               </Button>
             </header>
 

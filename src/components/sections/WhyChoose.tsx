@@ -48,7 +48,7 @@ const features = [
 
 export function WhyChoose() {
   return (
-    <section className="bg-white py-16 sm:py-24 lg:py-32">
+    <section id="why-selair" className="bg-white py-16 sm:py-24 lg:py-32">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="mb-4 font-heading text-3xl leading-tight text-zinc-900 sm:text-4xl">

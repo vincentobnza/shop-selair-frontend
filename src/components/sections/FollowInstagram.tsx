@@ -4,7 +4,10 @@ import BGVideo from "@/assets/video_bg_social.mp4"
 
 export function FollowInstagram() {
   return (
-    <section className="relative overflow-hidden bg-black py-20 sm:py-28 lg:py-32">
+    <section
+      id="follow-us"
+      className="relative overflow-hidden bg-black py-20 sm:py-28 lg:py-32"
+    >
       {/* Video background */}
       <video
         autoPlay
@@ -50,7 +53,7 @@ export function FollowInstagram() {
                 key={item}
                 className="aspect-square overflow-hidden rounded-lg bg-zinc-800"
               >
-                <div className="h-full w-full bg-gradient-to-br from-zinc-700 to-zinc-900" />
+                <div className="h-full w-full bg-linear-to-br from-zinc-700 to-zinc-900" />
               </div>
             ))}
           </div>
