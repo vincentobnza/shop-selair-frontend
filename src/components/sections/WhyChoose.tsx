@@ -68,7 +68,7 @@ export function WhyChoose() {
                 key={idx}
                 className="flex flex-col items-center justify-center px-4 py-1"
               >
-                <div className="mb-10 flex">
+                <div className="mb-5 flex">
                   <IconComponent size={32} className="text-[#2c2824]" />
                 </div>
                 <h3 className="mb-2 font-heading text-base text-zinc-900 md:text-lg lg:text-xl">

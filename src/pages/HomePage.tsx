@@ -2,6 +2,7 @@ import { HeroSection } from "@/components/sections/HeroSection"
 import { NewArrival } from "@/components/sections/NewArrival"
 import { SplitSection } from "@/components/sections/SplitSection"
 import { WhyChoose } from "@/components/sections/WhyChoose"
+import { FollowInstagram } from "@/components/sections/FollowInstagram"
 import { SAMPLE_DATA } from "@/dummy/sampleData"
 
 export function HomePage() {
@@ -17,6 +18,7 @@ export function HomePage() {
       <NewArrival />
       <SplitSection />
       <WhyChoose />
+      <FollowInstagram />
     </>
   )
 }
