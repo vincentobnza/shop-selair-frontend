@@ -139,14 +139,14 @@ export function Navbar() {
                   onSignOut={() => void signOut()}
                 />
               ) : (
-                <>
-                  <Button variant="pill" asChild className={navPillClass}>
+                <div className="ml-2 flex gap-1">
+                  <Button variant="outline" asChild className={cn(navPillClass, "rounded-full")}>
                     <Link to="/login">Sign In</Link>
                   </Button>
                   <Button variant="pill" asChild className={navPillClass}>
                     <Link to="/signup">Join Now</Link>
                   </Button>
-                </>
+                </div>
               )}
             </div>
           </div>

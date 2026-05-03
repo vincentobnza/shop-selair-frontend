@@ -8,7 +8,7 @@ export function PromoBanner() {
             className="fixed top-0 z-60 flex h-12 w-full items-center justify-center gap-2 bg-black px-4 text-center text-xs text-white sm:text-sm"
         >
             <span className="truncate ">
-                Event season — browse rentals & dresses for sale.
+                Event season — browse rentals & dresses for sale. 👜
             </span>
             <Link
                 to="/shop"

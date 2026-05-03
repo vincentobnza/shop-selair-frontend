@@ -77,7 +77,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
           >
             <header className="flex items-center justify-between border-b border-black/10 px-4 py-4 sm:px-5">
               <div>
-                <h2 className="text-2xl font-medium text-zinc-950">Cart</h2>
+                <h2 className="text-2xl font-medium text-zinc-950">My Bag</h2>
               </div>
 
               <Button

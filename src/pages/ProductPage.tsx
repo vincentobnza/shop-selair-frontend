@@ -11,6 +11,8 @@ import { differenceInCalendarDays, format } from "date-fns"
 import type { DateRange } from "react-day-picker"
 import { BagIcon } from "@phosphor-icons/react"
 
+import { ProductCard } from "@/components/ProductCard"
+
 const currencyFormatter = new Intl.NumberFormat("en-PH", {
   style: "currency",
   currency: "PHP",
@@ -258,30 +260,7 @@ export function ProductPage() {
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {relatedProducts.map((item) => (
-                <Link
-                  key={item.id}
-                  to={`/products/${item.id}`}
-                  className="group overflow-hidden bg-white"
-                >
-                  <div
-                    className="overflow-hidden bg-zinc-50"
-                    style={{ aspectRatio: "4 / 5" }}
-                  >
-                    <img
-                      src={item.image[0]}
-                      alt={item.name}
-                      className="block h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="py-5">
-                    <h3 className="font-heading text-sm font-semibold text-zinc-900 md:text-base">
-                      {item.name}
-                    </h3>
-                    <p className="mt-2 text-sm font-bold  text-orange-900 md:text-base">
-                      {currencyFormatter.format(item.price)}
-                    </p>
-                  </div>
-                </Link>
+                <ProductCard key={item.id} product={item} />
               ))}
             </div>
           </section>

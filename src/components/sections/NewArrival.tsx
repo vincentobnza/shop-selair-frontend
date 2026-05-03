@@ -1,21 +1,12 @@
 import { Link } from "react-router-dom"
-import { SAMPLE_DATA } from "@/dummy/sampleData"
 import useEmblaCarousel from "embla-carousel-react"
 
-const currencyFormatter = new Intl.NumberFormat("en-PH", {
-  style: "currency",
-  currency: "PHP",
-  maximumFractionDigits: 0,
-})
+import { ProductCard } from "@/components/ProductCard"
+import { SAMPLE_DATA } from "@/dummy/sampleData"
 
 export function NewArrival() {
   const items = SAMPLE_DATA.NewArrivals || []
   const [emblaRef] = useEmblaCarousel({ loop: true, align: "start" })
-
-
-
-
-
 
   return (
     <section id="new-arrivals" className="bg-white">
@@ -28,82 +19,20 @@ export function NewArrival() {
           <div ref={emblaRef} className="overflow-hidden">
             <div className="-ml-3 flex touch-pan-y">
               {items.map((item) => (
-                <article
+                <div
                   key={item.id}
                   className="min-w-0 shrink-0 basis-[78%] pl-3"
                 >
-                  <Link to={`/products/${item.id}`} className="group block">
-                    <div
-                      className="relative w-full overflow-hidden"
-                      style={{ aspectRatio: "3 / 4" }}
-                    >
-                      <img
-                        src={item.image?.[0]}
-                        alt={item.name}
-                        className="absolute inset-0 h-full w-full object-cover"
-                      />
-                    </div>
-
-                    <div className="mt-4">
-                      <h1 className="font-heading text-sm font-medium text-zinc-900 line-clamp-1">
-                        {item.name}
-                      </h1>
-                      <p className="mt-2 text-sm font-bold text-zinc-900">
-                        {item.brand}
-                      </p>
-                      <p className="mt-2 text-sm font-bold text-orange-900">
-                        From {currencyFormatter.format(item.price)}
-                      </p>
-                    </div>
-                  </Link>
-                </article>
+                  <ProductCard product={item} compact />
+                </div>
               ))}
             </div>
           </div>
-
-
         </div>
 
         <div className="hidden grid-cols-1 gap-8 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {items.map((item) => (
-            <article key={item.id} className="group overflow-hidden">
-              <Link to={`/products/${item.id}`} className="block">
-                <div
-                  className="relative w-full overflow-hidden"
-                  style={{ aspectRatio: "3 / 4" }}
-                >
-                  {/* front image */}
-                  <img
-                    src={item.image?.[0]}
-                    alt={item.name}
-                    className="absolute inset-0 h-full w-full object-cover transition-all duration-500 ease-out group-hover:opacity-0"
-                  />
-
-                  {/* back image (appears on hover) */}
-                  {item.image?.[1] ? (
-                    <img
-                      src={item.image[1]}
-                      alt={`${item.name} (back)`}
-                      className="absolute inset-0 h-full w-full object-cover opacity-0 transition-all duration-500 ease-out group-hover:opacity-100"
-                    />
-                  ) : null}
-                </div>
-
-                <div className="mt-4">
-                  <div className="space-y-0.5">
-                    <h1 className="font-heading text-sm font-medium text-zinc-900 md:text-base line-clamp-1">
-                      {item.name}
-                    </h1>
-                    <p className="text-xs font-medium text-muted-foreground">
-                      {item.brand}
-                    </p>
-                  </div>
-                  <p className="mt-2 text-sm font-bold text-primary">
-                    {currencyFormatter.format(item.price)}
-                  </p>
-                </div>
-              </Link>
-            </article>
+            <ProductCard key={item.id} product={item} />
           ))}
         </div>
 

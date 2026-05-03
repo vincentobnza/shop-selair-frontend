@@ -146,7 +146,7 @@ type DressingForPickerProps = {
 
 export function DressingForPicker({ ctaLabel = "Browse All Styles" }: DressingForPickerProps) {
   return (
-    <div className="mt-12 border-t border-neutral-100 pt-12 sm:mt-16 sm:pt-16">
+    <section className="mt-12 border-t border-neutral-100 pt-12 sm:mt-16 sm:pt-16">
       <h2 className="mb-12 text-center font-heading text-xl sm:text-3xl leading-tight text-zinc-900 ">
         I&apos;m getting dressed for
       </h2>
@@ -174,6 +174,6 @@ export function DressingForPicker({ ctaLabel = "Browse All Styles" }: DressingFo
           <Link to="/shop">{ctaLabel}</Link>
         </Button>
       </div>
-    </div>
+    </section>
   )
 }

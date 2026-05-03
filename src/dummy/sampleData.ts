@@ -8,6 +8,10 @@ export const SAMPLE_DATA = {
     ctaSecondaryTo: "/rent",
     heroBackgroundImage:
       "https://images.pexels.com/photos/13868107/pexels-photo-13868107.jpeg",
+    sideImageLeft:
+      "https://images.pexels.com/photos/17472389/pexels-photo-17472389.jpeg",
+    sideImageRight:
+      "https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800",
   },
 
   NewArrivals: [
