@@ -2,7 +2,6 @@ import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom"
 import { Helmet } from "react-helmet-async"
 
 import { buildTitle, DEFAULT_DESCRIPTION } from "@/config/site"
-import { SAMPLE_DATA } from "@/dummy/sampleData"
 import { ReservationCalendar } from "@/components/ReservationCalendar"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -13,6 +12,7 @@ import { BagIcon } from "@phosphor-icons/react"
 
 import { ProductCard } from "@/components/ProductCard"
 import { useCartStore } from "@/features/cart/cartStore"
+import { useCatalogProduct, useCatalogProducts } from "@/features/products/queries"
 
 const currencyFormatter = new Intl.NumberFormat("en-PH", {
   style: "currency",
@@ -26,6 +26,13 @@ export function ProductPage() {
   const [searchParams] = useSearchParams()
   const addToCart = useCartStore((s) => s.addItem)
   const [addingCart, setAddingCart] = useState(false)
+
+  const {
+    data: product,
+    isPending,
+    isError,
+  } = useCatalogProduct(productId)
+  const { data: catalog = [] } = useCatalogProducts()
 
   const range = useMemo<DateRange | undefined>(() => {
     const startDateParam = searchParams.get("startDate") ?? searchParams.get("date")
@@ -43,13 +50,10 @@ export function ProductPage() {
     return differenceInCalendarDays(range.to, range.from) + 1
   }, [range])
 
-  const product =
-    SAMPLE_DATA.NewArrivals.find((item) => item.id === productId) ??
-    SAMPLE_DATA.NewArrivals[0]
-
   const dailyRate = useMemo(() => {
+    if (!product) return 0
     return product.price / Math.max(product.duration, 1)
-  }, [product.price, product.duration])
+  }, [product])
 
   const totalRate = useMemo(() => {
     if (!rentalDays) return 0
@@ -81,10 +85,49 @@ export function ProductPage() {
     return `${year}-${month}-${day}`
   }
 
-  const relatedProducts = SAMPLE_DATA.NewArrivals.filter(
-    (item) => item.id !== product.id
-  ).slice(0, 3)
+  const relatedProducts = useMemo(() => {
+    if (!product) return []
+    return catalog.filter((item) => item.id !== product.id).slice(0, 3)
+  }, [catalog, product])
 
+  if (isPending) {
+    return (
+      <main className="bg-white">
+        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
+          <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+            <div className="aspect-[3/4] animate-pulse bg-zinc-100" />
+            <div className="space-y-4 pt-6">
+              <div className="h-8 w-2/3 animate-pulse rounded bg-zinc-100" />
+              <div className="h-4 w-full animate-pulse rounded bg-zinc-100" />
+              <div className="h-4 w-5/6 animate-pulse rounded bg-zinc-100" />
+            </div>
+          </div>
+        </section>
+      </main>
+    )
+  }
+
+  if (isError || !product) {
+    return (
+      <main className="bg-white">
+        <Helmet>
+          <title>{buildTitle("Product not found")}</title>
+        </Helmet>
+        <section className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 lg:px-8">
+          <p className="font-heading text-lg text-zinc-900">Product not found</p>
+          <Link
+            to="/shop"
+            className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-900 underline underline-offset-4"
+          >
+            <BagIcon size={16} weight="bold" />
+            Back to shop
+          </Link>
+        </section>
+      </main>
+    )
+  }
+
+  const heroImage = product.image[0] ?? ""
   const pageTitle = buildTitle(product.name)
   const pageDesc = product.description?.[0] ?? DEFAULT_DESCRIPTION
 
@@ -113,11 +156,15 @@ export function ProductPage() {
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
           <div>
             <div className="overflow-hidden bg-zinc-50">
-              <img
-                src={product.image[0]}
-                alt={product.name}
-                className="block h-full w-full object-cover"
-              />
+              {heroImage ? (
+                <img
+                  src={heroImage}
+                  alt={product.name}
+                  className="block h-full w-full object-cover"
+                />
+              ) : (
+                <div className="aspect-[3/4] bg-zinc-100" />
+              )}
             </div>
 
             <div className="mt-4 grid grid-cols-3 gap-3">

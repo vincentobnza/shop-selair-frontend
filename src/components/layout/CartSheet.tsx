@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/features/auth/hooks"
 import { useCartStore } from "@/features/cart/cartStore"
-import { SAMPLE_DATA } from "@/dummy/sampleData"
+import { useCatalogProducts } from "@/features/products/queries"
 import { AnimatePresence, motion } from "motion/react"
 import { XIcon } from "@phosphor-icons/react"
 
@@ -42,6 +42,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
   const clearApi = useCartStore((s) => s.clearApi)
   const clearGuest = useCartStore((s) => s.clearGuest)
   const navigate = useNavigate()
+  const { data: catalog = [] } = useCatalogProducts()
 
   useEffect(() => {
     if (open && isAuthenticated) {
@@ -51,7 +52,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
 
   const guestRows = useMemo(() => {
     return guestLines.map((line) => {
-      const p = SAMPLE_DATA.NewArrivals.find((x) => x.id === line.productId)
+      const p = catalog.find((x) => x.id === line.productId)
       return {
         key: line.productId,
         title: p?.name ?? "Product",
@@ -60,7 +61,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
         lineTotal: (p?.price ?? 0) * line.quantity,
       }
     })
-  }, [guestLines])
+  }, [guestLines, catalog])
 
   const apiRows = apiCart?.items ?? []
 
@@ -222,11 +223,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                       : ""
                   }
                 >
-                  {isAuthenticated ? (
-                    <p className="mb-3 text-xs font-medium text-zinc-500">
-                      Catalog (saved on this device)
-                    </p>
-                  ) : null}
+
                   <ul className="divide-y divide-black/10">
                     {guestRows.map((row) => (
                       <li key={row.key} className="py-4">

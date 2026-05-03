@@ -10,7 +10,7 @@ import {
 } from "@/components/shop/shop-filters"
 import { ProductCard } from "@/components/ProductCard"
 import { buildTitle } from "@/config/site"
-import { SAMPLE_DATA } from "@/dummy/sampleData"
+import { useCatalogProducts } from "@/features/products/queries"
 import { cn } from "@/lib/utils"
 
 function filterHref(id: ShopFilterId): string {
@@ -20,7 +20,7 @@ function filterHref(id: ShopFilterId): string {
 export function ShopPage() {
   const [searchParams] = useSearchParams()
   const activeFilter = parseShopFilter(searchParams.get("filter"))
-  const products = SAMPLE_DATA.NewArrivals
+  const { data: products = [], isPending, isError } = useCatalogProducts()
   const visible = filterShopProducts(products, activeFilter)
   const filterLabel = labelForShopFilter(activeFilter)
   const pageTitle = buildTitle(
@@ -69,38 +69,55 @@ export function ShopPage() {
         </header>
 
         <section className="pt-10" aria-live="polite">
-          <p className="mb-6 text-sm text-zinc-500">
-            {visible.length}{" "}
-            {visible.length === 1 ? "piece" : "pieces"}
-            {activeFilter !== "all" ? (
-              <>
-                {" "}
-                in <span className="font-medium text-zinc-800">{filterLabel}</span>
-              </>
-            ) : null}
-          </p>
-
-          {visible.length > 0 ? (
+          {isError ? (
+            <p className="text-sm text-red-700">
+              Could not load the catalog. Ensure the API is running and try again.
+            </p>
+          ) : isPending ? (
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {visible.map((product) => (
-                <ProductCard key={product.id} product={product} />
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="aspect-[3/4] animate-pulse rounded-sm bg-zinc-100"
+                />
               ))}
             </div>
           ) : (
-            <div className="rounded-lg border border-dashed border-neutral-200 bg-zinc-50 px-6 py-14 text-center">
-              <p className="font-heading text-base text-zinc-800">
-                Nothing here yet
+            <>
+              <p className="mb-6 text-sm text-zinc-500">
+                {visible.length}{" "}
+                {visible.length === 1 ? "piece" : "pieces"}
+                {activeFilter !== "all" ? (
+                  <>
+                    {" "}
+                    in <span className="font-medium text-zinc-800">{filterLabel}</span>
+                  </>
+                ) : null}
               </p>
-              <p className="mt-2 text-sm text-zinc-600">
-                Try another category or browse the full catalog.
-              </p>
-              <Link
-                to="/shop"
-                className="mt-6 inline-block text-sm font-medium text-zinc-900 underline underline-offset-4"
-              >
-                Browse all
-              </Link>
-            </div>
+
+              {visible.length > 0 ? (
+                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {visible.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-lg border border-dashed border-neutral-200 bg-zinc-50 px-6 py-14 text-center">
+                  <p className="font-heading text-base text-zinc-800">
+                    Nothing here yet
+                  </p>
+                  <p className="mt-2 text-sm text-zinc-600">
+                    Try another category or browse the full catalog.
+                  </p>
+                  <Link
+                    to="/shop"
+                    className="mt-6 inline-block text-sm font-medium text-zinc-900 underline underline-offset-4"
+                  >
+                    Browse all
+                  </Link>
+                </div>
+              )}
+            </>
           )}
         </section>
       </div>

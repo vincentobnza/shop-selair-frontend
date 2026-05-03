@@ -1,8 +1,8 @@
-import { SAMPLE_DATA } from "@/dummy/sampleData"
+import type { CatalogProduct } from "@/features/products/types"
 
 export type ShopFilterId = (typeof SHOP_FILTER_OPTIONS)[number]["id"]
 
-export type ShopProduct = (typeof SAMPLE_DATA.NewArrivals)[number]
+export type ShopProduct = CatalogProduct
 
 export const SHOP_FILTER_OPTIONS = [
   { id: "all", label: "Browse all" },

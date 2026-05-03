@@ -2,10 +2,10 @@ import { Link } from "react-router-dom"
 import useEmblaCarousel from "embla-carousel-react"
 
 import { ProductCard } from "@/components/ProductCard"
-import { SAMPLE_DATA } from "@/dummy/sampleData"
+import { useCatalogProducts } from "@/features/products/queries"
 
 export function NewArrival() {
-  const items = SAMPLE_DATA.NewArrivals || []
+  const { data: items = [], isPending, isError } = useCatalogProducts()
   const [emblaRef] = useEmblaCarousel({ loop: true, align: "start" })
 
   return (
@@ -15,26 +15,43 @@ export function NewArrival() {
           New Arrivals
         </h2>
 
-        <div className="sm:hidden">
-          <div ref={emblaRef} className="overflow-hidden">
-            <div className="-ml-3 flex touch-pan-y">
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  className="min-w-0 shrink-0 basis-[78%] pl-3"
-                >
-                  <ProductCard product={item} compact />
+        {isError ? (
+          <p className="text-center text-sm text-zinc-600">
+            Could not load products. Check that the API is running.
+          </p>
+        ) : isPending ? (
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="aspect-[3/4] animate-pulse rounded-sm bg-zinc-100"
+              />
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="sm:hidden">
+              <div ref={emblaRef} className="overflow-hidden">
+                <div className="-ml-3 flex touch-pan-y">
+                  {items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="min-w-0 shrink-0 basis-[78%] pl-3"
+                    >
+                      <ProductCard product={item} compact />
+                    </div>
+                  ))}
                 </div>
+              </div>
+            </div>
+
+            <div className="hidden grid-cols-1 gap-8 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {items.map((item) => (
+                <ProductCard key={item.id} product={item} />
               ))}
             </div>
-          </div>
-        </div>
-
-        <div className="hidden grid-cols-1 gap-8 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {items.map((item) => (
-            <ProductCard key={item.id} product={item} />
-          ))}
-        </div>
+          </>
+        )}
 
         <div className="mt-12 text-center">
           <Link
