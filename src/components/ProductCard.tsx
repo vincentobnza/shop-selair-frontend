@@ -28,7 +28,7 @@ export function ProductCard({
   const hasSwap = !compact && Boolean(product.image?.[1])
 
   return (
-    <article className={cn("group relative overflow-hidden", className)}>
+    <article className={cn("my-2 group relative overflow-hidden", className)}>
       <div className="relative">
         <Link to={to} className="block">
           <div
@@ -81,7 +81,7 @@ export function ProductCard({
           <h2
             className={cn(
               "font-heading font-medium text-zinc-900 line-clamp-1",
-              compact ? "text-sm" : "text-sm md:text-base",
+              compact ? "text-sm" : "text-sm md:text-base ",
             )}
           >
             {product.name}

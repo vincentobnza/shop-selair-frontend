@@ -161,7 +161,12 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
 
             <div className="flex-1 overflow-y-auto px-4 sm:px-5">
               {(loading || authPending) && isAuthenticated ? (
-                <p className="py-8 text-sm text-zinc-500">Loading cart…</p>
+                <div className="min-h-[calc(100vh-250px)] flex items-center justify-center">
+                  <h2 className="text-xs sm:text-sm md:text-base font-medium text-black font-heading text-center">
+
+                    Loading cart...
+                  </h2>
+                </div>
               ) : null}
 
               {showEmptyAuth || showGuestEmpty ? (

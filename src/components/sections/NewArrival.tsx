@@ -10,7 +10,7 @@ export function NewArrival() {
 
   return (
     <section id="new-arrivals" className="bg-white">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="py-16 sm:px-6 lg:px-8">
         <h2 className="mb-12 text-center font-heading text-xl sm:text-3xl leading-tight text-zinc-900 ">
           New Arrivals
         </h2>
@@ -20,7 +20,7 @@ export function NewArrival() {
             Could not load products. Check that the API is running.
           </p>
         ) : isPending ? (
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
@@ -45,7 +45,7 @@ export function NewArrival() {
               </div>
             </div>
 
-            <div className="hidden grid-cols-1 gap-8 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="hidden grid-cols-1 gap-1  sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {items.map((item) => (
                 <ProductCard key={item.id} product={item} />
               ))}
