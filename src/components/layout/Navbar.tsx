@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { useAuth, useLogout } from "@/features/auth/hooks"
 import { useCartItemCount } from "@/features/cart/cartStore"
+import { useFavoriteCount } from "@/features/favorites/useFavoriteCount"
 import { cn } from "@/lib/utils"
 import { TooltipComponent } from "../TooltipComponent"
 
@@ -52,6 +53,7 @@ export function Navbar() {
   const { isAuthenticated } = useAuth()
   const { run: signOut, pending: signingOut } = useLogout()
   const cartItemCount = useCartItemCount()
+  const favoriteCount = useFavoriteCount()
 
   const [cartOpen, setCartOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -105,15 +107,24 @@ export function Navbar() {
             </Link>
 
             <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
-              <TooltipComponent side="bottom" content="View wishlist">
+              <TooltipComponent side="bottom" content="View all favorites">
                 <Button
-                  type="button"
+                  asChild
                   variant="ghost"
                   size="icon"
-                  aria-label="View wishlist"
-                  className="hidden sm:block relative size-10 shrink-0 rounded-full text-black "
+                  className="relative size-10 shrink-0 rounded-full text-black"
                 >
-                  <HeartIcon size={32} weight="regular" className="size-5" />
+                  <Link
+                    to="/favorites"
+                    aria-label={
+                      favoriteCount > 0
+                        ? `All favorites, ${favoriteCount} pieces`
+                        : "All favorites"
+                    }
+                  >
+                    <HeartIcon size={32} weight="regular" className="size-5" />
+
+                  </Link>
                 </Button>
               </TooltipComponent>
 

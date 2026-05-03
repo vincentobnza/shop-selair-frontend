@@ -2,19 +2,11 @@ import { useCallback, useEffect, useState } from "react"
 
 import { useAuthStore } from "@/features/auth/store"
 import { useFavoriteStore } from "@/features/favorites/favoritesStore"
-
-const LOCAL_KEY = "selair-favorites"
-
-function readLocalIds(): string[] {
-  try {
-    const raw = localStorage.getItem(LOCAL_KEY)
-    if (!raw) return []
-    const ids = JSON.parse(raw) as string[]
-    return Array.isArray(ids) ? ids : []
-  } catch {
-    return []
-  }
-}
+import {
+  FAVORITES_LOCAL_KEY,
+  dispatchLocalFavoritesChanged,
+  readLocalFavoriteIds,
+} from "@/features/favorites/local-favorites"
 
 export function useFavorite(productId: string) {
   const token = useAuthStore((s) => s.token)
@@ -22,12 +14,12 @@ export function useFavorite(productId: string) {
   const toggleRemote = useFavoriteStore((s) => s.toggle)
 
   const [localIds, setLocalIds] = useState<string[]>(() =>
-    token ? [] : readLocalIds(),
+    token ? [] : readLocalFavoriteIds(),
   )
 
   useEffect(() => {
     if (!token) {
-      setLocalIds(readLocalIds())
+      setLocalIds(readLocalFavoriteIds())
     }
   }, [token, productId])
 
@@ -42,12 +34,13 @@ export function useFavorite(productId: string) {
     }
 
     setLocalIds((prev) => {
-      const cur = prev.length ? prev : readLocalIds()
+      const cur = prev.length ? prev : readLocalFavoriteIds()
       const next = cur.includes(productId)
         ? cur.filter((id) => id !== productId)
         : [...cur, productId]
       try {
-        localStorage.setItem(LOCAL_KEY, JSON.stringify(next))
+        localStorage.setItem(FAVORITES_LOCAL_KEY, JSON.stringify(next))
+        dispatchLocalFavoritesChanged()
       } catch {
         /* ignore */
       }

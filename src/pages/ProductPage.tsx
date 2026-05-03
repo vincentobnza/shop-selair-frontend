@@ -95,7 +95,7 @@ export function ProductPage() {
       <main className="bg-white">
         <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
           <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
-            <div className="aspect-[3/4] animate-pulse bg-zinc-100" />
+            <div className="aspect-3/4 animate-pulse bg-zinc-100" />
             <div className="space-y-4 pt-6">
               <div className="h-8 w-2/3 animate-pulse rounded bg-zinc-100" />
               <div className="h-4 w-full animate-pulse rounded bg-zinc-100" />
@@ -163,7 +163,7 @@ export function ProductPage() {
                   className="block h-full w-full object-cover"
                 />
               ) : (
-                <div className="aspect-[3/4] bg-zinc-100" />
+                <div className="aspect-3/4 bg-zinc-100" />
               )}
             </div>
 
@@ -184,7 +184,7 @@ export function ProductPage() {
             <p className="font-heading text-sm font-medium text-zinc-700 uppercase">
               Selair Collection
             </p>
-            <h1 className="mt-3 font-heading text-3xl leading-tight font-medium  text-zinc-900 sm:text-4xl lg:text-5xl">
+            <h1 className="mt-3 font-heading text-3xl leading-tight font-medium  text-zinc-900 sm:text-4xl">
               {product.name}
             </h1>
 
@@ -208,10 +208,10 @@ export function ProductPage() {
                 setRange={handleRangeChange}
               />
 
-              <div className="border border-zinc-200 bg-zinc-50/70">
+              <div className="border border-black bg-zinc-50/70">
                 <div className="grid gap-3 text-sm text-zinc-700 sm:grid-cols-2 p-4">
                   <div>
-                    <p className="text-[10px] text-zinc-400 font-semibold uppercase">
+                    <p className="text-[10px] text-black font-semibold uppercase">
                       Start date
                     </p>
                     <p className="font-medium text-sm md:text-base text-zinc-900">
@@ -219,7 +219,7 @@ export function ProductPage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-zinc-400 font-semibold uppercase">
+                    <p className="text-[10px] text-black font-semibold uppercase">
                       Return date
                     </p>
                     <p className="font-medium text-sm md:text text-zinc-900">
@@ -228,7 +228,7 @@ export function ProductPage() {
                   </div>
                 </div>
 
-                <div className="border-t border-zinc-200 py-2 px-4 bg-neutral-100">
+                <div className="border-t border-black py-2 px-4 bg-white">
                   <div className="flex items-baseline justify-between">
                     <p className="text-[10px] text-zinc-400 font-semibold uppercase">
                       Rate
@@ -269,7 +269,7 @@ export function ProductPage() {
                   type="button"
                   variant="outline"
                   disabled={addingCart}
-                  className="h-auto rounded-none border-zinc-300 bg-transparent px-6 py-4 text-sm text-black sm:text-base"
+                  className="h-auto rounded-none border-black bg-transparent px-6 py-4 text-sm text-black sm:text-base"
                   onClick={() => {
                     setAddingCart(true)
                     void addToCart(String(product.id), 1).finally(() =>

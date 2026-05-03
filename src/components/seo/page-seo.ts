@@ -46,6 +46,11 @@ export function getSeoForPath(pathname: string): PageSeo {
       description:
         "Practical picks for daily routines—comfortable, versatile pieces you’ll reach for again and again.",
     },
+    "/favorites": {
+      label: "Saved items",
+      description:
+        "Pieces you have saved—quick links back to each listing with pricing and photos.",
+    },
   }
 
   const section = staticMap[path]

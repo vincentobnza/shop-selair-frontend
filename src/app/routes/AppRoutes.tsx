@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom"
 import { AppShell } from "@/components/layout/AppShell"
 import { AccountSectionPage } from "@/pages/AccountSectionPage"
 import { EssentialsPage } from "@/pages/EssentialsPage"
+import { FavoritesPage } from "@/pages/FavoritesPage"
 import { HomePage } from "@/pages/HomePage"
 import { LoginPage } from "@/pages/LoginPage"
 import { ProductPage } from "@/pages/ProductPage"
@@ -18,6 +19,7 @@ export function AppRoutes() {
         <Route path="products/:productId" element={<ProductPage />} />
         <Route path="rent" element={<RentPage />} />
         <Route path="shop" element={<ShopPage />} />
+        <Route path="favorites" element={<FavoritesPage />} />
         <Route path="essentials" element={<EssentialsPage />} />
         <Route path="account" element={<Navigate to="/account/profile" replace />} />
         <Route path="account/:slug" element={<AccountSectionPage />} />

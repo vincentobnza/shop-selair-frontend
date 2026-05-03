@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { XIcon } from "@phosphor-icons/react"
 
 import type { ApiCartLine } from "@/features/cart/types"
+import EmptyStateImage from '@/assets/empty_shopping_cart.png'
 
 type CartSheetProps = {
   open: boolean
@@ -87,6 +88,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
     !loading
   const showGuestEmpty = !isAuthenticated && guestLines.length === 0
   const hasBagItems = apiRows.length > 0 || guestRows.length > 0
+  const showFullBagEmpty = showEmptyAuth || showGuestEmpty
 
   useEffect(() => {
     if (!open) {
@@ -169,8 +171,9 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                 </div>
               ) : null}
 
-              {showEmptyAuth || showGuestEmpty ? (
+              {showFullBagEmpty ? (
                 <div className="space-y-4 flex flex-col items-center justify-center min-h-[calc(100vh-250px)]">
+                  <img src={EmptyStateImage} alt="Empty shopping cart" className="w-24 h-24 mb-8 sm:mb-12 md:mb-16" />
                   <h2 className="text-sm sm:text-base md:text-lg font-medium text-black font-heading text-center">
                     Looks like your shopping bag is empty.
                     {!isAuthenticated ? (

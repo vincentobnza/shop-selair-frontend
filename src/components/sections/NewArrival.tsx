@@ -10,7 +10,7 @@ export function NewArrival() {
 
   return (
     <section id="new-arrivals" className="bg-white">
-      <div className="py-16 sm:px-6 lg:px-8">
+      <div className="py-8 sm:px-6 lg:px-8">
         <h2 className="mb-12 text-center font-heading text-xl sm:text-3xl leading-tight text-zinc-900 ">
           New Arrivals
         </h2>

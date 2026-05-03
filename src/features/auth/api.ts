@@ -1,11 +1,12 @@
 import type { AuthSuccessJson } from "@/features/auth/types"
+import { apiPath } from "@/lib/api-base"
 import { api } from "@/lib/axios"
 
 const DEVICE_NAME = "selair-web"
 
 export function login(body: { email: string; password: string }) {
   return api
-    .post<AuthSuccessJson>("/api/v1/auth/login", {
+    .post<AuthSuccessJson>(apiPath("auth/login"), {
       email: body.email,
       password: body.password,
       device_name: DEVICE_NAME,
@@ -20,7 +21,7 @@ export function register(body: {
   password_confirmation: string
 }) {
   return api
-    .post<AuthSuccessJson>("/api/v1/auth/register", {
+    .post<AuthSuccessJson>(apiPath("auth/register"), {
       name: body.name,
       email: body.email,
       password: body.password,
@@ -31,5 +32,5 @@ export function register(body: {
 }
 
 export function logout() {
-  return api.post("/api/v1/auth/logout").then(() => undefined)
+  return api.post(apiPath("auth/logout")).then(() => undefined)
 }
