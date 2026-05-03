@@ -13,6 +13,7 @@ import { BagIcon } from "@phosphor-icons/react"
 import { ProductCard } from "@/components/ProductCard"
 import { useCartStore } from "@/features/cart/cartStore"
 import { useCatalogProduct, useCatalogProducts } from "@/features/products/queries"
+import { toast } from "sonner"
 
 const currencyFormatter = new Intl.NumberFormat("en-PH", {
   style: "currency",
@@ -272,9 +273,16 @@ export function ProductPage() {
                   className="h-auto rounded-none border-black bg-transparent px-6 py-4 text-sm text-black sm:text-base"
                   onClick={() => {
                     setAddingCart(true)
-                    void addToCart(String(product.id), 1).finally(() =>
-                      setAddingCart(false),
-                    )
+                    void addToCart(String(product.id), 1)
+                      .then(() => {
+                        toast.success("Added to cart", {
+                          description: "Item added to cart successfully",
+                        })
+                      })
+                      .catch(() => {
+                        toast.error("Could not add to cart")
+                      })
+                      .finally(() => setAddingCart(false))
                   }}
                 >
                   {addingCart ? "Adding…" : "Add to Cart"}

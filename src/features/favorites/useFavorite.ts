@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import { toast } from "sonner"
 
 import { useAuthStore } from "@/features/auth/store"
 import { useFavoriteStore } from "@/features/favorites/favoritesStore"
@@ -28,16 +29,20 @@ export function useFavorite(productId: string) {
     : localIds.includes(productId)
 
   const toggle = useCallback(async () => {
+    const wasSaved = saved
     if (token) {
       await toggleRemote(productId)
+      if (!wasSaved) toast.success("Saved to favorites")
       return
     }
 
+    const cur = readLocalFavoriteIds()
+    const adding = !cur.includes(productId)
     setLocalIds((prev) => {
-      const cur = prev.length ? prev : readLocalFavoriteIds()
-      const next = cur.includes(productId)
-        ? cur.filter((id) => id !== productId)
-        : [...cur, productId]
+      const base = prev.length ? prev : cur
+      const next = base.includes(productId)
+        ? base.filter((id) => id !== productId)
+        : [...base, productId]
       try {
         localStorage.setItem(FAVORITES_LOCAL_KEY, JSON.stringify(next))
         dispatchLocalFavoritesChanged()
@@ -46,7 +51,8 @@ export function useFavorite(productId: string) {
       }
       return next
     })
-  }, [token, productId, toggleRemote])
+    if (adding) toast.success("Saved to favorites")
+  }, [token, productId, toggleRemote, saved])
 
   return { saved, toggle }
 }
