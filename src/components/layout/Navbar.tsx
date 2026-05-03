@@ -1,181 +1,206 @@
-import { useEffect, useState } from "react"
-import { Link, NavLink, useLocation } from "react-router-dom"
+import { useState } from "react"
+import { Link } from "react-router-dom"
 import {
-  ShoppingBagIcon as CartIcon,
-  MagnifyingGlassIcon,
-  UserIcon,
   ListIcon,
+  MagnifyingGlassIcon,
+  ToteIcon as CartIcon,
   XIcon,
 } from "@phosphor-icons/react"
 
 import { CartSheet } from "@/components/layout/CartSheet"
+import {
+  categoryNavItems,
+  SITE_LOGO_TEXT,
+  utilityLinks,
+} from "@/components/layout/nav-config"
+import { Button } from "@/components/ui/button"
 import { cartItemCount } from "@/features/cart/data/cartItems"
+import { cn } from "@/lib/utils"
 
-const routeLinks = [
-  { label: "Home", to: "/" },
-  { label: "Rent", to: "/rent" },
-  { label: "Shop", to: "/shop" },
-  { label: "Essentials", to: "/essentials" },
-]
+const navPillClass =
+  "hidden h-auto min-h-9 px-4 py-2 text-xs font-medium tracking-wide sm:inline-flex sm:min-h-10 sm:text-sm"
 
-const sectionLinks = [
-  { label: "New Arrivals", to: "/#new-arrivals" },
-  { label: "Why Selair", to: "/#why-selair" },
-  { label: "Instagram", to: "/#follow-us" },
-]
+function CategoryLink({
+  to,
+  label,
+  accent,
+}: {
+  to: string
+  label: string
+  accent?: boolean
+}) {
+  const cls = cn(
+    "whitespace-nowrap text-[13px] leading-none transition-colors sm:text-sm",
+    accent
+      ? "text-nav-sale hover:text-nav-sale/90"
+      : "text-black hover:text-neutral-600",
+  )
 
-function navLinkClassName(isActive: boolean): string {
-  return isActive
-    ? "text-white font-medium"
-    : "text-zinc-300 transition-colors hover:text-white"
+  return (
+    <Link to={to} className={cls}>
+      {label}
+    </Link>
+  )
 }
 
 export function Navbar() {
-  const { pathname } = useLocation()
-  const [isCartOpen, setIsCartOpen] = useState(false)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const isHome = pathname === "/"
-  const showScrolledBg = isHome && isScrolled
-
-  useEffect(() => {
-    if (!isHome) return
-
-    const onScroll = () => {
-      setIsScrolled(window.scrollY >= 150)
-    }
-
-    onScroll()
-    window.addEventListener("scroll", onScroll, { passive: true })
-
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [isHome])
+  const [cartOpen, setCartOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <>
-      <header
-        className={`fixed top-10 z-50 w-full transition-colors duration-500 ${isHome ? (showScrolledBg ? "bg-neutral-900" : "") : "bg-neutral-900"}`}
-      >
-        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center justify-between gap-3 py-3 sm:py-4">
+      <header className="fixed top-10 z-50 w-full border-b border-neutral-200 bg-white">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10">
+          <div className="relative flex items-center justify-between gap-3 py-3 sm:gap-4 sm:py-3.5">
+            <div className="flex min-w-0 flex-1 items-center gap-2 text-sm text-black sm:gap-3">
+              <Link
+                to={utilityLinks.howItWorks.href}
+                className="hidden shrink-0 hover:text-neutral-600 sm:inline"
+              >
+                {utilityLinks.howItWorks.label}
+              </Link>
+              <span
+                aria-hidden
+                className="hidden h-3 w-px shrink-0 bg-neutral-300 sm:block"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label="Search"
+                className="hidden h-9 w-9 shrink-0 rounded-full text-black sm:inline-flex sm:h-10 sm:w-10"
+              >
+                <MagnifyingGlassIcon size={22} weight="regular" />
+              </Button>
+
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={menuOpen}
+                aria-controls="mobile-nav-panel"
+                onClick={() => setMenuOpen((v) => !v)}
+                className="inline-flex h-9 w-9 shrink-0 rounded-full text-black sm:hidden"
+              >
+                {menuOpen ? <XIcon size={22} weight="bold" /> : <ListIcon size={22} weight="bold" />}
+              </Button>
+            </div>
+
             <Link
               to="/"
-              className="shrink-0 font-heading text-lg tracking-tight text-white sm:text-xl"
+              className="font-heading absolute left-1/2 -translate-x-1/2 text-center text-base font-normal tracking-tighter text-black uppercase sm:text-lg"
             >
-              Rent Selair
+              {SITE_LOGO_TEXT}
             </Link>
 
-            <div className="hidden items-center gap-8 md:flex">
-              <ul className="flex items-center gap-6 text-sm">
-                {routeLinks.map((link) => (
-                  <li key={link.to}>
-                    <NavLink
-                      to={link.to}
-                      end={link.to === "/"}
-                      className={({ isActive }) => navLinkClassName(isActive)}
-                    >
-                      {link.label}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-
-              <ul className="flex items-center gap-6 border-l border-white/10 pl-6 text-sm">
-                {sectionLinks.map((link) => (
-                  <li key={link.to}>
-                    <a
-                      href={link.to}
-                      className="text-zinc-300 transition-colors hover:text-white"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
-              <button
+            <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2">
+              <Button
                 type="button"
-                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-                aria-expanded={isMenuOpen}
-                aria-controls="mobile-nav"
-                onClick={() => setIsMenuOpen((v) => !v)}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700 md:hidden"
-              >
-                {isMenuOpen ? (
-                  <XIcon size={20} weight="bold" />
-                ) : (
-                  <ListIcon size={20} weight="bold" />
-                )}
-              </button>
-              <button
-                type="button"
-                aria-label="Search"
-                className="hidden h-10 w-10 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700 sm:inline-flex"
-              >
-                <MagnifyingGlassIcon size={22} weight="bold" />
-              </button>
-              <button
-                type="button"
+                variant="ghost"
+                size="icon"
                 aria-label="View cart"
-                aria-expanded={isCartOpen}
+                aria-expanded={cartOpen}
                 aria-controls="cart-sheet"
-                onClick={() => setIsCartOpen(true)}
-                className="relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700 sm:h-10 sm:w-10"
+                onClick={() => setCartOpen(true)}
+                className="relative size-10 shrink-0 rounded-full text-black sm:mr-2"
               >
-                <CartIcon size={22} weight="bold" />
-                <span className="absolute -top-0.5 -right-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full border border-zinc-300 bg-white px-1 text-[11px] font-medium text-zinc-800">
+                <CartIcon size={32} weight="regular" className="size-5" />
+                <span className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full border border-neutral-200 bg-black px-1 text-[11px] font-medium text-white">
                   {cartItemCount}
                 </span>
-              </button>
+              </Button>
+              <Button variant="pill" asChild className={navPillClass}>
+                <Link to="/login">Sign In</Link>
+              </Button>
 
-              <Link
-                to="/login"
-                aria-label="User account"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700 sm:h-10 sm:w-10"
-              >
-                <UserIcon size={22} weight="bold" />
-              </Link>
             </div>
+          </div>
+
+          <nav
+            aria-label="Categories"
+            className="hidden border-t border-neutral-100 py-2.5 sm:block"
+          >
+            <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 md:gap-x-5 lg:flex-nowrap lg:justify-between lg:gap-x-3">
+              {categoryNavItems.map((item) => (
+                <li key={item.label}>
+                  <CategoryLink
+                    to={item.to}
+                    label={item.label}
+                    accent={item.variant === "accent"}
+                  />
+                </li>
+              ))}
+            </ul>
           </nav>
 
-          {isMenuOpen ? (
-            <div id="mobile-nav" className="pb-4 md:hidden">
-              <div className="grid gap-2 p-1">
-                {routeLinks.map((link) => (
-                  <NavLink
-                    key={link.to}
-                    to={link.to}
-                    end={link.to === "/"}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={({ isActive }) =>
-                      isActive
-                        ? "rounded-md bg-white px-3 py-2 text-sm font-medium text-zinc-900"
-                        : "rounded-md px-3 py-2 text-sm text-zinc-200 transition-colors hover:bg-zinc-700 hover:text-white"
-                    }
+          {menuOpen ? (
+            <div
+              id="mobile-nav-panel"
+              className="border-t border-neutral-100 pb-4 sm:hidden"
+            >
+              <div className="flex flex-col gap-3 pt-3">
+                <Link
+                  to={utilityLinks.howItWorks.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="text-sm text-black"
+                >
+                  {utilityLinks.howItWorks.label}
+                </Link>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  aria-label="Search"
+                  className="h-auto justify-start gap-2 px-0 py-1 font-normal text-black hover:bg-transparent"
+                >
+                  <MagnifyingGlassIcon size={20} weight="regular" />
+                  Search
+                </Button>
+                <div className="flex flex-wrap gap-2 border-t border-neutral-100 pt-3">
+                  <Button
+                    variant="pill"
+                    asChild
+                    className="h-auto min-h-10 flex-1 basis-0 py-2.5 text-sm"
                   >
-                    {link.label}
-                  </NavLink>
-                ))}
-                <div className="my-1 border-t border-zinc-700" />
-                {sectionLinks.map((link) => (
-                  <a
-                    key={link.to}
-                    href={link.to}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="rounded-md px-3 py-2 text-sm text-zinc-200 transition-colors hover:bg-zinc-700 hover:text-white"
+                    <Link to="/login" onClick={() => setMenuOpen(false)}>
+                      Sign In
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="pill"
+                    asChild
+                    className="h-auto min-h-10 flex-1 basis-0 py-2.5 text-sm"
                   >
-                    {link.label}
-                  </a>
-                ))}
+                    <Link to="/signup" onClick={() => setMenuOpen(false)}>
+                      Join Now
+                    </Link>
+                  </Button>
+                </div>
+                <ul className="grid gap-2 border-t border-neutral-100 pt-3">
+                  {categoryNavItems.map((item) => (
+                    <li key={item.label}>
+                      <Link
+                        to={item.to}
+                        onClick={() => setMenuOpen(false)}
+                        className={cn(
+                          "block py-1 text-sm",
+                          item.variant === "accent"
+                            ? "font-medium text-nav-sale"
+                            : "text-black",
+                        )}
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           ) : null}
         </div>
       </header>
 
-      <CartSheet open={isCartOpen} onOpenChange={setIsCartOpen} />
+      <CartSheet open={cartOpen} onOpenChange={setCartOpen} />
     </>
   )
 }

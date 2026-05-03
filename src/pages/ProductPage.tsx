@@ -2,6 +2,7 @@ import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom"
 
 import { SAMPLE_DATA } from "@/dummy/sampleData"
 import { ReservationCalendar } from "@/components/ReservationCalendar"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useMemo } from "react"
 import { differenceInCalendarDays, format } from "date-fns"
@@ -189,22 +190,23 @@ export function ProductPage() {
                 </span>
               )}
               <div className="flex flex-col gap-1">
-                <button
+                <Button
+                  type="button"
+                  disabled={!range?.from || !range?.to}
                   className={cn(
-                    "bg-zinc-900 px-6 py-4 text-sm font-medium text-white transition-colors hover:bg-zinc-800 sm:text-base",
+                    "h-auto rounded-none px-6 py-4 text-sm sm:text-base",
                     (!range?.from || !range?.to) && "cursor-not-allowed opacity-20"
                   )}
-                  disabled={!range?.from || !range?.to}
                 >
                   Reserve now
-                </button>
-                <button
-                  className={cn(
-                    "bg-transparent px-6 py-4 text-sm font-medium text-black transition-colors border border-zinc-300 rounded-none sm:text-base",
-                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-auto rounded-none border-zinc-300 bg-transparent px-6 py-4 text-sm text-black sm:text-base"
                 >
                   Add to Cart
-                </button>
+                </Button>
               </div>
 
               {/* DESCRIPTION */}

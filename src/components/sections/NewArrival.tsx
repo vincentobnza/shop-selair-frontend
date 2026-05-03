@@ -20,7 +20,7 @@ export function NewArrival() {
   return (
     <section id="new-arrivals" className="bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <h2 className="mb-12 text-center font-heading text-3xl leading-tight text-zinc-900">
+        <h2 className="mb-12 text-center font-heading text-xl sm:text-3xl leading-tight text-zinc-900 tracking-tight">
           New Arrivals
         </h2>
 
@@ -45,7 +45,7 @@ export function NewArrival() {
                     </div>
 
                     <div className="mt-4">
-                      <h1 className="font-heading text-sm font-medium text-zinc-900">
+                      <h1 className="font-heading text-sm font-medium text-zinc-900 line-clamp-1">
                         {item.name}
                       </h1>
                       <p className="mt-2 text-sm font-bold text-orange-900">
@@ -87,7 +87,7 @@ export function NewArrival() {
                 </div>
 
                 <div className="mt-4">
-                  <h1 className="font-heading text-sm font-medium text-zinc-900 md:text-base">
+                  <h1 className="font-heading text-sm font-medium text-zinc-900 md:text-base line-clamp-1">
                     {item.name}
                   </h1>
                   <p className="mt-2 text-sm font-bold text-orange-900">

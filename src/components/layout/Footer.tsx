@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom"
 import { InstagramLogo, FacebookLogo, TwitterLogo } from "@phosphor-icons/react"
 
+import { Button } from "@/components/ui/button"
+
 export function Footer() {
   return (
     <footer className="border-t border-zinc-200 bg-white">
@@ -92,7 +94,7 @@ export function Footer() {
                 Stay in touch
               </h4>
               <form
-                className="flex max-w-sm flex-col gap-3"
+                className="flex max-w-lg flex-col gap-3"
                 onSubmit={(e) => e.preventDefault()}
               >
                 <label htmlFor="email" className="sr-only">
@@ -103,11 +105,14 @@ export function Footer() {
                     id="email"
                     type="email"
                     placeholder="Email address"
-                    className="w-full rounded-md border border-zinc-200 px-3 py-2 text-sm text-zinc-700 focus:ring-2 focus:ring-zinc-200 sm:rounded-r-none"
+                    className="w-full rounded-md border border-zinc-200 px-3 py-2 text-sm text-zinc-700 h-10! focus:ring-2 focus:ring-zinc-200 sm:rounded-r-none"
                   />
-                  <button className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 sm:rounded-l-none">
+                  <Button
+                    type="submit"
+                    className="rounded-md px-4 py-2 text-sm sm:rounded-l-none sm:rounded-r-md h-10"
+                  >
                     Subscribe
-                  </button>
+                  </Button>
                 </div>
                 <p className="mt-1 text-xs text-zinc-500">
                   No spam — unsubscribe anytime.

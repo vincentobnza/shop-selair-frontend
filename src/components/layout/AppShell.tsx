@@ -9,7 +9,9 @@ export function AppShell() {
     <div className="min-h-svh overflow-x-clip bg-background text-foreground">
       <PromoBanner />
       <Navbar />
-      <Outlet />
+      <main className="pt-[calc(2.5rem+3.75rem)] sm:pt-[calc(2.5rem+7rem)]">
+        <Outlet />
+      </main>
       <Footer />
     </div>
   )

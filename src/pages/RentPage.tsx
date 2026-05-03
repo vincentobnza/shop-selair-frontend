@@ -7,6 +7,9 @@ export function RentPage() {
       title="Rent With Confidence"
       description="Find polished formal wear for graduations, ceremonies, and special events with a smooth booking experience."
       ctaLabel="Browse Rentals"
+      ctaTo="/rent"
+      secondaryCtaLabel="Shop essentials"
+      secondaryCtaTo="/shop"
     />
   )
 }

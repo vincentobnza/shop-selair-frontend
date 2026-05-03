@@ -7,6 +7,9 @@ export function ShopPage() {
       title="Shop Essentials With Ease"
       description="Discover practical items for school and home with fast checkout and reliable delivery options."
       ctaLabel="Browse Shop"
+      ctaTo="/shop"
+      secondaryCtaLabel="Rent formal wear"
+      secondaryCtaTo="/rent"
     />
   )
 }

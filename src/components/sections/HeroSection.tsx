@@ -1,95 +1,67 @@
+import { Link } from "react-router-dom"
+
+import { DressingForPicker } from "@/components/sections/DressingForPicker"
 import { Button } from "@/components/ui/button"
+import { SAMPLE_DATA } from "@/dummy/sampleData"
+import { cn } from "@/lib/utils"
+
+const defaults = SAMPLE_DATA.HeroSection
 
 type HeroSectionProps = {
   eyebrow?: string
-  title: string
+  title?: string
   description?: string
-  ctaLabel: string
-  backgroundImage?: string
-  buttonVariant?: "dark" | "light"
+  ctaLabel?: string
+  ctaTo?: string
+  secondaryCtaLabel?: string
+  secondaryCtaTo?: string
+  pickerCtaLabel?: string
+  dressingFor?: boolean
 }
 
 export function HeroSection({
-  eyebrow = "Modern daily convenience",
-  title,
-  description,
-  ctaLabel,
-  backgroundImage,
-}: HeroSectionProps) {
-  // If background image is provided, render with overlay design
-  if (backgroundImage) {
-    return (
-      <section
-        className="relative overflow-hidden"
-        style={{
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        {/* Dark overlay gradient */}
-        <div className="absolute inset-0 bg-linear-to-r from-black/60 via-black/40 to-transparent" />
-
-        {/* Content */}
-        <div className="relative z-10 mx-auto flex min-h-[75svh] w-full max-w-7xl flex-col justify-center px-4 py-16 sm:min-h-screen sm:px-6 sm:py-24 lg:px-8 lg:py-32">
-          <div className="max-w-2xl">
-            {eyebrow && (
-              <p className="mb-4 text-sm font-medium tracking-wide text-white opacity-90">
-                {eyebrow}
-              </p>
-            )}
-
-            <h1 className="leading-tighter font-heading text-4xl tracking-tight text-white sm:text-5xl lg:text-7xl">
-              {title}
-            </h1>
-
-            {description && (
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
-                {description}
-              </p>
-            )}
-
-            <div className="mt-10">
-              <button className="inline-flex items-center justify-center bg-white px-6 py-3 text-sm font-medium hover:text-zinc-900 sm:px-8">
-                {ctaLabel}
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  // Default minimal design (fallback)
+  eyebrow,
+  title = defaults.title,
+  description = defaults.description,
+  ctaLabel = defaults.ctaLabel,
+  ctaTo = "/shop",
+  secondaryCtaLabel = defaults.ctaSecondaryLabel,
+  secondaryCtaTo = defaults.ctaSecondaryTo,
+  pickerCtaLabel,
+  dressingFor = false,
+}: HeroSectionProps = {}) {
   return (
-    <section className="relative overflow-hidden">
-      <div className="mx-auto flex w-full max-w-6xl flex-col px-4 pt-14 pb-16 sm:px-6 sm:pt-20 lg:px-8 lg:pt-24 lg:pb-24">
-        <p className="mb-5 inline-flex w-fit items-center rounded-full border border-zinc-300/70 bg-white/70 px-3 py-1 text-xs tracking-wide text-zinc-700">
-          {eyebrow}
-        </p>
-
-        <h1 className="max-w-3xl font-heading text-4xl leading-tight tracking-tight text-zinc-950 sm:text-5xl lg:text-6xl">
-          {title}
-        </h1>
-
-        {description && (
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-zinc-700 sm:text-lg">
-            {description}
+    <section className="bg-white px-4 py-16 sm:py-20">
+      <div className={dressingFor ? "mx-auto max-w-4xl text-center" : "mx-auto max-w-3xl text-center"}>
+        {eyebrow ? (
+          <p className="mb-3 text-xs font-medium tracking-[0.2em] text-neutral-500 uppercase sm:text-sm">
+            {eyebrow}
           </p>
-        )}
+        ) : null}
+        <h1 className="font-heading text-3xl text-neutral-900 sm:text-5xl">{title}</h1>
+        <p className="mx-auto mt-4 max-w-xl text-sm tracking-tight text-black sm:text-base">{description}</p>
 
-        <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
-          <Button className="h-11 rounded bg-zinc-900 px-7 text-sm text-white hover:bg-zinc-800">
-            {ctaLabel}
+        <div
+          className={cn(
+            "mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4",
+          )}
+        >
+          <Button variant="pill" asChild className="h-auto min-w-[10rem] px-6 py-3 text-sm font-medium">
+            <Link to={ctaTo}>{ctaLabel}</Link>
           </Button>
-          <a
-            href="#"
-            className="text-sm font-medium text-zinc-700 underline-offset-4 transition-colors hover:text-zinc-950 hover:underline"
+          <Button
+            variant="outline"
+            asChild
+            className="h-auto min-w-[10rem] rounded-full border-neutral-300 px-6 py-3 text-sm font-medium"
           >
-            Learn more
-          </a>
+            <Link to={secondaryCtaTo}>{secondaryCtaLabel}</Link>
+          </Button>
         </div>
+
+        {dressingFor ? <DressingForPicker ctaLabel={pickerCtaLabel} /> : null}
       </div>
     </section>
   )
 }
+
+export default HeroSection

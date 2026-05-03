@@ -4,6 +4,8 @@ export const SAMPLE_DATA = {
     description:
       "Discover a seamless shopping experience with Selair, your modern online store. Explore our curated selection of products, enjoy personalized recommendations, and shop with confidence. Join us today and elevate your shopping journey to new heights.",
     ctaLabel: "Shop now",
+    ctaSecondaryLabel: "Explore rentals",
+    ctaSecondaryTo: "/rent",
     heroBackgroundImage:
       "https://images.pexels.com/photos/13868107/pexels-photo-13868107.jpeg",
   },

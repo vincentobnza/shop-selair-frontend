@@ -59,7 +59,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed inset-0 z-40 bg-black/30"
+            className="fixed inset-0 z-99 bg-black/30"
           />
 
           <motion.aside
@@ -73,7 +73,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
             transition={{
               duration: 0.26,
             }}
-            className="fixed top-0 right-0 z-50 flex h-svh w-full max-w-md flex-col border-l border-black/10 bg-white sm:w-md"
+            className="fixed top-0 right-0 z-99 flex h-svh w-full max-w-md flex-col border-l border-black/10 bg-white sm:w-md"
           >
             <header className="flex items-center justify-between border-b border-black/10 px-4 py-4 sm:px-5">
               <div>
@@ -126,9 +126,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
               </div>
 
               <div className="grid gap-2">
-                <Button className="h-11 rounded bg-zinc-900 text-white hover:bg-zinc-800">
-                  Checkout
-                </Button>
+                <Button className="h-11 rounded">Checkout</Button>
                 <Button
                   variant="outline"
                   className="h-11 rounded border-zinc-300"
