@@ -28,16 +28,23 @@ export function SignupPage() {
           Start booking standout looks and keep your picks in sync.
         </p>
 
-        <form onSubmit={onSubmit} className="mt-7 space-y-4">
+        <form
+          onSubmit={onSubmit}
+          className="auth-form mt-7 space-y-4"
+          autoComplete="off"
+        >
           <label className="block space-y-2">
             <span className="text-sm font-medium text-zinc-700">Full name</span>
             <Input
               type="text"
+              name="signup-name"
               value={form.name}
               onChange={(event) =>
                 setForm((prev) => ({ ...prev, name: event.target.value }))
               }
-              autoComplete="name"
+              autoComplete="off"
+              autoCorrect="off"
+              spellCheck={false}
               required
               className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
               placeholder="Vincent Selair"
@@ -48,11 +55,14 @@ export function SignupPage() {
             <span className="text-sm font-medium text-zinc-700">Email</span>
             <Input
               type="email"
+              name="signup-email"
               value={form.email}
               onChange={(event) =>
                 setForm((prev) => ({ ...prev, email: event.target.value }))
               }
-              autoComplete="email"
+              autoComplete="off"
+              autoCorrect="off"
+              spellCheck={false}
               required
               className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
               placeholder="you@example.com"
@@ -63,11 +73,12 @@ export function SignupPage() {
             <span className="text-sm font-medium text-zinc-700">Password</span>
             <Input
               type="password"
+              name="signup-password"
               value={form.password}
               onChange={(event) =>
                 setForm((prev) => ({ ...prev, password: event.target.value }))
               }
-              autoComplete="new-password"
+              autoComplete="off"
               required
               className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
               placeholder="Create a password"
@@ -80,11 +91,12 @@ export function SignupPage() {
             </span>
             <Input
               type="password"
+              name="signup-password-confirm"
               value={form.confirm}
               onChange={(event) =>
                 setForm((prev) => ({ ...prev, confirm: event.target.value }))
               }
-              autoComplete="new-password"
+              autoComplete="off"
               required
               className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
               placeholder="Repeat password"

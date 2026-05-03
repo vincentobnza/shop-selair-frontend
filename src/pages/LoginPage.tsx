@@ -9,10 +9,11 @@ export function LoginPage() {
     email: "",
     password: "",
     remember: true,
+    confirmPassword: "",
   })
 
   const onChange =
-    (field: "email" | "password") =>
+    (field: "email" | "password" | "confirmPassword") =>
       (event: ChangeEvent<HTMLInputElement>) => {
         setForm((prev) => ({ ...prev, [field]: event.target.value }))
       }
@@ -33,14 +34,21 @@ export function LoginPage() {
           Manage your rentals, orders, and saved essentials in one place.
         </p>
 
-        <form onSubmit={onSubmit} className="mt-7 space-y-4">
+        <form
+          onSubmit={onSubmit}
+          className="auth-form mt-7 space-y-4"
+          autoComplete="off"
+        >
           <label className="block space-y-2">
             <span className="text-sm font-medium text-zinc-700">Email</span>
             <Input
               type="email"
+              name="login-email"
               value={form.email}
               onChange={onChange("email")}
-              autoComplete="email"
+              autoComplete="off"
+              autoCorrect="off"
+              spellCheck={false}
               required
               className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
               placeholder="you@example.com"
@@ -51,9 +59,10 @@ export function LoginPage() {
             <span className="text-sm font-medium text-zinc-700">Password</span>
             <Input
               type="password"
+              name="login-password"
               value={form.password}
               onChange={onChange("password")}
-              autoComplete="current-password"
+              autoComplete="off"
               required
               className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
               placeholder="Enter your password"
@@ -64,12 +73,13 @@ export function LoginPage() {
             <span className="text-sm font-medium text-zinc-700">Confirm Password</span>
             <Input
               type="password"
-              value={form.password}
-              onChange={onChange("password")}
-              autoComplete="confirm-password"
+              name="login-confirm-password"
+              value={form.confirmPassword}
+              onChange={onChange("confirmPassword")}
+              autoComplete="off"
               required
               className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
-              placeholder="Enter your password"
+              placeholder="Confirm your password"
             />
           </label>
 

@@ -133,3 +133,16 @@
     @apply font-sans;
   }
 }
+
+@layer components {
+  /* Override Chrome/Safari autofill tint so auth fields stay white */
+  .auth-form input:-webkit-autofill,
+  .auth-form input:-webkit-autofill:hover,
+  .auth-form input:-webkit-autofill:focus,
+  .auth-form input:-webkit-autofill:active {
+    -webkit-text-fill-color: #18181b;
+    -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+    box-shadow: 0 0 0 1000px #fff inset !important;
+    transition: background-color 99999s ease-out 0s;
+  }
+}
