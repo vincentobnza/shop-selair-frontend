@@ -10,6 +10,7 @@ import { XIcon } from "@phosphor-icons/react"
 
 import type { ApiCartLine } from "@/features/cart/types"
 import EmptyStateImage from '@/assets/empty_shopping_cart.png'
+import { DotPulse } from "../ui/dot-pulse"
 
 type CartSheetProps = {
   open: boolean
@@ -167,10 +168,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
             <div className="flex-1 overflow-y-auto px-4 sm:px-5">
               {(loading || authPending) && isAuthenticated ? (
                 <div className="min-h-[calc(100vh-250px)] flex items-center justify-center">
-                  <h2 className="text-xs sm:text-sm md:text-base font-medium text-black font-heading text-center">
-
-                    Loading cart...
-                  </h2>
+                  <DotPulse size="lg" />
                 </div>
               ) : null}
 

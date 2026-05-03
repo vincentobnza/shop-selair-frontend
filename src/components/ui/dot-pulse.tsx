@@ -6,11 +6,13 @@ export type DotPulseProps = {
   className?: string
   /** Announced to screen readers */
   label?: string
+  size?: "sm" | "md" | "lg"
 }
 
 export function DotPulse({
   className,
   label = "Loading",
+  size = "sm",
 }: DotPulseProps) {
   return (
     <span
@@ -25,7 +27,7 @@ export function DotPulse({
       {staggerMs.map((delay, i) => (
         <span
           key={i}
-          className="size-1.5 shrink-0 rounded-full bg-current animate-dot-pulse"
+          className={cn("shrink-0 bg-current animate-dot-pulse", size === "sm" ? "size-1.5" : size === "md" ? "size-2" : "size-2.5")}
           style={{ animationDelay: `${delay}ms` }}
         />
       ))}
