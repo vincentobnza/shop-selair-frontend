@@ -1,19 +1,13 @@
-import { HeroSection } from "@/components/sections/HeroSection"
-import { NewArrival } from "@/components/sections/NewArrival"
-import { SplitSection } from "@/components/sections/SplitSection"
-import { WhyChoose } from "@/components/sections/WhyChoose"
-import { FollowInstagram } from "@/components/sections/FollowInstagram"
-import { FaqSection } from "@/components/sections/FaqSection"
+import { Suspense, lazy } from "react"
+
+import SuspenseLoading from "@/components/SuspenseLoading"
+
+const HomePageBody = lazy(() => import("./HomePageBody"))
 
 export function HomePage() {
   return (
-    <>
-      <HeroSection />
-      <NewArrival />
-      <SplitSection />
-      <WhyChoose />
-      <FaqSection />
-      <FollowInstagram />
-    </>
+    <Suspense fallback={<SuspenseLoading />}>
+      <HomePageBody />
+    </Suspense>
   )
 }

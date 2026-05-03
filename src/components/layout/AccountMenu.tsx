@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { SignOutIcon, UserIcon } from "@phosphor-icons/react"
+import { SignOutIcon } from "@phosphor-icons/react"
 
 import { ACCOUNT_MENU_LINKS } from "@/components/layout/account-menu-config"
 import { Button } from "@/components/ui/button"
@@ -32,13 +32,20 @@ export function AccountMenu({ signingOut, onSignOut }: AccountMenuProps) {
         <Button
           type="button"
           variant="ghost"
-          size="icon"
-          aria-label="My account"
+          aria-label={
+            user?.email ? `My account, ${user.email}` : "My account"
+          }
           aria-expanded={open}
           aria-haspopup="dialog"
-          className="size-10 shrink-0 rounded-full text-black"
+          title={user?.email ?? undefined}
+          className={cn(
+            "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded p-0 text-black touch-manipulation",
+            "sm:h-auto sm:min-h-10 sm:w-auto sm:max-w-[min(46vw,13rem)] sm:justify-start sm:gap-2 sm:px-2.5 sm:py-2",
+          )}
         >
-          <UserIcon weight="regular" className="size-6" />
+          <span className="hidden min-w-0 flex-1 truncate text-left text-sm  font-medium text-black sm:inline">
+            {user?.email}
+          </span>
         </Button>
       </PopoverTrigger>
       <PopoverContent
