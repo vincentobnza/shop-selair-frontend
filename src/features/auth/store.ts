@@ -8,7 +8,7 @@ import { bindAuthTokenGetter } from "@/lib/axios"
 function mapUser(raw: unknown): AuthUser {
   const u = raw as Record<string, unknown>
   return {
-    id: Number(u.id),
+    id: String(u.id ?? ""),
     name: String(u.name ?? ""),
     email: String(u.email ?? ""),
   }

@@ -73,7 +73,7 @@ export function HeroSection({
         <Button
           variant="outline"
           asChild
-          className="h-11 w-full rounded-full border-neutral-300 px-6 text-sm font-medium touch-manipulation sm:h-auto sm:min-w-40 sm:w-auto sm:py-3"
+          className="h-11 w-full rounded-full  px-6 text-sm font-medium touch-manipulation sm:h-auto sm:min-w-40 sm:w-auto sm:py-3"
         >
           <Link to={secondaryCtaTo}>{secondaryCtaLabel}</Link>
         </Button>

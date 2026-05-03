@@ -99,7 +99,7 @@ export function ProductCard({
           type="button"
           aria-pressed={saved}
           aria-label={saved ? "Remove from favorites" : "Add to favorites"}
-          className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 shadow-sm ring-1 ring-black/5 transition hover:scale-105 active:scale-95"
+          className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/70 shadow-sm ring-1 ring-black/2 transition hover:scale-105 active:scale-95 cursor-pointer"
           onClick={(e) => {
             e.preventDefault()
             toggle()
@@ -108,7 +108,7 @@ export function ProductCard({
           <HeartIcon
             size={20}
             weight={saved ? "fill" : "regular"}
-            className={saved ? "text-red-500" : "text-zinc-900"}
+            className={saved ? "text-black" : "text-zinc-900"}
           />
         </button>
       </div>
