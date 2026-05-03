@@ -3,6 +3,7 @@ import { NewArrival } from "@/components/sections/NewArrival"
 import { SplitSection } from "@/components/sections/SplitSection"
 import { WhyChoose } from "@/components/sections/WhyChoose"
 import { FollowInstagram } from "@/components/sections/FollowInstagram"
+import { FaqSection } from "@/components/sections/FaqSection"
 
 export function HomePage() {
   return (
@@ -19,6 +20,7 @@ export function HomePage() {
       <NewArrival />
       <SplitSection />
       <WhyChoose />
+      <FaqSection />
       <FollowInstagram />
     </>
   )

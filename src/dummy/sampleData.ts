@@ -26,6 +26,14 @@ export const SAMPLE_DATA = {
         "Premium blend: 63% cotton, 37% nylon",
         "Perfect for formal events and special occasions",
       ],
+      shopTags: [
+        "new-arrivals",
+        "dresses",
+        "weddings",
+        "designers",
+        "buy",
+      ],
+      brand: "Matteau",
     },
     {
       id: "2",
@@ -42,6 +50,8 @@ export const SAMPLE_DATA = {
         "Delicate white fabric with charming details",
         "Ideal for celebrations, fiestas, and cultural events",
       ],
+      shopTags: ["new-arrivals", "dresses", "weddings", "buy"],
+      brand: "Chynna",
     },
     {
       id: "3",
@@ -58,6 +68,8 @@ export const SAMPLE_DATA = {
         "Breathable fabric blend for all-day comfort",
         "Perfect for weddings, galas, and formal celebrations",
       ],
+      shopTags: ["new-arrivals", "dresses", "weddings", "buy"],
+      brand: "Eden",
     },
     {
       id: "4",
@@ -74,6 +86,8 @@ export const SAMPLE_DATA = {
         "Flowing maxi skirt for elegant silhouette",
         "Statement-making set for parties and special gatherings",
       ],
+      shopTags: ["new-arrivals", "dresses", "buy"],
+      brand: "3D Flower",
     },
     {
       id: "5",
@@ -90,6 +104,8 @@ export const SAMPLE_DATA = {
         "Flowing maxi skirt for elegant silhouette",
         "Statement-making set for parties and special gatherings",
       ],
+      shopTags: ["new-arrivals", "dresses", "workwear", "buy"],
+      brand: "Mango",
     },
     {
       id: "6",
@@ -106,6 +122,8 @@ export const SAMPLE_DATA = {
         "Flowing maxi skirt for elegant silhouette",
         "Statement-making set for parties and special gatherings",
       ],
+      shopTags: ["new-arrivals", "dresses", "weddings", "buy"],
+      brand: "Red Ruffle",
     },
     {
       id: "7",
@@ -122,6 +140,8 @@ export const SAMPLE_DATA = {
         "Flowing maxi skirt for elegant silhouette",
         "Statement-making set for parties and special gatherings",
       ],
+      shopTags: ["new-arrivals", "dresses", "buy"],
+      brand: "Chiffon Ruffled",
     },
     {
       id: "8",
@@ -138,6 +158,8 @@ export const SAMPLE_DATA = {
         "Flowing maxi skirt for elegant silhouette",
         "Statement-making set for parties and special gatherings",
       ],
+      shopTags: ["new-arrivals", "dresses", "designers", "buy"],
+      brand: "Silk Chiffon Ruffled",
     },
   ],
 

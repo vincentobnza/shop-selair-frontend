@@ -94,7 +94,7 @@ export function Footer() {
                 Stay in touch
               </h4>
               <form
-                className="flex max-w-lg flex-col gap-3"
+                className="flex min-w-80 flex-col gap-3"
                 onSubmit={(e) => e.preventDefault()}
               >
                 <label htmlFor="email" className="sr-only">
@@ -109,7 +109,7 @@ export function Footer() {
                   />
                   <Button
                     type="submit"
-                    className="rounded-md px-4 py-2 text-sm sm:rounded-l-none sm:rounded-r-md h-10"
+                    className="rounded-md px-4 py-2 text-sm sm:rounded-l-none sm:rounded-r-md h-10.5!"
                   >
                     Subscribe
                   </Button>

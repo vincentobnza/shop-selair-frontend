@@ -48,6 +48,9 @@ export function NewArrival() {
                       <h1 className="font-heading text-sm font-medium text-zinc-900 line-clamp-1">
                         {item.name}
                       </h1>
+                      <p className="mt-2 text-sm font-bold text-zinc-900">
+                        {item.brand}
+                      </p>
                       <p className="mt-2 text-sm font-bold text-orange-900">
                         From {currencyFormatter.format(item.price)}
                       </p>
@@ -87,11 +90,16 @@ export function NewArrival() {
                 </div>
 
                 <div className="mt-4">
-                  <h1 className="font-heading text-sm font-medium text-zinc-900 md:text-base line-clamp-1">
-                    {item.name}
-                  </h1>
-                  <p className="mt-2 text-sm font-bold text-orange-900">
-                    From {currencyFormatter.format(item.price)}
+                  <div className="space-y-0.5">
+                    <h1 className="font-heading text-sm font-medium text-zinc-900 md:text-base line-clamp-1">
+                      {item.name}
+                    </h1>
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {item.brand}
+                    </p>
+                  </div>
+                  <p className="mt-2 text-sm font-bold text-primary">
+                    {currencyFormatter.format(item.price)}
                   </p>
                 </div>
               </Link>

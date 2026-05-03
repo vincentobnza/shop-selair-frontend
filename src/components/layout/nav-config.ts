@@ -10,14 +10,14 @@ export type CategoryItem =
 
 export const categoryNavItems: CategoryItem[] = [
   { label: "Browse All", to: "/shop" },
-  { label: "New Arrivals", to: "/#new-arrivals" },
+  { label: "New Arrivals", to: "/shop?filter=new-arrivals" },
   { label: "One-off Rentals", to: "/rent" },
-  { label: "Dresses", to: "/shop" },
+  { label: "Dresses", to: "/shop?filter=dresses" },
   { label: "Everyday", to: "/essentials" },
-  { label: "Workwear", to: "/shop" },
+  { label: "Workwear", to: "/shop?filter=workwear" },
   { label: "Vacations", to: "/rent" },
-  { label: "Weddings", to: "/shop" },
-  { label: "Designers", to: "/shop" },
-  { label: "Maternity", to: "/shop" },
-  { label: "Buy", to: "/shop" },
+  { label: "Weddings", to: "/shop?filter=weddings" },
+  { label: "Designers", to: "/shop?filter=designers" },
+  { label: "Maternity", to: "/shop?filter=maternity" },
+  { label: "Buy", to: "/shop?filter=buy" },
 ]
