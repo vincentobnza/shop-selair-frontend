@@ -17,6 +17,7 @@ import { useCartStore } from "@/features/cart/cartStore"
 import { useCatalogProduct, useCatalogProducts } from "@/features/products/queries"
 import type { CatalogProduct } from "@/features/products/types"
 import { toast } from "sonner"
+import { FaqSection } from "@/components/sections/FaqSection"
 
 const currencyFormatter = new Intl.NumberFormat("en-PH", {
   style: "currency",
@@ -141,7 +142,14 @@ function ProductPurchasePanel({
             className="h-auto rounded-none border-black bg-transparent px-6 py-4 text-sm text-black sm:text-base"
             onClick={() => {
               setAddingCart(true)
-              void addToCart(String(product.id), 1, size ?? undefined)
+              const rental =
+                range?.from && range?.to
+                  ? {
+                    start: format(range.from, "yyyy-MM-dd"),
+                    end: format(range.to, "yyyy-MM-dd"),
+                  }
+                  : undefined
+              void addToCart(String(product.id), 1, size ?? undefined, rental)
                 .then(() => {
                   toast.success("Added to cart", {
                     description: "Item added to cart successfully",
@@ -361,6 +369,7 @@ export function ProductPage() {
 
       </section>
 
+      <FaqSection />
       {relatedProducts.length > 0 ? (
         <section className="px-4 py-10 sm:px-6 lg:px-8 mt-16 border-t border-zinc-200 pt-12">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-3 sm:gap-4">
@@ -387,6 +396,11 @@ export function ProductPage() {
           </div>
         </section>
       ) : null}
+
+
+
+      {/* FAQ's */}
+
     </main>
   )
 }

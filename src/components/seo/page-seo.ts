@@ -92,6 +92,15 @@ export function getSeoForPath(pathname: string): PageSeo {
     }
   }
 
+  if (path === "/checkout") {
+    return {
+      title: buildTitle("Checkout"),
+      description:
+        "Review your bag, enter delivery details, and complete your Selair order.",
+      robots: "noindex,nofollow",
+    }
+  }
+
   return {
     title: buildTitle(SITE_NAME),
     description: DEFAULT_DESCRIPTION,

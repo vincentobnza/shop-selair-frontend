@@ -11,7 +11,12 @@ export type GuestCartLine = {
   quantity: number
   /** Guest cart line key; omit in persisted legacy lines (treated as ""). */
   size?: string
+  /** ISO date `yyyy-MM-dd` when added from rental flow */
+  rentalStart?: string
+  rentalEnd?: string
 }
+
+export type RentalWindow = { start: string; end: string }
 
 function lineMatch(a: GuestCartLine, productId: string, size: string): boolean {
   return a.productId === productId && (a.size ?? "") === size
@@ -22,13 +27,27 @@ function mergeGuestLines(
   productId: string,
   qty: number,
   size = "",
+  rental?: RentalWindow,
 ): GuestCartLine[] {
   const next = [...lines]
   const i = next.findIndex((l) => lineMatch(l, productId, size))
   if (i >= 0) {
-    next[i] = { ...next[i], quantity: next[i].quantity + qty }
+    next[i] = {
+      ...next[i],
+      quantity: next[i].quantity + qty,
+      ...(rental
+        ? { rentalStart: rental.start, rentalEnd: rental.end }
+        : {}),
+    }
   } else {
-    next.push({ productId, quantity: qty, size })
+    next.push({
+      productId,
+      quantity: qty,
+      size,
+      ...(rental
+        ? { rentalStart: rental.start, rentalEnd: rental.end }
+        : {}),
+    })
   }
   return next
 }
@@ -36,9 +55,16 @@ function mergeGuestLines(
 type CartState = {
   apiCart: CartPayload | null
   guestLines: GuestCartLine[]
+  /** Signed-in cart: rental dates keyed `productId::size` (ISO yyyy-MM-dd). */
+  reservationByProductKey: Record<string, RentalWindow>
   loading: boolean
   load: () => Promise<void>
-  addItem: (productId: string, quantity?: number, size?: string) => Promise<void>
+  addItem: (
+    productId: string,
+    quantity?: number,
+    size?: string,
+    rental?: RentalWindow,
+  ) => Promise<void>
   updateApiLine: (cartItemId: number, quantity: number) => Promise<void>
   removeApiLine: (cartItemId: number) => Promise<void>
   updateGuestLine: (productId: string, quantity: number, size?: string) => void
@@ -53,9 +79,10 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       apiCart: null,
       guestLines: [],
+      reservationByProductKey: {},
       loading: false,
 
-      resetApi: () => set({ apiCart: null }),
+      resetApi: () => set({ apiCart: null, reservationByProductKey: {} }),
 
       load: async () => {
         const token = useAuthStore.getState().token
@@ -66,13 +93,28 @@ export const useCartStore = create<CartState>()(
         set({ loading: true })
         try {
           const data = await cartApi.fetchCart()
-          set({ apiCart: data })
+          set((s) => {
+            const nextRes = { ...s.reservationByProductKey }
+            for (const k of Object.keys(nextRes)) {
+              const inApi = data.items.some(
+                (item) =>
+                  `${item.product_id}::${item.size_label ?? ""}` === k,
+              )
+              if (!inApi) delete nextRes[k]
+            }
+            return { apiCart: data, reservationByProductKey: nextRes }
+          })
         } finally {
           set({ loading: false })
         }
       },
 
-      addItem: async (productId: string, quantity = 1, size?: string) => {
+      addItem: async (
+        productId: string,
+        quantity = 1,
+        size?: string,
+        rental?: RentalWindow,
+      ) => {
         const token = useAuthStore.getState().token
         const qty = Math.max(1, quantity)
         const pid = Number(productId)
@@ -82,10 +124,27 @@ export const useCartStore = create<CartState>()(
           try {
             await cartApi.addCartItem(pid, qty, sizeKey || undefined)
             await get().load()
+            if (rental?.start && rental?.end) {
+              set((s) => ({
+                reservationByProductKey: {
+                  ...s.reservationByProductKey,
+                  [`${productId}::${sizeKey}`]: {
+                    start: rental.start,
+                    end: rental.end,
+                  },
+                },
+              }))
+            }
           } catch (e) {
             if (e instanceof ApiError && e.status === 422) {
               set((s) => ({
-                guestLines: mergeGuestLines(s.guestLines, productId, qty, sizeKey),
+                guestLines: mergeGuestLines(
+                  s.guestLines,
+                  productId,
+                  qty,
+                  sizeKey,
+                  rental,
+                ),
               }))
               return
             }
@@ -95,7 +154,13 @@ export const useCartStore = create<CartState>()(
         }
 
         set((s) => ({
-          guestLines: mergeGuestLines(s.guestLines, productId, qty, sizeKey),
+          guestLines: mergeGuestLines(
+            s.guestLines,
+            productId,
+            qty,
+            sizeKey,
+            rental,
+          ),
         }))
       },
 
@@ -136,7 +201,10 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "selair-guest-cart",
-      partialize: (s) => ({ guestLines: s.guestLines }),
+      partialize: (s) => ({
+        guestLines: s.guestLines,
+        reservationByProductKey: s.reservationByProductKey,
+      }),
     },
   ),
 )

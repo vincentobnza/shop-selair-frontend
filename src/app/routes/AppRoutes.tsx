@@ -8,6 +8,7 @@ import { HomePage } from "@/pages/HomePage"
 import { LoginPage } from "@/pages/LoginPage"
 import { ProductPage } from "@/pages/ProductPage"
 import { RentPage } from "@/pages/RentPage"
+import { CheckoutPage } from "@/pages/CheckoutPage"
 import { ShopPage } from "@/pages/ShopPage"
 import { SignupPage } from "@/pages/SignupPage"
 
@@ -26,6 +27,7 @@ export function AppRoutes() {
       </Route>
       <Route path="login" element={<LoginPage />} />
       <Route path="signup" element={<SignupPage />} />
+      <Route path="checkout" element={<CheckoutPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

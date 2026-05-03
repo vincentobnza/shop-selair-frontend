@@ -101,7 +101,7 @@ export function Navbar() {
 
             <Link
               to="/"
-              className="font-heading absolute left-1/2 -translate-x-1/2 text-center text-base font-normal er text-black uppercase sm:text-lg"
+              className="font-logo absolute left-1/2 -translate-x-1/2 text-center text-base font-normal text-black uppercase sm:text-lg"
             >
               {SITE_LOGO_TEXT}
             </Link>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 
+import { LineReservationDates } from "@/components/cart/LineReservationDates"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/features/auth/hooks"
 import { useCartStore } from "@/features/cart/cartStore"
@@ -37,6 +38,9 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
   const { isAuthenticated } = useAuth()
   const apiCart = useCartStore((s) => s.apiCart)
   const guestLines = useCartStore((s) => s.guestLines)
+  const reservationByProductKey = useCartStore(
+    (s) => s.reservationByProductKey,
+  )
   const loading = useCartStore((s) => s.loading)
   const load = useCartStore((s) => s.load)
   const removeApiLine = useCartStore((s) => s.removeApiLine)
@@ -44,6 +48,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
   const clearApi = useCartStore((s) => s.clearApi)
   const clearGuest = useCartStore((s) => s.clearGuest)
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { data: catalog = [] } = useCatalogProducts()
 
   useEffect(() => {
@@ -64,11 +69,14 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
         subtitle: sz ? `Size ${sz}` : "Shop",
         quantity: line.quantity,
         lineTotal: (p?.price ?? 0) * line.quantity,
+        imageUrl: p?.image?.[0],
+        rentalStart: line.rentalStart,
+        rentalEnd: line.rentalEnd,
       }
     })
   }, [guestLines, catalog])
 
-  const apiRows = apiCart?.items ?? []
+  const apiRows = useMemo(() => apiCart?.items ?? [], [apiCart])
 
   const guestPesosTotal = useMemo(
     () => guestRows.reduce((s, r) => s + r.lineTotal, 0),
@@ -189,38 +197,68 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
 
               {isAuthenticated && apiRows.length > 0 ? (
                 <ul className="divide-y divide-black/10">
-                  {apiRows.map((line: ApiCartLine) => (
-                    <li key={line.id} className="py-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <p className="text-xs font-medium text-zinc-500 uppercase">
-                            {line.size_label ? `Size ${line.size_label}` : "Shop"}
-                          </p>
-                          <p className="mt-1 text-base font-medium text-zinc-900">
-                            {line.product.name}
-                          </p>
-                          <p className="mt-1 text-sm text-zinc-600">
-                            Qty {line.quantity}
-                          </p>
-                        </div>
-
-                        <div className="text-right">
-                          <p className="text-base font-medium text-zinc-950">
-                            {formatPhpFromCents(
-                              line.product.price_cents * line.quantity,
+                  {apiRows.map((line: ApiCartLine) => {
+                    const resKey = `${line.product_id}::${line.size_label ?? ""}`
+                    const res = reservationByProductKey[resKey]
+                    const name = line.product?.name ?? "Product unavailable"
+                    const unitCents = line.product?.price_cents ?? 0
+                    const cat = catalog.find(
+                      (c) => c.id === String(line.product_id),
+                    )
+                    const img = cat?.image?.[0]
+                    return (
+                      <li key={line.id} className="py-4">
+                        <div className="flex gap-4">
+                          <div className="size-16 shrink-0 overflow-hidden bg-zinc-100 sm:size-20">
+                            {img ? (
+                              <img
+                                src={img}
+                                alt=""
+                                className="size-full object-cover"
+                              />
+                            ) : (
+                              <div className="size-full bg-zinc-200/80" />
                             )}
-                          </p>
-                          <button
-                            type="button"
-                            className="mt-2 text-xs font-medium text-zinc-500 underline"
-                            onClick={() => void removeApiLine(line.id)}
-                          >
-                            Remove
-                          </button>
+                          </div>
+                          <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
+                            <div>
+                              <p className="text-xs font-medium uppercase text-zinc-500">
+                                {line.size_label
+                                  ? `Size ${line.size_label}`
+                                  : "Shop"}
+                              </p>
+                              <p className="mt-1 text-base font-medium text-zinc-900">
+                                {name}
+                              </p>
+                              <p className="mt-1 text-sm text-zinc-600">
+                                Qty {line.quantity}
+                              </p>
+                              <LineReservationDates
+                                start={res?.start}
+                                end={res?.end}
+                                className="text-zinc-600"
+                              />
+                            </div>
+
+                            <div className="shrink-0 text-right">
+                              <p className="text-base font-medium text-zinc-950 tabular-nums">
+                                {formatPhpFromCents(
+                                  unitCents * line.quantity,
+                                )}
+                              </p>
+                              <button
+                                type="button"
+                                className="mt-2 text-xs font-medium text-zinc-500 underline"
+                                onClick={() => void removeApiLine(line.id)}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </li>
-                  ))}
+                      </li>
+                    )
+                  })}
                 </ul>
               ) : null}
 
@@ -236,32 +274,50 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                   <ul className="divide-y divide-black/10">
                     {guestRows.map((row) => (
                       <li key={row.key} className="py-4">
-                        <div className="flex items-start justify-between gap-4">
-                          <div>
-                            <p className="text-xs font-medium text-zinc-500 uppercase">
-                              {row.subtitle}
-                            </p>
-                            <p className="mt-1 text-base font-medium text-zinc-900">
-                              {row.title}
-                            </p>
-                            <p className="mt-1 text-sm text-zinc-600">
-                              Qty {row.quantity}
-                            </p>
+                        <div className="flex gap-4">
+                          <div className="size-16 shrink-0 overflow-hidden bg-zinc-100 sm:size-20">
+                            {row.imageUrl ? (
+                              <img
+                                src={row.imageUrl}
+                                alt=""
+                                className="size-full object-cover"
+                              />
+                            ) : (
+                              <div className="size-full bg-zinc-200/80" />
+                            )}
                           </div>
+                          <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
+                            <div>
+                              <p className="text-xs font-medium uppercase text-zinc-500">
+                                {row.subtitle}
+                              </p>
+                              <p className="mt-1 text-base font-medium text-zinc-900">
+                                {row.title}
+                              </p>
+                              <p className="mt-1 text-sm text-zinc-600">
+                                Qty {row.quantity}
+                              </p>
+                              <LineReservationDates
+                                start={row.rentalStart}
+                                end={row.rentalEnd}
+                                className="text-zinc-600"
+                              />
+                            </div>
 
-                          <div className="text-right">
-                            <p className="text-base font-medium text-zinc-950">
-                              {formatPhpAmount(row.lineTotal)}
-                            </p>
-                            <button
-                              type="button"
-                              className="mt-2 text-xs font-medium text-zinc-500 underline"
-                              onClick={() =>
-                                removeGuestLine(row.productId, row.size)
-                              }
-                            >
-                              Remove
-                            </button>
+                            <div className="shrink-0 text-right">
+                              <p className="text-base font-medium tabular-nums text-zinc-950">
+                                {formatPhpAmount(row.lineTotal)}
+                              </p>
+                              <button
+                                type="button"
+                                className="mt-2 text-xs font-medium text-zinc-500 underline"
+                                onClick={() =>
+                                  removeGuestLine(row.productId, row.size)
+                                }
+                              >
+                                Remove
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </li>
@@ -281,7 +337,15 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                 </div>
 
                 <div className="grid gap-2">
-                  <Button className="h-11 rounded">Checkout</Button>
+                  <Button className="h-11 rounded" asChild>
+                    <Link
+                      to="/checkout"
+                      state={{ backTo: pathname }}
+                      onClick={() => onOpenChange(false)}
+                    >
+                      Checkout
+                    </Link>
+                  </Button>
                   <Button
                     type="button"
                     variant="outline"
