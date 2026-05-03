@@ -296,33 +296,34 @@ export function ProductPage() {
           </div>
         </div>
 
-        {relatedProducts.length > 0 ? (
-          <section className="mt-16 border-t border-zinc-200 pt-12">
-            <div className="mb-6 flex flex-wrap items-end justify-between gap-3 sm:gap-4">
-              <div>
-                <h2 className="font-heading text-2xl text-zinc-900">
-                  More to explore
-                </h2>
-                <p className="mt-2 text-sm text-zinc-500">
-                  Similar pieces selected from the collection.
-                </p>
-              </div>
-              <Link
-                to="/shop"
-                className="text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900"
-              >
-                View all
-              </Link>
-            </div>
-
-            <div className="grid gap-1 sm:grid-cols-2 lg:grid-cols-3">
-              {relatedProducts.map((item) => (
-                <ProductCard key={item.id} product={item} />
-              ))}
-            </div>
-          </section>
-        ) : null}
       </section>
+
+      {relatedProducts.length > 0 ? (
+        <section className="px-4 py-10 sm:px-6 lg:px-8 mt-16 border-t border-zinc-200 pt-12">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-3 sm:gap-4">
+            <div>
+              <h2 className="font-heading text-2xl text-zinc-900">
+                More to explore
+              </h2>
+              <p className="mt-2 text-sm text-zinc-500">
+                Similar pieces selected from the collection.
+              </p>
+            </div>
+            <Link
+              to="/shop"
+              className="text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900"
+            >
+              View all
+            </Link>
+          </div>
+
+          <div className="grid gap-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {relatedProducts.map((item) => (
+              <ProductCard key={item.id} product={item} />
+            ))}
+          </div>
+        </section>
+      ) : null}
     </main>
   )
 }

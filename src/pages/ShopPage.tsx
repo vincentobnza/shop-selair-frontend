@@ -35,8 +35,8 @@ export function ShopPage() {
         <title>{pageTitle}</title>
       </Helmet>
 
-      <div className="mx-auto max-w-7xl py-10 sm:py-12 lg:py-14">
-        <header className="border-b border-neutral-200 py-12 sm:py-16">
+      <div className="px-1 py-10 sm:py-12 lg:py-14">
+        <header className="mx-auto max-w-7xl border-b border-neutral-200 py-12 sm:py-16">
           <h1 className="font-heading text-2xl font-medium tracking-tight text-zinc-900 sm:text-3xl">
             Shop essentials with ease
           </h1>
