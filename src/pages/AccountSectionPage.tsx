@@ -1,19 +1,10 @@
 import { Link, useParams } from "react-router-dom"
 
-const TITLES: Record<string, string> = {
-  orders: "Order History",
-  notifications: "Notifications",
-  pickup: "Schedule Pickup",
-  settings: "Settings",
-  reviews: "Your Reviews",
-  referral: "Get $30",
-  profile: "Profile",
-  credits: "Credits",
-}
+import { ACCOUNT_SECTION_TITLES } from "@/config/account-routes"
 
 export function AccountSectionPage() {
   const { slug } = useParams<{ slug: string }>()
-  const title = (slug && TITLES[slug]) ?? "Account"
+  const title = (slug && ACCOUNT_SECTION_TITLES[slug]) ?? "Account"
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-16">

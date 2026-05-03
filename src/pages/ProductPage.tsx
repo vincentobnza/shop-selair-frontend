@@ -1,5 +1,7 @@
 import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom"
+import { Helmet } from "react-helmet-async"
 
+import { buildTitle, DEFAULT_DESCRIPTION } from "@/config/site"
 import { SAMPLE_DATA } from "@/dummy/sampleData"
 import { ReservationCalendar } from "@/components/ReservationCalendar"
 import { Button } from "@/components/ui/button"
@@ -78,8 +80,19 @@ export function ProductPage() {
     (item) => item.id !== product.id
   ).slice(0, 3)
 
+  const pageTitle = buildTitle(product.name)
+  const pageDesc = product.description?.[0] ?? DEFAULT_DESCRIPTION
+
   return (
     <main className="bg-white">
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDesc} />
+        <meta property="og:title" content={pageTitle} />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta property="og:description" content={pageDesc} />
+        <meta name="twitter:description" content={pageDesc} />
+      </Helmet>
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
         <div className="mb-6 flex items-center justify-between gap-4 sm:mb-8">
           <Link
