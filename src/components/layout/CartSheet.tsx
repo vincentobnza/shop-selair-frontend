@@ -54,10 +54,13 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
   const guestRows = useMemo(() => {
     return guestLines.map((line) => {
       const p = catalog.find((x) => x.id === line.productId)
+      const sz = line.size ?? ""
       return {
-        key: line.productId,
+        key: `${line.productId}::${sz}`,
+        productId: line.productId,
+        size: sz,
         title: p?.name ?? "Product",
-        subtitle: "Shop",
+        subtitle: sz ? `Size ${sz}` : "Shop",
         quantity: line.quantity,
         lineTotal: (p?.price ?? 0) * line.quantity,
       }
@@ -193,7 +196,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <p className="text-xs font-medium text-zinc-500 uppercase">
-                            Shop
+                            {line.size_label ? `Size ${line.size_label}` : "Shop"}
                           </p>
                           <p className="mt-1 text-base font-medium text-zinc-900">
                             {line.product.name}
@@ -255,7 +258,9 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                             <button
                               type="button"
                               className="mt-2 text-xs font-medium text-zinc-500 underline"
-                              onClick={() => removeGuestLine(row.key)}
+                              onClick={() =>
+                                removeGuestLine(row.productId, row.size)
+                              }
                             >
                               Remove
                             </button>

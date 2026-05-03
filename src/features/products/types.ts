@@ -9,6 +9,7 @@ export type ApiProductRow = {
   duration_days: number
   highlights: string[] | null
   shop_tags: string[] | null
+  sizes: { label: string; available: boolean }[] | null
   price_cents: number
   stock: number
   is_active: boolean
@@ -24,4 +25,5 @@ export type CatalogProduct = {
   duration: number
   description: string[]
   shopTags: string[]
+  sizes: { label: string; available: boolean }[]
 }

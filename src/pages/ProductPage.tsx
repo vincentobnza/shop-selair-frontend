@@ -12,8 +12,10 @@ import type { DateRange } from "react-day-picker"
 import { BagIcon } from "@phosphor-icons/react"
 
 import { ProductCard } from "@/components/ProductCard"
+import { ProductSizePicker } from "@/components/ProductSizePicker"
 import { useCartStore } from "@/features/cart/cartStore"
 import { useCatalogProduct, useCatalogProducts } from "@/features/products/queries"
+import type { CatalogProduct } from "@/features/products/types"
 import { toast } from "sonner"
 
 const currencyFormatter = new Intl.NumberFormat("en-PH", {
@@ -22,12 +24,162 @@ const currencyFormatter = new Intl.NumberFormat("en-PH", {
   maximumFractionDigits: 0,
 })
 
+type PurchasePanelProps = {
+  product: CatalogProduct
+  range: DateRange | undefined
+  rentalDays: number
+  dailyRate: number
+  totalRate: number
+  onRangeChange: (r: DateRange | undefined) => void
+}
+
+function ProductPurchasePanel({
+  product,
+  range,
+  rentalDays,
+  dailyRate,
+  totalRate,
+  onRangeChange,
+}: PurchasePanelProps) {
+  const addToCart = useCartStore((s) => s.addItem)
+  const [addingCart, setAddingCart] = useState(false)
+  const [size, setSize] = useState<string | null>(null)
+
+  const needsSize = product.sizes.length > 0
+  const sizeOk = !needsSize || Boolean(size)
+  const bookingReady = Boolean(range?.from && range?.to) && sizeOk
+
+  return (
+    <>
+      <div className="mt-6 flex flex-wrap items-center gap-3 sm:mt-8 sm:gap-4">
+        <span className="font-heading text-2xl font-bold text-zinc-900 sm:text-3xl">
+          {currencyFormatter.format(product.price)}
+        </span>
+        <span className="px-2 py-1 text-xs  text-zinc-600 sm:px-3 sm:text-sm">
+          {product.duration} day rental
+        </span>
+      </div>
+
+      <ProductSizePicker
+        sizes={product.sizes}
+        value={size}
+        onChange={setSize}
+        hint={needsSize && !size}
+      />
+
+      <div className="mt-6 flex flex-col gap-2 sm:mt-8">
+        <ReservationCalendar range={range} setRange={onRangeChange} />
+
+        <div className="border border-black bg-zinc-50/70">
+          <div className="grid gap-3 text-sm text-zinc-700 sm:grid-cols-2 p-4">
+            <div>
+              <p className="text-[10px] text-black font-semibold uppercase">
+                Start date
+              </p>
+              <p className="font-medium text-sm md:text-base text-zinc-900">
+                {range?.from ? format(range.from, "PPP") : "-"}
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] text-black font-semibold uppercase">
+                Return date
+              </p>
+              <p className="font-medium text-sm md:text text-zinc-900">
+                {range?.to ? format(range.to, "PPP") : "-"}
+              </p>
+            </div>
+          </div>
+
+          <div className="border-t border-black py-2 px-4 bg-white">
+            <div className="flex items-baseline justify-between">
+              <p className="text-[10px] text-zinc-400 font-semibold uppercase">
+                Rate
+              </p>
+              <p className="font-heading text-xl font-semibold text-zinc-900">
+                {currencyFormatter.format(totalRate)}
+              </p>
+            </div>
+            <p className="text-sm md:text-base  font-semibold text-black">
+              {currencyFormatter.format(Math.round(dailyRate))} / day
+              {rentalDays
+                ? ` x ${rentalDays} day${rentalDays > 1 ? "s" : ""}`
+                : ""}
+            </p>
+          </div>
+        </div>
+
+        {!range?.from && (
+          <span className="font-heading text-sm font-semibold  text-orange-900">
+            - Please select a start date to proceed with reservation.
+          </span>
+        )}
+        {range?.from && !range?.to && (
+          <span className="font-heading text-sm font-semibold  text-orange-900">
+            - Please select a return date to complete your rental period.
+          </span>
+        )}
+        {needsSize && !size ? (
+          <span className="font-heading text-sm font-semibold text-orange-900">
+            - Please choose a size before reserving or adding to cart.
+          </span>
+        ) : null}
+        <div className="flex flex-col gap-1">
+          <Button
+            type="button"
+            disabled={!bookingReady}
+            className={cn(
+              "h-auto rounded-none px-6 py-4 text-sm sm:text-base",
+              !bookingReady && "cursor-not-allowed opacity-20",
+            )}
+          >
+            Reserve now
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={addingCart || !sizeOk}
+            className="h-auto rounded-none border-black bg-transparent px-6 py-4 text-sm text-black sm:text-base"
+            onClick={() => {
+              setAddingCart(true)
+              void addToCart(String(product.id), 1, size ?? undefined)
+                .then(() => {
+                  toast.success("Added to cart", {
+                    description: "Item added to cart successfully",
+                  })
+                })
+                .catch(() => {
+                  toast.error("Could not add to cart")
+                })
+                .finally(() => setAddingCart(false))
+            }}
+          >
+            {addingCart ? (
+              <DotPulse label="Adding to cart" className="min-h-[1.25em]" />
+            ) : (
+              "Add to Cart"
+            )}
+          </Button>
+        </div>
+
+        <div className="pt-2">
+          <h1 className="mb-5 font-heading font-medium">Description</h1>
+          <ul className="mt-2">
+            {product.description.map((item) => (
+              <li key={item} className="mt-2 ml-4 list-disc text-sm text-zinc-800">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </>
+  )
+}
+
 export function ProductPage() {
   const { productId } = useParams()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const addToCart = useCartStore((s) => s.addItem)
-  const [addingCart, setAddingCart] = useState(false)
 
   const {
     data: product,
@@ -195,117 +347,15 @@ export function ProductPage() {
               feel polished, effortless, and elegant.
             </p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-3 sm:mt-8 sm:gap-4">
-              <span className="font-heading text-2xl font-bold text-zinc-900 sm:text-3xl">
-                {currencyFormatter.format(product.price)}
-              </span>
-              <span className="px-2 py-1 text-xs  text-zinc-600 sm:px-3 sm:text-sm">
-                {product.duration} day rental
-              </span>
-            </div>
-
-            <div className="mt-6 flex flex-col gap-2 sm:mt-8">
-              <ReservationCalendar
-                range={range}
-                setRange={handleRangeChange}
-              />
-
-              <div className="border border-black bg-zinc-50/70">
-                <div className="grid gap-3 text-sm text-zinc-700 sm:grid-cols-2 p-4">
-                  <div>
-                    <p className="text-[10px] text-black font-semibold uppercase">
-                      Start date
-                    </p>
-                    <p className="font-medium text-sm md:text-base text-zinc-900">
-                      {range?.from ? format(range.from, "PPP") : "-"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-black font-semibold uppercase">
-                      Return date
-                    </p>
-                    <p className="font-medium text-sm md:text text-zinc-900">
-                      {range?.to ? format(range.to, "PPP") : "-"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="border-t border-black py-2 px-4 bg-white">
-                  <div className="flex items-baseline justify-between">
-                    <p className="text-[10px] text-zinc-400 font-semibold uppercase">
-                      Rate
-                    </p>
-                    <p className="font-heading text-xl font-semibold text-zinc-900">
-                      {currencyFormatter.format(totalRate)}
-                    </p>
-                  </div>
-                  <p className="text-sm md:text-base  font-semibold text-black">
-                    {currencyFormatter.format(Math.round(dailyRate))} / day
-                    {rentalDays ? ` x ${rentalDays} day${rentalDays > 1 ? "s" : ""}` : ""}
-                  </p>
-                </div>
-              </div>
-
-              {!range?.from && (
-                <span className="font-heading text-sm font-semibold  text-orange-900">
-                  - Please select a start date to proceed with reservation.
-                </span>
-              )}
-              {range?.from && !range?.to && (
-                <span className="font-heading text-sm font-semibold  text-orange-900">
-                  - Please select a return date to complete your rental period.
-                </span>
-              )}
-              <div className="flex flex-col gap-1">
-                <Button
-                  type="button"
-                  disabled={!range?.from || !range?.to}
-                  className={cn(
-                    "h-auto rounded-none px-6 py-4 text-sm sm:text-base",
-                    (!range?.from || !range?.to) && "cursor-not-allowed opacity-20"
-                  )}
-                >
-                  Reserve now
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={addingCart}
-                  className="h-auto rounded-none border-black bg-transparent px-6 py-4 text-sm text-black sm:text-base"
-                  onClick={() => {
-                    setAddingCart(true)
-                    void addToCart(String(product.id), 1)
-                      .then(() => {
-                        toast.success("Added to cart", {
-                          description: "Item added to cart successfully",
-                        })
-                      })
-                      .catch(() => {
-                        toast.error("Could not add to cart")
-                      })
-                      .finally(() => setAddingCart(false))
-                  }}
-                >
-                  {addingCart ? (
-                    <DotPulse label="Adding to cart" className="min-h-[1.25em]" />
-                  ) : (
-                    "Add to Cart"
-                  )}
-                </Button>
-              </div>
-
-              {/* DESCRIPTION */}
-              <div className="pt-2">
-                <h1 className="mb-5 font-heading font-medium">Description</h1>
-                <ul className="mt-2">
-                  {product.description.map((item) => (
-                    <li key={item} className="mt-2 ml-4 list-disc text-sm text-zinc-800">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+            <ProductPurchasePanel
+              key={product.id}
+              product={product}
+              range={range}
+              rentalDays={rentalDays}
+              dailyRate={dailyRate}
+              totalRate={totalRate}
+              onRangeChange={handleRangeChange}
+            />
           </div>
         </div>
 

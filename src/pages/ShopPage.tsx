@@ -6,16 +6,12 @@ import {
   labelForShopFilter,
   parseShopFilter,
   SHOP_FILTER_OPTIONS,
-  type ShopFilterId,
+  shopFilterHref,
 } from "@/components/shop/shop-filters"
 import { ProductCard } from "@/components/ProductCard"
 import { buildTitle } from "@/config/site"
 import { useCatalogProducts } from "@/features/products/queries"
 import { cn } from "@/lib/utils"
-
-function filterHref(id: ShopFilterId): string {
-  return id === "all" ? "/shop" : `/shop?filter=${id}`
-}
 
 export function ShopPage() {
   const [searchParams] = useSearchParams()
@@ -36,7 +32,7 @@ export function ShopPage() {
       </Helmet>
 
       <div className="px-1 py-10 sm:py-12 lg:py-14">
-        <header className="mx-auto max-w-7xl border-b border-neutral-200 py-12 sm:py-16">
+        <header className="px-4 sm:px-6 lg:px-8 border-b border-neutral-200 py-12 sm:py-16">
           <h1 className="font-heading text-2xl font-medium tracking-tight text-zinc-900 sm:text-3xl">
             Shop essentials with ease
           </h1>
@@ -53,7 +49,7 @@ export function ShopPage() {
               return (
                 <Link
                   key={id}
-                  to={filterHref(id)}
+                  to={shopFilterHref(id)}
                   className={cn(
                     "shrink-0 rounded-full border px-3.5 py-2 text-xs font-medium transition-colors sm:text-sm",
                     active

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 
 import { toUserMessage } from "@/features/auth/errors"
 import { useAuthStore } from "@/features/auth/store"
+import { toast } from "sonner"
 
 export { useAuth } from "@/features/auth/store"
 
@@ -21,6 +22,9 @@ export function useLogin() {
         navigate("/", { replace: true })
       } catch (e) {
         setError(toUserMessage(e))
+        toast.error(toUserMessage(e), {
+          description: "Invalid credentials",
+        })
       } finally {
         setPending(false)
       }
@@ -53,6 +57,9 @@ export function useRegister() {
         navigate("/", { replace: true })
       } catch (e) {
         setError(toUserMessage(e))
+        toast.error(toUserMessage(e), {
+          description: "Invalid credentials",
+        })
       } finally {
         setPending(false)
       }

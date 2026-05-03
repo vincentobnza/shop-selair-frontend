@@ -12,6 +12,7 @@ export type ApiCartLine = {
   id: number
   user_id: string
   product_id: number
+  size_label?: string
   quantity: number
   product: ApiProduct
 }

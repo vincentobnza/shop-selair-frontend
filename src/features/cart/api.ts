@@ -9,11 +9,19 @@ export async function fetchCart(): Promise<CartPayload> {
   return res.data.data
 }
 
-export async function addCartItem(productId: number, quantity = 1): Promise<ApiCartLine> {
-  const res = await api.post<{ data: ApiCartLine }>(apiPath("cart/items"), {
+export async function addCartItem(
+  productId: number,
+  quantity = 1,
+  size?: string,
+): Promise<ApiCartLine> {
+  const body: Record<string, number | string> = {
     product_id: productId,
     quantity,
-  })
+  }
+  if (size !== undefined && size !== "") {
+    body.size = size
+  }
+  const res = await api.post<{ data: ApiCartLine }>(apiPath("cart/items"), body)
   return res.data.data
 }
 

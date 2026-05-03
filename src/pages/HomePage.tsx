@@ -4,25 +4,11 @@ import { SplitSection } from "@/components/sections/SplitSection"
 import { WhyChoose } from "@/components/sections/WhyChoose"
 import { FollowInstagram } from "@/components/sections/FollowInstagram"
 import { FaqSection } from "@/components/sections/FaqSection"
-import { useAuth } from "@/features/auth/hooks"
 
 export function HomePage() {
-  const { user } = useAuth()
-
-
-
-  console.log("USER IN HOME PAGE", user)
   return (
     <>
-      <HeroSection
-        dressingFor
-        ctaLabel="Shop now"
-        ctaTo="/shop"
-        secondaryCtaLabel="Explore rentals"
-        secondaryCtaTo="/rent"
-        pickerCtaLabel="Browse All Styles"
-      />
-
+      <HeroSection />
       <NewArrival />
       <SplitSection />
       <WhyChoose />

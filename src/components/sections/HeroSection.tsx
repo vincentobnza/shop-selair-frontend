@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 
 import { DressingForPicker } from "@/components/sections/DressingForPicker"
 import { Button } from "@/components/ui/button"
@@ -7,18 +7,11 @@ import { cn } from "@/lib/utils"
 
 const defaults = SAMPLE_DATA.HeroSection
 
-type HeroSectionProps = {
-  eyebrow?: string
-  title?: string
-  description?: string
-  ctaLabel?: string
-  ctaTo?: string
-  secondaryCtaLabel?: string
-  secondaryCtaTo?: string
-  pickerCtaLabel?: string
-  dressingFor?: boolean
-  sideImageLeft?: string
-  sideImageRight?: string
+function heroRoute(pathname: string): "home" | "rent" | "essentials" {
+  const p = pathname.replace(/\/$/, "") || "/"
+  if (p === "/rent") return "rent"
+  if (p === "/essentials") return "essentials"
+  return "home"
 }
 
 function SideImage({ src }: { src: string }) {
@@ -29,19 +22,34 @@ function SideImage({ src }: { src: string }) {
   )
 }
 
-export function HeroSection({
-  eyebrow,
-  title = defaults.title,
-  description = defaults.description,
-  ctaLabel = defaults.ctaLabel,
-  ctaTo = "/shop",
-  secondaryCtaLabel = defaults.ctaSecondaryLabel,
-  secondaryCtaTo = defaults.ctaSecondaryTo,
-  pickerCtaLabel,
-  dressingFor = false,
-  sideImageLeft = defaults.sideImageLeft,
-  sideImageRight = defaults.sideImageRight,
-}: HeroSectionProps = {}) {
+export function HeroSection() {
+  const { pathname } = useLocation()
+  const route = heroRoute(pathname)
+
+  const eyebrow =
+    route === "rent" ? "Formal moments made effortless" : undefined
+  const title =
+    route === "rent"
+      ? "Rent With Confidence"
+      : defaults.title
+  const description =
+    route === "rent"
+      ? "Find polished formal wear for graduations, ceremonies, and special events with a smooth booking experience."
+      : defaults.description
+
+  const ctaLabel =
+    route === "rent" ? "Browse Rentals" : defaults.ctaLabel
+  const ctaTo = route === "rent" ? "/rent" : "/shop"
+  const secondaryCtaLabel =
+    route === "rent" ? "Shop essentials" : defaults.ctaSecondaryLabel
+  const secondaryCtaTo =
+    route === "rent" ? "/shop" : defaults.ctaSecondaryTo
+
+  const dressingFor = route === "home"
+  const pickerCtaLabel = "Browse All Styles"
+
+  const sideImageLeft = defaults.sideImageLeft
+  const sideImageRight = defaults.sideImageRight
   const showSides = Boolean(sideImageLeft && sideImageRight)
 
   const mainCopy = (

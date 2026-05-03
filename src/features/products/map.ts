@@ -10,5 +10,6 @@ export function toCatalogProduct(row: ApiProductRow): CatalogProduct {
     duration: row.duration_days ?? 4,
     description: row.highlights ?? [],
     shopTags: row.shop_tags ?? [],
+    sizes: row.sizes ?? [],
   }
 }

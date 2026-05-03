@@ -62,9 +62,9 @@ export function Navbar() {
   return (
     <>
       <header className="sticky top-10 z-50 w-full border-b border-neutral-200 bg-white">
-        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10">
+        <div className="px-4 sm:px-6 lg:px-10">
           <div className="relative flex items-center justify-between gap-3 py-3 sm:gap-4 sm:py-3.5">
-            <div className="flex min-w-0 flex-1 items-center gap-2 text-sm text-black sm:gap-3">
+            <div className="flex min-w-0 flex-1 items-center gap-2 text-sm sm:text-base text-black sm:gap-3 font-heading">
               <Link
                 to={utilityLinks.howItWorks.href}
                 className="hidden shrink-0 hover:text-neutral-600 sm:inline"
@@ -171,7 +171,7 @@ export function Navbar() {
             aria-label="Categories"
             className="hidden border-t border-neutral-100 py-2.5 sm:block"
           >
-            <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 md:gap-x-5 lg:flex-nowrap lg:justify-between lg:gap-x-3">
+            <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 md:gap-x-5 lg:flex-nowrap lg:justify-between lg:gap-x-3 font-heading">
               {categoryNavItems.map((item) => (
                 <li key={item.label}>
                   <CategoryLink
@@ -218,7 +218,7 @@ export function Navbar() {
                             <Link
                               to={to}
                               onClick={() => setMenuOpen(false)}
-                              className="block rounded-md py-2 text-sm text-black hover:bg-neutral-50"
+                              className="block rounded-md py-2 text-sm sm:text-base text-black hover:bg-neutral-50"
                             >
                               {label}
                             </Link>
@@ -269,7 +269,7 @@ export function Navbar() {
                         to={item.to}
                         onClick={() => setMenuOpen(false)}
                         className={cn(
-                          "block py-1 text-sm",
+                          "block py-1 text-sm sm:text-base",
                           item.variant === "accent"
                             ? "font-medium text-nav-sale"
                             : "text-black",
