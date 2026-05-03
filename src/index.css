@@ -134,6 +134,24 @@
   }
 }
 
+@keyframes dot-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@layer utilities {
+  .animate-dot-pulse {
+    animation: dot-pulse 1.05s ease-in-out infinite;
+  }
+}
+
 @layer components {
   /* Override Chrome/Safari autofill tint so auth fields stay white */
   .auth-form input:-webkit-autofill,

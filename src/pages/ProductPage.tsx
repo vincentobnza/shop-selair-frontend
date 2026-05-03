@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async"
 import { buildTitle, DEFAULT_DESCRIPTION } from "@/config/site"
 import { ReservationCalendar } from "@/components/ReservationCalendar"
 import { Button } from "@/components/ui/button"
+import { DotPulse } from "@/components/ui/dot-pulse"
 import { cn } from "@/lib/utils"
 import { useMemo, useState } from "react"
 import { differenceInCalendarDays, format } from "date-fns"
@@ -285,7 +286,11 @@ export function ProductPage() {
                       .finally(() => setAddingCart(false))
                   }}
                 >
-                  {addingCart ? "Adding…" : "Add to Cart"}
+                  {addingCart ? (
+                    <DotPulse label="Adding to cart" className="min-h-[1.25em]" />
+                  ) : (
+                    "Add to Cart"
+                  )}
                 </Button>
               </div>
 

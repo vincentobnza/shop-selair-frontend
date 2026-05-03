@@ -2,6 +2,7 @@ import { type FormEvent, useState } from "react"
 import { Link } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
+import { DotPulse } from "@/components/ui/dot-pulse"
 import { Input } from "@/components/ui/input"
 import { useRegister } from "@/features/auth/hooks"
 
@@ -149,7 +150,11 @@ export function SignupPage() {
             disabled={pending}
             className="w-full rounded-xl text-sm"
           >
-            {pending ? "Creating account…" : "Create account"}
+            {pending ? (
+              <DotPulse label="Creating account" className="min-h-[1.25em]" />
+            ) : (
+              "Create account"
+            )}
           </Button>
         </form>
 
