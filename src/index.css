@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=TASA+Explorer:wght@400..800&display=swap");
 
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -78,7 +78,7 @@
 }
 
 @theme inline {
-  --font-sans: "Bricolage Grotesque", sans-serif;
+  --font-sans: "TASA Explorer", sans-serif;
   --font-heading: "Lora Variable", serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);

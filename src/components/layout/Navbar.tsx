@@ -54,7 +54,7 @@ export function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 z-50 w-full transition-colors duration-500 ${isHome ? (showScrolledBg ? "bg-neutral-900" : "") : "bg-neutral-900"}`}
+        className={`fixed top-10 z-50 w-full transition-colors duration-500 ${isHome ? (showScrolledBg ? "bg-neutral-900" : "") : "bg-neutral-900"}`}
       >
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center justify-between gap-3 py-3 sm:py-4">
@@ -130,13 +130,13 @@ export function Navbar() {
                 </span>
               </button>
 
-              <button
-                type="button"
+              <Link
+                to="/login"
                 aria-label="User account"
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-white transition-colors hover:bg-zinc-700 sm:h-10 sm:w-10"
               >
                 <UserIcon size={22} weight="bold" />
-              </button>
+              </Link>
             </div>
           </nav>
 

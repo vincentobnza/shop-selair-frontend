@@ -78,7 +78,7 @@ export function ProductPage() {
   ).slice(0, 3)
 
   return (
-    <main className="bg-white">
+    <main className="bg-white pt-10 sm:pt-12 md:pt-14 lg:pt-16">
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
         <div className="mb-6 flex items-center justify-between gap-4 sm:mb-8">
           <Link
@@ -188,15 +188,24 @@ export function ProductPage() {
                   - Please select a return date to complete your rental period.
                 </span>
               )}
-              <button
-                className={cn(
-                  "bg-zinc-900 px-6 py-4 text-sm font-medium text-white transition-colors hover:bg-zinc-800 sm:text-base",
-                  (!range?.from || !range?.to) && "cursor-not-allowed opacity-20"
-                )}
-                disabled={!range?.from || !range?.to}
-              >
-                Reserve now
-              </button>
+              <div className="flex flex-col gap-1">
+                <button
+                  className={cn(
+                    "bg-zinc-900 px-6 py-4 text-sm font-medium text-white transition-colors hover:bg-zinc-800 sm:text-base",
+                    (!range?.from || !range?.to) && "cursor-not-allowed opacity-20"
+                  )}
+                  disabled={!range?.from || !range?.to}
+                >
+                  Reserve now
+                </button>
+                <button
+                  className={cn(
+                    "bg-transparent px-6 py-4 text-sm font-medium text-black transition-colors border border-zinc-300 rounded-none sm:text-base",
+                  )}
+                >
+                  Add to Cart
+                </button>
+              </div>
 
               {/* DESCRIPTION */}
               <div className="pt-2">
