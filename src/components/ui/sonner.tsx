@@ -65,7 +65,7 @@ const Toaster = ({ className, toastOptions, ...props }: ToasterProps) => {
         ...toastOptions,
         classNames: {
           toast: cn(
-            "border-border bg-popover gap-3 border border-black! p-4 text-popover-foreground shadow-lg",
+            "border-border bg-popover gap-3 border border-black! p-4 text-popover-foreground shadow-2xl!",
             "rounded-[var(--radius)]",
             toastOptions?.classNames?.toast,
           ),

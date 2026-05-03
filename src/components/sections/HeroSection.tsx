@@ -74,14 +74,14 @@ export function HeroSection() {
         <Button
           variant="pill"
           asChild
-          className="h-11 w-full px-6 text-sm font-medium touch-manipulation sm:h-auto sm:min-w-40 sm:w-auto sm:py-3"
+          className="h-11 w-full px-6 text-sm sm:text-base md:text-lg tracking-tighter font-medium touch-manipulation sm:h-auto sm:min-w-40 sm:w-auto sm:py-3"
         >
           <Link to={ctaTo}>{ctaLabel}</Link>
         </Button>
         <Button
           variant="outline"
           asChild
-          className="h-11 w-full rounded-full  px-6 text-sm font-medium touch-manipulation sm:h-auto sm:min-w-40 sm:w-auto sm:py-3"
+          className="h-11 w-full rounded-full  px-6 text-sm sm:text-base md:text-lg tracking-tighter font-medium touch-manipulation sm:h-auto sm:min-w-40 sm:w-auto sm:py-3"
         >
           <Link to={secondaryCtaTo}>{secondaryCtaLabel}</Link>
         </Button>

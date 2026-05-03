@@ -47,8 +47,6 @@ function ProductPurchasePanel({
   const [size, setSize] = useState<string | null>(null)
 
   const needsSize = product.sizes.length > 0
-  const sizeOk = !needsSize || Boolean(size)
-  const bookingReady = Boolean(range?.from && range?.to) && sizeOk
 
   return (
     <>
@@ -109,38 +107,61 @@ function ProductPurchasePanel({
           </div>
         </div>
 
-        {!range?.from && (
-          <span className="font-heading text-sm font-semibold  text-orange-900">
-            - Please select a start date to proceed with reservation.
-          </span>
-        )}
-        {range?.from && !range?.to && (
-          <span className="font-heading text-sm font-semibold  text-orange-900">
-            - Please select a return date to complete your rental period.
-          </span>
-        )}
-        {needsSize && !size ? (
-          <span className="font-heading text-sm font-semibold text-orange-900">
-            - Please choose a size before reserving or adding to cart.
-          </span>
-        ) : null}
         <div className="flex flex-col gap-1">
           <Button
             type="button"
-            disabled={!bookingReady}
-            className={cn(
-              "h-auto rounded-none px-6 py-4 text-sm sm:text-base",
-              !bookingReady && "cursor-not-allowed opacity-20",
-            )}
+            disabled={addingCart}
+            className="h-auto rounded-none px-6 py-4 text-sm sm:text-base"
+            onClick={() => {
+              if (needsSize && !size) {
+                toast.error(
+                  "Please choose a size before reserving or adding to cart.",
+                )
+                return
+              }
+              if (!range?.from) {
+                toast.error(
+                  "Please select a start date to proceed with reservation.",
+                )
+                return
+              }
+              if (!range?.to) {
+                toast.error(
+                  "Please select a return date to complete your rental period.",
+                )
+                return
+              }
+              setAddingCart(true)
+              const rental = {
+                start: format(range.from, "yyyy-MM-dd"),
+                end: format(range.to, "yyyy-MM-dd"),
+              }
+              void addToCart(String(product.id), 1, size ?? undefined, rental)
+                .then(() => {
+                  toast.success("Added to cart", {
+                    description: "Item added to cart successfully",
+                  })
+                })
+                .catch(() => {
+                  toast.error("Could not add to cart")
+                })
+                .finally(() => setAddingCart(false))
+            }}
           >
             Reserve now
           </Button>
           <Button
             type="button"
             variant="outline"
-            disabled={addingCart || !sizeOk}
+            disabled={addingCart}
             className="h-auto rounded-none border-black bg-transparent px-6 py-4 text-sm text-black sm:text-base"
             onClick={() => {
+              if (needsSize && !size) {
+                toast.error(
+                  "Please choose a size before reserving or adding to cart.",
+                )
+                return
+              }
               setAddingCart(true)
               const rental =
                 range?.from && range?.to
@@ -169,18 +190,69 @@ function ProductPurchasePanel({
           </Button>
         </div>
 
-        <div className="pt-2">
-          <h1 className="mb-5 font-heading font-medium">Description</h1>
-          <ul className="mt-2">
-            {product.description.map((item) => (
-              <li key={item} className="mt-2 ml-4 list-disc text-sm text-zinc-800">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
       </div>
+
     </>
+  )
+}
+
+function ProductImageGallery({ product }: { product: CatalogProduct }) {
+  const [activeIndex, setActiveIndex] = useState(0)
+  const mainSrc =
+    product.image[
+    Math.min(activeIndex, Math.max(0, product.image.length - 1))
+    ] ?? ""
+
+  return (
+    <div
+      className={cn(
+        "flex flex-row items-start gap-3",
+        product.image.length <= 1 && "flex-col",
+      )}
+    >
+      {product.image.length > 1 ? (
+        <div
+          className="flex max-h-[min(70vh,32rem)] w-16 shrink-0 flex-col gap-2 overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] sm:w-18 [&::-webkit-scrollbar]:hidden"
+          role="tablist"
+          aria-label="Product views"
+        >
+          {product.image.map((image, index) => (
+            <button
+              key={`${image}-${index}`}
+              type="button"
+              role="tab"
+              aria-selected={index === activeIndex}
+              aria-label={`View ${index + 1}`}
+              onClick={() => setActiveIndex(index)}
+              className={cn(
+                "mt-0.3 touch-manipulation w-full shrink-0 overflow-hidden border-2 bg-zinc-50 transition-colors cursor-pointer",
+                index === activeIndex
+                  ? "border-zinc-200"
+                  : "border-transparent opacity-80 hover:opacity-100 grayscale",
+              )}
+            >
+              <img
+                src={image}
+                alt=""
+                className="block aspect-square w-full object-cover"
+              />
+            </button>
+          ))}
+        </div>
+      ) : null}
+
+      <div className="min-w-0 flex-1 overflow-hidden bg-zinc-50">
+        {mainSrc ? (
+          <img
+            src={mainSrc}
+            alt={product.name}
+            className="block h-full w-full object-cover"
+          />
+        ) : (
+          <div className="aspect-3/4 bg-zinc-100" />
+        )}
+      </div>
+    </div>
   )
 }
 
@@ -289,7 +361,6 @@ export function ProductPage() {
     )
   }
 
-  const heroImage = product.image[0] ?? ""
   const pageTitle = buildTitle(product.name)
   const pageDesc = product.description?.[0] ?? DEFAULT_DESCRIPTION
 
@@ -317,29 +388,7 @@ export function ProductPage() {
 
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
           <div>
-            <div className="overflow-hidden bg-zinc-50">
-              {heroImage ? (
-                <img
-                  src={heroImage}
-                  alt={product.name}
-                  className="block h-full w-full object-cover"
-                />
-              ) : (
-                <div className="aspect-3/4 bg-zinc-100" />
-              )}
-            </div>
-
-            <div className="mt-4 grid grid-cols-3 gap-3">
-              {product.image.slice(1).map((image, index) => (
-                <div key={image} className="overflow-hidden bg-zinc-50">
-                  <img
-                    src={image}
-                    alt={`${product.name} view ${index + 2}`}
-                    className="block aspect-square w-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
+            <ProductImageGallery key={product.id} product={product} />
           </div>
 
           <div className="lg:pt-6">
@@ -368,6 +417,17 @@ export function ProductPage() {
         </div>
 
       </section>
+
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <h1 className="mb-5 font-heading font-medium text-2xl text-zinc-900">Product Description</h1>
+        <ul className="mt-2">
+          {product.description.map((item) => (
+            <li key={item} className="mt-2 ml-4 list-disc text-sm sm:text-base text-zinc-600">
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <FaqSection />
       {relatedProducts.length > 0 ? (

@@ -78,14 +78,35 @@ export function ProductCard({
 
       <Link to={to} className="mt-4 block">
         <div className="space-y-0.5">
-          <h2
-            className={cn(
-              "font-heading font-medium text-zinc-900 line-clamp-1",
-              compact ? "text-sm" : "text-sm md:text-base ",
-            )}
-          >
-            {product.name}
-          </h2>
+          <div className="flex justify-between items-center">
+            <h2
+              className={cn(
+                "font-heading font-medium text-zinc-900 line-clamp-1",
+                compact ? "text-sm" : "text-sm md:text-base ",
+              )}
+            >
+              {product.name}
+            </h2>
+
+            {product.sizes.length > 0 ? (
+              <div className="flex max-w-[58%] shrink-0 flex-wrap items-center justify-end gap-x-1.5 gap-y-0.5 mr-2">
+                {product.sizes.map((opt) => (
+                  <span
+                    key={opt.label}
+                    title={opt.available ? undefined : "Unavailable"}
+                    className={cn(
+                      "text-sm font-heading font-medium",
+                      opt.available
+                        ? "text-zinc-900"
+                        : "text-zinc-400 line-through decoration-zinc-400",
+                    )}
+                  >
+                    {opt.label}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+          </div>
           {product.brand ? (
             <p
               className={cn(

@@ -3,7 +3,7 @@ export const SAMPLE_DATA = {
   HeroSection: {
     title: "Experience the future of shopping with Selair",
     description:
-      "Discover a seamless shopping experience with Selair, your modern online store. Explore our curated selection of products, enjoy personalized recommendations, and shop with confidence. Join us today and elevate your shopping journey to new heights.",
+      "Discover a seamless shopping experience with Selair, your modern online store. Explore our curated selection of products, enjoy personalized recommendations, and shop with confidence.",
     ctaLabel: "Shop now",
     ctaSecondaryLabel: "Explore rentals",
     ctaSecondaryTo: "/rent",
