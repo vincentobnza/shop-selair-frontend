@@ -20,6 +20,4 @@ export const categoryNavItems: CategoryItem[] = [
   { label: "Designers", to: "/shop" },
   { label: "Maternity", to: "/shop" },
   { label: "Buy", to: "/shop" },
-  { label: "Clearance", to: "/shop", variant: "accent" },
-  { label: "Gift Cards", to: "/shop" },
 ]

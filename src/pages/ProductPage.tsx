@@ -79,7 +79,7 @@ export function ProductPage() {
   ).slice(0, 3)
 
   return (
-    <main className="bg-white pt-10 sm:pt-12 md:pt-14 lg:pt-16">
+    <main className="bg-white">
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
         <div className="mb-6 flex items-center justify-between gap-4 sm:mb-8">
           <Link

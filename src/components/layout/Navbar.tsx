@@ -49,7 +49,7 @@ export function Navbar() {
 
   return (
     <>
-      <header className="fixed top-10 z-50 w-full border-b border-neutral-200 bg-white">
+      <header className="sticky top-10 z-50 w-full border-b border-neutral-200 bg-white">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10">
           <div className="relative flex items-center justify-between gap-3 py-3 sm:gap-4 sm:py-3.5">
             <div className="flex min-w-0 flex-1 items-center gap-2 text-sm text-black sm:gap-3">

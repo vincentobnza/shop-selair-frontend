@@ -151,12 +151,12 @@ export function DressingForPicker({ ctaLabel = "Browse All Styles" }: DressingFo
         I&apos;m getting dressed for
       </h2>
 
-      <ul className="mt-8 flex flex-wrap items-start justify-center gap-x-6 gap-y-8 sm:gap-x-10 md:gap-x-12">
+      <ul className="mt-8 flex flex-wrap items-start justify-center gap-x-4 gap-y-8 touch-manipulation sm:gap-x-10 md:gap-x-12">
         {occasions.map(({ key, label, href, Icon }) => (
           <li key={key}>
             <Link
               to={href}
-              className="group flex w-18 flex-col items-center gap-3 text-center sm:w-22"
+              className="group flex w-18 flex-col items-center gap-3 text-center touch-manipulation sm:w-22"
             >
               <span className="flex text-neutral-800 transition-transform group-hover:scale-[1.03]">
                 <Icon />
