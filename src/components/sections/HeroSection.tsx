@@ -41,7 +41,7 @@ export function HeroSection({
         <h1 className="font-heading text-[1.65rem] leading-snug text-neutral-900 sm:text-4xl md:text-5xl max-w-3xl mx-auto">
           {title}
         </h1>
-        <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed tracking-tight text-black sm:text-base">
+        <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed  text-black sm:text-base">
           {description}
         </p>
 

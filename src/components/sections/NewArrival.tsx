@@ -20,7 +20,7 @@ export function NewArrival() {
   return (
     <section id="new-arrivals" className="bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <h2 className="mb-12 text-center font-heading text-xl sm:text-3xl leading-tight text-zinc-900 tracking-tight">
+        <h2 className="mb-12 text-center font-heading text-xl sm:text-3xl leading-tight text-zinc-900 ">
           New Arrivals
         </h2>
 
@@ -102,7 +102,7 @@ export function NewArrival() {
         <div className="mt-12 text-center">
           <Link
             to="/shop"
-            className="inline-block font-heading text-sm font-bold tracking-tight text-zinc-900 underline underline-offset-4 transition-colors hover:bg-zinc-100"
+            className="inline-block font-heading text-sm font-medium  text-zinc-900 underline underline-offset-4 transition-colors hover:bg-zinc-100"
           >
             View all products
           </Link>

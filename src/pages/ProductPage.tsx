@@ -119,7 +119,7 @@ export function ProductPage() {
             <p className="font-heading text-sm font-medium text-zinc-700 uppercase">
               Selair Collection
             </p>
-            <h1 className="mt-3 font-heading text-3xl leading-tight font-medium tracking-tight text-zinc-900 sm:text-4xl lg:text-5xl">
+            <h1 className="mt-3 font-heading text-3xl leading-tight font-medium  text-zinc-900 sm:text-4xl lg:text-5xl">
               {product.name}
             </h1>
 
@@ -132,7 +132,7 @@ export function ProductPage() {
               <span className="font-heading text-2xl font-bold text-zinc-900 sm:text-3xl">
                 {currencyFormatter.format(product.price)}
               </span>
-              <span className="px-2 py-1 text-xs tracking-tight text-zinc-600 sm:px-3 sm:text-sm">
+              <span className="px-2 py-1 text-xs  text-zinc-600 sm:px-3 sm:text-sm">
                 {product.duration} day rental
               </span>
             </div>
@@ -180,12 +180,12 @@ export function ProductPage() {
               </div>
 
               {!range?.from && (
-                <span className="font-heading text-sm font-semibold tracking-tight text-orange-900">
+                <span className="font-heading text-sm font-semibold  text-orange-900">
                   - Please select a start date to proceed with reservation.
                 </span>
               )}
               {range?.from && !range?.to && (
-                <span className="font-heading text-sm font-semibold tracking-tight text-orange-900">
+                <span className="font-heading text-sm font-semibold  text-orange-900">
                   - Please select a return date to complete your rental period.
                 </span>
               )}
@@ -264,7 +264,7 @@ export function ProductPage() {
                     <h3 className="font-heading text-sm font-semibold text-zinc-900 md:text-base">
                       {item.name}
                     </h3>
-                    <p className="mt-2 text-sm font-bold tracking-tight text-orange-900 md:text-base">
+                    <p className="mt-2 text-sm font-bold  text-orange-900 md:text-base">
                       {currencyFormatter.format(item.price)}
                     </p>
                   </div>

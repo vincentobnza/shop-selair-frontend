@@ -8,12 +8,15 @@ import {
 } from "@phosphor-icons/react"
 
 import { CartSheet } from "@/components/layout/CartSheet"
+import { AccountMenu } from "@/components/layout/AccountMenu"
+import { ACCOUNT_MENU_LINKS } from "@/components/layout/account-menu-config"
 import {
   categoryNavItems,
   SITE_LOGO_TEXT,
   utilityLinks,
 } from "@/components/layout/nav-config"
 import { Button } from "@/components/ui/button"
+import { useAuth, useLogout } from "@/features/auth/hooks"
 import { cartItemCount } from "@/features/cart/data/cartItems"
 import { cn } from "@/lib/utils"
 
@@ -44,6 +47,9 @@ function CategoryLink({
 }
 
 export function Navbar() {
+  const { isAuthenticated } = useAuth()
+  const { run: signOut, pending: signingOut } = useLogout()
+
   const [cartOpen, setCartOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -89,12 +95,13 @@ export function Navbar() {
 
             <Link
               to="/"
-              className="font-heading absolute left-1/2 -translate-x-1/2 text-center text-base font-normal tracking-tighter text-black uppercase sm:text-lg"
+              className="font-heading absolute left-1/2 -translate-x-1/2 text-center text-base font-normal er text-black uppercase sm:text-lg"
             >
               {SITE_LOGO_TEXT}
             </Link>
 
             <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2">
+
               <Button
                 type="button"
                 variant="ghost"
@@ -110,10 +117,23 @@ export function Navbar() {
                   {cartItemCount}
                 </span>
               </Button>
-              <Button variant="pill" asChild className={navPillClass}>
-                <Link to="/login">Sign In</Link>
-              </Button>
 
+
+              {isAuthenticated ? (
+                <AccountMenu
+                  signingOut={signingOut}
+                  onSignOut={() => void signOut()}
+                />
+              ) : (
+                <>
+                  <Button variant="pill" asChild className={navPillClass}>
+                    <Link to="/login">Sign In</Link>
+                  </Button>
+                  <Button variant="pill" asChild className={navPillClass}>
+                    <Link to="/signup">Join Now</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
 
@@ -157,24 +177,60 @@ export function Navbar() {
                   Search
                 </Button>
                 <div className="flex flex-wrap gap-2 border-t border-neutral-100 pt-3">
-                  <Button
-                    variant="pill"
-                    asChild
-                    className="h-auto min-h-10 flex-1 basis-0 py-2.5 text-sm"
-                  >
-                    <Link to="/login" onClick={() => setMenuOpen(false)}>
-                      Sign In
-                    </Link>
-                  </Button>
-                  <Button
-                    variant="pill"
-                    asChild
-                    className="h-auto min-h-10 flex-1 basis-0 py-2.5 text-sm"
-                  >
-                    <Link to="/signup" onClick={() => setMenuOpen(false)}>
-                      Join Now
-                    </Link>
-                  </Button>
+                  {isAuthenticated ? (
+                    <div className="w-full">
+                      <p className="text-[11px] font-semibold tracking-[0.12em] text-black uppercase">
+                        My account
+                      </p>
+                      <ul className="mt-2 grid gap-0.5">
+                        {ACCOUNT_MENU_LINKS.map(({ label, to }) => (
+                          <li key={to}>
+                            <Link
+                              to={to}
+                              onClick={() => setMenuOpen(false)}
+                              className="block rounded-md py-2 text-sm text-black hover:bg-neutral-50"
+                            >
+                              {label}
+                            </Link>
+                          </li>
+                        ))}
+                        <li className="border-t border-neutral-100 pt-1">
+                          <button
+                            type="button"
+                            disabled={signingOut}
+                            className="w-full rounded-md py-2 text-left text-sm text-black hover:bg-neutral-50 disabled:opacity-50"
+                            onClick={() => {
+                              void signOut()
+                              setMenuOpen(false)
+                            }}
+                          >
+                            {signingOut ? "Signing out…" : "Sign Out"}
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  ) : (
+                    <>
+                      <Button
+                        variant="pill"
+                        asChild
+                        className="h-auto min-h-10 flex-1 basis-0 py-2.5 text-sm"
+                      >
+                        <Link to="/login" onClick={() => setMenuOpen(false)}>
+                          Sign In
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="pill"
+                        asChild
+                        className="h-auto min-h-10 flex-1 basis-0 py-2.5 text-sm"
+                      >
+                        <Link to="/signup" onClick={() => setMenuOpen(false)}>
+                          Join Now
+                        </Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
                 <ul className="grid gap-2 border-t border-neutral-100 pt-3">
                   {categoryNavItems.map((item) => (

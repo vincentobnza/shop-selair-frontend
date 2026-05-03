@@ -3,17 +3,42 @@ import { Link } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useRegister } from "@/features/auth/hooks"
 
 export function SignupPage() {
+  const { run: submitRegister, error, pending, clearError } = useRegister()
+
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     confirm: "",
   })
+  const [clientError, setClientError] = useState<string | null>(null)
+
+  const displayError = clientError ?? error
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    setClientError(null)
+    clearError()
+
+    if (form.password !== form.confirm) {
+      setClientError("Passwords do not match.")
+      return
+    }
+
+    void submitRegister({
+      name: form.name.trim(),
+      email: form.email.trim(),
+      password: form.password,
+      password_confirmation: form.confirm,
+    })
+  }
+
+  const clearAllErrors = () => {
+    setClientError(null)
+    clearError()
   }
 
   return (
@@ -33,15 +58,25 @@ export function SignupPage() {
           className="auth-form mt-7 space-y-4"
           autoComplete="off"
         >
+          {displayError ? (
+            <p
+              className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800"
+              role="alert"
+            >
+              {displayError}
+            </p>
+          ) : null}
+
           <label className="block space-y-2">
             <span className="text-sm font-medium text-zinc-700">Full name</span>
             <Input
               type="text"
               name="signup-name"
               value={form.name}
-              onChange={(event) =>
+              onChange={(event) => {
                 setForm((prev) => ({ ...prev, name: event.target.value }))
-              }
+                clearAllErrors()
+              }}
               autoComplete="off"
               autoCorrect="off"
               spellCheck={false}
@@ -57,9 +92,10 @@ export function SignupPage() {
               type="email"
               name="signup-email"
               value={form.email}
-              onChange={(event) =>
+              onChange={(event) => {
                 setForm((prev) => ({ ...prev, email: event.target.value }))
-              }
+                clearAllErrors()
+              }}
               autoComplete="off"
               autoCorrect="off"
               spellCheck={false}
@@ -75,11 +111,13 @@ export function SignupPage() {
               type="password"
               name="signup-password"
               value={form.password}
-              onChange={(event) =>
+              onChange={(event) => {
                 setForm((prev) => ({ ...prev, password: event.target.value }))
-              }
+                clearAllErrors()
+              }}
               autoComplete="off"
               required
+              minLength={8}
               className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
               placeholder="Create a password"
             />
@@ -93,18 +131,25 @@ export function SignupPage() {
               type="password"
               name="signup-password-confirm"
               value={form.confirm}
-              onChange={(event) =>
+              onChange={(event) => {
                 setForm((prev) => ({ ...prev, confirm: event.target.value }))
-              }
+                clearAllErrors()
+              }}
               autoComplete="off"
               required
+              minLength={8}
               className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
               placeholder="Repeat password"
             />
           </label>
 
-          <Button type="submit" size="lg" className="w-full rounded-xl text-sm">
-            Create account
+          <Button
+            type="submit"
+            size="lg"
+            disabled={pending}
+            className="w-full rounded-xl text-sm"
+          >
+            {pending ? "Creating account…" : "Create account"}
           </Button>
         </form>
 

@@ -3,23 +3,27 @@ import { Link } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useLogin } from "@/features/auth/hooks"
 
 export function LoginPage() {
+  const { run: submitLogin, error, pending, clearError } = useLogin()
+
   const [form, setForm] = useState({
     email: "",
     password: "",
     remember: true,
-    confirmPassword: "",
   })
 
   const onChange =
-    (field: "email" | "password" | "confirmPassword") =>
+    (field: "email" | "password") =>
       (event: ChangeEvent<HTMLInputElement>) => {
         setForm((prev) => ({ ...prev, [field]: event.target.value }))
+        clearError()
       }
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    void submitLogin(form.email.trim(), form.password)
   }
 
   return (
@@ -39,6 +43,15 @@ export function LoginPage() {
           className="auth-form mt-7 space-y-4"
           autoComplete="off"
         >
+          {error ? (
+            <p
+              className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800"
+              role="alert"
+            >
+              {error}
+            </p>
+          ) : null}
+
           <label className="block space-y-2">
             <span className="text-sm font-medium text-zinc-700">Email</span>
             <Input
@@ -64,22 +77,9 @@ export function LoginPage() {
               onChange={onChange("password")}
               autoComplete="off"
               required
+              minLength={8}
               className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
               placeholder="Enter your password"
-            />
-          </label>
-
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-zinc-700">Confirm Password</span>
-            <Input
-              type="password"
-              name="login-confirm-password"
-              value={form.confirmPassword}
-              onChange={onChange("confirmPassword")}
-              autoComplete="off"
-              required
-              className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
-              placeholder="Confirm your password"
             />
           </label>
 
@@ -95,8 +95,13 @@ export function LoginPage() {
             Keep me signed in
           </label>
 
-          <Button type="submit" size="lg" className="w-full rounded-xl text-sm">
-            Sign in
+          <Button
+            type="submit"
+            size="lg"
+            disabled={pending}
+            className="w-full rounded-xl text-sm"
+          >
+            {pending ? "Signing in…" : "Sign in"}
           </Button>
         </form>
 

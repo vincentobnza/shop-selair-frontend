@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom"
 
 import { AppShell } from "@/components/layout/AppShell"
+import { AccountSectionPage } from "@/pages/AccountSectionPage"
 import { EssentialsPage } from "@/pages/EssentialsPage"
 import { HomePage } from "@/pages/HomePage"
 import { LoginPage } from "@/pages/LoginPage"
@@ -18,6 +19,8 @@ export function AppRoutes() {
         <Route path="rent" element={<RentPage />} />
         <Route path="shop" element={<ShopPage />} />
         <Route path="essentials" element={<EssentialsPage />} />
+        <Route path="account" element={<Navigate to="/account/profile" replace />} />
+        <Route path="account/:slug" element={<AccountSectionPage />} />
       </Route>
       <Route path="login" element={<LoginPage />} />
       <Route path="signup" element={<SignupPage />} />

@@ -146,3 +146,7 @@
     transition: background-color 99999s ease-out 0s;
   }
 }
+
+* {
+  letter-spacing: -0.025em;
+}
