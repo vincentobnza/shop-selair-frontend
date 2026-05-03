@@ -5,6 +5,7 @@ import {
   MagnifyingGlassIcon,
   ToteIcon as CartIcon,
   XIcon,
+  HeartIcon,
 } from "@phosphor-icons/react"
 
 import { CartSheet } from "@/components/layout/CartSheet"
@@ -19,6 +20,7 @@ import { Button } from "@/components/ui/button"
 import { useAuth, useLogout } from "@/features/auth/hooks"
 import { cartItemCount } from "@/features/cart/data/cartItems"
 import { cn } from "@/lib/utils"
+import { TooltipComponent } from "../TooltipComponent"
 
 const navPillClass =
   "hidden h-auto min-h-9 px-4 py-2 text-xs font-medium tracking-wide sm:inline-flex sm:min-h-10 sm:text-sm"
@@ -52,6 +54,7 @@ export function Navbar() {
 
   const [cartOpen, setCartOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+
 
   return (
     <>
@@ -100,7 +103,18 @@ export function Navbar() {
               {SITE_LOGO_TEXT}
             </Link>
 
-            <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2">
+            <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
+              <TooltipComponent side="bottom" content="View wishlist">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label="View wishlist"
+                  className="relative size-10 shrink-0 rounded-full text-black "
+                >
+                  <HeartIcon size={32} weight="regular" className="size-5" />
+                </Button>
+              </TooltipComponent>
 
               <Button
                 type="button"
@@ -110,7 +124,7 @@ export function Navbar() {
                 aria-expanded={cartOpen}
                 aria-controls="cart-sheet"
                 onClick={() => setCartOpen(true)}
-                className="relative size-10 shrink-0 rounded-full text-black sm:mr-2"
+                className="relative size-10 shrink-0 rounded-full text-black "
               >
                 <CartIcon size={32} weight="regular" className="size-5" />
                 <span className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full border border-neutral-200 bg-black px-1 text-[11px] font-medium text-white">
