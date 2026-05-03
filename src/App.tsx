@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { useLocation } from "react-router-dom"
 
 import { AppRoutes } from "@/app/routes/AppRoutes"
+import { ShoppingSync } from "@/components/ShoppingSync"
 import { RouteSeo } from "@/components/seo/RouteSeo"
 
 export function App() {
@@ -12,6 +13,7 @@ export function App() {
 
   return (
     <>
+      <ShoppingSync />
       <RouteSeo />
       <AppRoutes />
     </>

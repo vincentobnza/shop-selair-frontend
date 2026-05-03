@@ -6,12 +6,13 @@ import { SAMPLE_DATA } from "@/dummy/sampleData"
 import { ReservationCalendar } from "@/components/ReservationCalendar"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { differenceInCalendarDays, format } from "date-fns"
 import type { DateRange } from "react-day-picker"
 import { BagIcon } from "@phosphor-icons/react"
 
 import { ProductCard } from "@/components/ProductCard"
+import { useCartStore } from "@/features/cart/cartStore"
 
 const currencyFormatter = new Intl.NumberFormat("en-PH", {
   style: "currency",
@@ -23,6 +24,8 @@ export function ProductPage() {
   const { productId } = useParams()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const addToCart = useCartStore((s) => s.addItem)
+  const [addingCart, setAddingCart] = useState(false)
 
   const range = useMemo<DateRange | undefined>(() => {
     const startDateParam = searchParams.get("startDate") ?? searchParams.get("date")
@@ -218,9 +221,16 @@ export function ProductPage() {
                 <Button
                   type="button"
                   variant="outline"
+                  disabled={addingCart}
                   className="h-auto rounded-none border-zinc-300 bg-transparent px-6 py-4 text-sm text-black sm:text-base"
+                  onClick={() => {
+                    setAddingCart(true)
+                    void addToCart(String(product.id), 1).finally(() =>
+                      setAddingCart(false),
+                    )
+                  }}
                 >
-                  Add to Cart
+                  {addingCart ? "Adding…" : "Add to Cart"}
                 </Button>
               </div>
 

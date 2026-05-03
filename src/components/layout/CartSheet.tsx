@@ -1,30 +1,91 @@
 import { useEffect, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
-import { cartItems } from "@/features/cart/data/cartItems"
+import { useAuth } from "@/features/auth/hooks"
+import { useCartStore } from "@/features/cart/cartStore"
+import { SAMPLE_DATA } from "@/dummy/sampleData"
 import { AnimatePresence, motion } from "motion/react"
 import { XIcon } from "@phosphor-icons/react"
+
+import type { ApiCartLine } from "@/features/cart/types"
 
 type CartSheetProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat("en-US", {
+function formatPhpFromCents(cents: number): string {
+  return new Intl.NumberFormat("en-PH", {
     style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-  }).format(value)
+    currency: "PHP",
+    maximumFractionDigits: 0,
+  }).format(cents / 100)
+}
+
+function formatPhpAmount(pesos: number): string {
+  return new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: "PHP",
+    maximumFractionDigits: 0,
+  }).format(pesos)
 }
 
 export function CartSheet({ open, onOpenChange }: CartSheetProps) {
+  const { isAuthenticated } = useAuth()
+  const apiCart = useCartStore((s) => s.apiCart)
+  const guestLines = useCartStore((s) => s.guestLines)
+  const loading = useCartStore((s) => s.loading)
+  const load = useCartStore((s) => s.load)
+  const removeApiLine = useCartStore((s) => s.removeApiLine)
+  const removeGuestLine = useCartStore((s) => s.removeGuestLine)
+  const clearApi = useCartStore((s) => s.clearApi)
+  const clearGuest = useCartStore((s) => s.clearGuest)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (open && isAuthenticated) {
+      void load()
+    }
+  }, [open, isAuthenticated, load])
+
+  const guestRows = useMemo(() => {
+    return guestLines.map((line) => {
+      const p = SAMPLE_DATA.NewArrivals.find((x) => x.id === line.productId)
+      return {
+        key: line.productId,
+        title: p?.name ?? "Product",
+        subtitle: "Shop",
+        quantity: line.quantity,
+        lineTotal: (p?.price ?? 0) * line.quantity,
+      }
+    })
+  }, [guestLines])
+
+  const apiRows = apiCart?.items ?? []
+
+  const guestPesosTotal = useMemo(
+    () => guestRows.reduce((s, r) => s + r.lineTotal, 0),
+    [guestRows],
+  )
+
   const subtotal = useMemo(() => {
-    return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    )
-  }, [])
+    if (!isAuthenticated) {
+      return formatPhpAmount(guestPesosTotal)
+    }
+    const apiPesos = (apiCart?.subtotal_cents ?? 0) / 100
+    return formatPhpAmount(apiPesos + guestPesosTotal)
+  }, [isAuthenticated, apiCart, guestPesosTotal])
+
+  const authPending = isAuthenticated && apiCart === null
+  const showEmptyAuth =
+    isAuthenticated &&
+    apiCart !== null &&
+    apiRows.length === 0 &&
+    guestLines.length === 0 &&
+    !loading
+  const showGuestEmpty = !isAuthenticated && guestLines.length === 0
+  const hasBagItems = apiRows.length > 0 || guestRows.length > 0
 
   useEffect(() => {
     if (!open) {
@@ -46,6 +107,12 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
       window.removeEventListener("keydown", onKeyDown)
     }
   }, [open, onOpenChange])
+
+
+  const handleContinueShopping = () => {
+    void onOpenChange(false)
+    navigate("/shop")
+  }
 
   return (
     <AnimatePresence>
@@ -92,49 +159,137 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
             </header>
 
             <div className="flex-1 overflow-y-auto px-4 sm:px-5">
-              <ul className="divide-y divide-black/10">
-                {cartItems.map((item) => (
-                  <li key={item.id} className="py-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="text-xs font-medium text-zinc-500 uppercase">
-                          {item.category}
-                        </p>
-                        <p className="mt-1 text-base font-medium text-zinc-900">
-                          {item.name}
-                        </p>
-                        <p className="mt-1 text-sm text-zinc-600">
-                          Qty {item.quantity}
-                        </p>
-                      </div>
+              {(loading || authPending) && isAuthenticated ? (
+                <p className="py-8 text-sm text-zinc-500">Loading cart…</p>
+              ) : null}
 
-                      <p className="text-base font-medium text-zinc-950">
-                        {formatCurrency(item.price * item.quantity)}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              {showEmptyAuth || showGuestEmpty ? (
+                <div className="space-y-4 flex flex-col items-center justify-center min-h-[calc(100vh-250px)]">
+                  <h2 className="text-sm sm:text-base md:text-lg font-medium text-black font-heading text-center">
+                    Looks like your shopping bag is empty.
+                    {!isAuthenticated ? (
+                      <> Sign in to sync your cart across devices.</>
+                    ) : null}
+                  </h2>
+                  <Button variant="outline" className="mt-3 h-11 rounded-full px-8" onClick={handleContinueShopping}>
+                    Continue Shopping
+                  </Button>
+                </div>
+              ) : null}
+
+              {isAuthenticated && apiRows.length > 0 ? (
+                <ul className="divide-y divide-black/10">
+                  {apiRows.map((line: ApiCartLine) => (
+                    <li key={line.id} className="py-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="text-xs font-medium text-zinc-500 uppercase">
+                            Shop
+                          </p>
+                          <p className="mt-1 text-base font-medium text-zinc-900">
+                            {line.product.name}
+                          </p>
+                          <p className="mt-1 text-sm text-zinc-600">
+                            Qty {line.quantity}
+                          </p>
+                        </div>
+
+                        <div className="text-right">
+                          <p className="text-base font-medium text-zinc-950">
+                            {formatPhpFromCents(
+                              line.product.price_cents * line.quantity,
+                            )}
+                          </p>
+                          <button
+                            type="button"
+                            className="mt-2 text-xs font-medium text-zinc-500 underline"
+                            onClick={() => void removeApiLine(line.id)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+
+              {guestRows.length > 0 ? (
+                <div
+                  className={
+                    isAuthenticated && apiRows.length > 0
+                      ? "mt-6 border-t border-black/10 pt-6"
+                      : ""
+                  }
+                >
+                  {isAuthenticated ? (
+                    <p className="mb-3 text-xs font-medium text-zinc-500">
+                      Catalog (saved on this device)
+                    </p>
+                  ) : null}
+                  <ul className="divide-y divide-black/10">
+                    {guestRows.map((row) => (
+                      <li key={row.key} className="py-4">
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <p className="text-xs font-medium text-zinc-500 uppercase">
+                              {row.subtitle}
+                            </p>
+                            <p className="mt-1 text-base font-medium text-zinc-900">
+                              {row.title}
+                            </p>
+                            <p className="mt-1 text-sm text-zinc-600">
+                              Qty {row.quantity}
+                            </p>
+                          </div>
+
+                          <div className="text-right">
+                            <p className="text-base font-medium text-zinc-950">
+                              {formatPhpAmount(row.lineTotal)}
+                            </p>
+                            <button
+                              type="button"
+                              className="mt-2 text-xs font-medium text-zinc-500 underline"
+                              onClick={() => removeGuestLine(row.key)}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
             </div>
 
-            <footer className="border-t border-black/10 px-4 py-4 sm:px-5">
-              <div className="mb-4 flex items-center justify-between">
-                <p className="text-sm text-zinc-600">Subtotal</p>
-                <p className="text-xl font-semibold text-zinc-950">
-                  {formatCurrency(subtotal)}
-                </p>
-              </div>
+            {hasBagItems ? (
+              <footer className="border-t border-black/10 px-4 py-4 sm:px-5">
+                <div className="mb-4 flex items-center justify-between">
+                  <p className="text-sm text-zinc-600">Subtotal</p>
+                  <p className="text-xl font-semibold text-zinc-950">
+                    {subtotal}
+                  </p>
+                </div>
 
-              <div className="grid gap-2">
-                <Button className="h-11 rounded">Checkout</Button>
-                <Button
-                  variant="outline"
-                  className="h-11 rounded border-zinc-300"
-                >
-                  View Full Cart
-                </Button>
-              </div>
-            </footer>
+                <div className="grid gap-2">
+                  <Button className="h-11 rounded">Checkout</Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-11 rounded border-zinc-300"
+                    onClick={() => {
+                      if (isAuthenticated) {
+                        void clearApi()
+                      }
+                      clearGuest()
+                    }}
+                  >
+                    Clear bag
+                  </Button>
+                </div>
+              </footer>
+            ) : null}
           </motion.aside>
         </>
       ) : null}

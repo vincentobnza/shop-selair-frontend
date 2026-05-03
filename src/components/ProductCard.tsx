@@ -1,52 +1,15 @@
 import { HeartIcon } from "@phosphor-icons/react"
-import { useCallback, useState } from "react"
 import { Link } from "react-router-dom"
 
 import type { ShopProduct } from "@/components/shop/shop-filters"
+import { useFavorite } from "@/features/favorites/useFavorite"
 import { cn } from "@/lib/utils"
-
-const FAVORITES_KEY = "selair-favorites"
 
 const currencyFormatter = new Intl.NumberFormat("en-PH", {
   style: "currency",
   currency: "PHP",
   maximumFractionDigits: 0,
 })
-
-function useFavorite(productId: string) {
-  const [saved, setSaved] = useState(() => {
-    try {
-      const raw = localStorage.getItem(FAVORITES_KEY)
-      if (!raw) return false
-      const ids = JSON.parse(raw) as string[]
-      return Array.isArray(ids) && ids.includes(productId)
-    } catch {
-      return false
-    }
-  })
-
-  const toggle = useCallback(() => {
-    setSaved((prev) => {
-      const next = !prev
-      try {
-        const raw = localStorage.getItem(FAVORITES_KEY)
-        let ids: string[] = raw ? (JSON.parse(raw) as string[]) : []
-        if (!Array.isArray(ids)) ids = []
-        if (next) {
-          if (!ids.includes(productId)) ids = [...ids, productId]
-        } else {
-          ids = ids.filter((id) => id !== productId)
-        }
-        localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids))
-      } catch {
-        /* ignore */
-      }
-      return next
-    })
-  }, [productId])
-
-  return { saved, toggle }
-}
 
 export type ProductCardProps = {
   product: ShopProduct
@@ -102,7 +65,7 @@ export function ProductCard({
           className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/70 shadow-sm ring-1 ring-black/2 transition hover:scale-105 active:scale-95 cursor-pointer"
           onClick={(e) => {
             e.preventDefault()
-            toggle()
+            void toggle()
           }}
         >
           <HeartIcon

@@ -18,7 +18,7 @@ import {
 } from "@/components/layout/nav-config"
 import { Button } from "@/components/ui/button"
 import { useAuth, useLogout } from "@/features/auth/hooks"
-import { cartItemCount } from "@/features/cart/data/cartItems"
+import { useCartItemCount } from "@/features/cart/cartStore"
 import { cn } from "@/lib/utils"
 import { TooltipComponent } from "../TooltipComponent"
 
@@ -51,6 +51,7 @@ function CategoryLink({
 export function Navbar() {
   const { isAuthenticated } = useAuth()
   const { run: signOut, pending: signingOut } = useLogout()
+  const cartItemCount = useCartItemCount()
 
   const [cartOpen, setCartOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -110,7 +111,7 @@ export function Navbar() {
                   variant="ghost"
                   size="icon"
                   aria-label="View wishlist"
-                  className="relative size-10 shrink-0 rounded-full text-black "
+                  className="hidden sm:block relative size-10 shrink-0 rounded-full text-black "
                 >
                   <HeartIcon size={32} weight="regular" className="size-5" />
                 </Button>
@@ -127,9 +128,13 @@ export function Navbar() {
                 className="relative size-10 shrink-0 rounded-full text-black "
               >
                 <CartIcon size={32} weight="regular" className="size-5" />
-                <span className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full border border-neutral-200 bg-black px-1 text-[11px] font-medium text-white">
-                  {cartItemCount}
-                </span>
+                {
+                  cartItemCount > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full border border-neutral-200 bg-black px-1 text-[11px] font-medium text-white">
+                      {cartItemCount}
+                    </span>
+                  )
+                }
               </Button>
 
 
