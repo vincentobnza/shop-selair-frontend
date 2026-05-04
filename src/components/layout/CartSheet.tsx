@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 
 import { LineReservationDates } from "@/components/cart/LineReservationDates"
+import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/features/auth/hooks"
 import { useCartStore } from "@/features/cart/cartStore"
@@ -183,7 +184,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                 <>
                   {showFullBagEmpty ? (
                     <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center space-y-4">
-                      <img src={EmptyStateImage} alt="Empty shopping cart" className="mb-8 h-24 w-24 sm:mb-12 md:mb-16" />
+                      <AppImage src={EmptyStateImage} alt="Empty shopping cart" className="mb-8 h-24 w-24 sm:mb-12 md:mb-16" />
                       <h2 className="font-heading text-center text-sm font-medium text-black sm:text-base md:text-lg">
                         Looks like your shopping bag is empty.
                         {!isAuthenticated ? (
@@ -212,7 +213,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                             <div className="flex gap-4">
                               <div className="size-16 shrink-0 overflow-hidden bg-zinc-100 sm:size-20">
                                 {img ? (
-                                  <img
+                                  <AppImage
                                     src={img}
                                     alt=""
                                     className="size-full object-cover"
@@ -278,7 +279,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                             <div className="flex gap-4">
                               <div className="size-16 shrink-0 overflow-hidden bg-zinc-100 sm:size-20">
                                 {row.imageUrl ? (
-                                  <img
+                                  <AppImage
                                     src={row.imageUrl}
                                     alt=""
                                     className="size-full object-cover"

@@ -2,6 +2,7 @@ import { HeartIcon } from "@phosphor-icons/react"
 import { Link } from "react-router-dom"
 
 import type { ShopProduct } from "@/components/shop/shop-filters"
+import { AppImage } from "@/components/ui/app-image"
 import { useFavorite } from "@/features/favorites/useFavorite"
 import { cn } from "@/lib/utils"
 
@@ -37,19 +38,19 @@ export function ProductCard({
           >
             {hasSwap ? (
               <>
-                <img
+                <AppImage
                   src={product.image?.[0]}
                   alt={product.name}
                   className="absolute inset-0 h-full w-full object-cover transition-all duration-500 ease-out group-hover:opacity-0"
                 />
-                <img
+                <AppImage
                   src={product.image![1]}
                   alt={`${product.name} (alternate view)`}
                   className="absolute inset-0 h-full w-full object-cover opacity-0 transition-all duration-500 ease-out group-hover:opacity-100"
                 />
               </>
             ) : (
-              <img
+              <AppImage
                 src={product.image?.[0]}
                 alt={product.name}
                 className="absolute inset-0 h-full w-full object-cover"

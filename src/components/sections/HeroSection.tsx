@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom"
 
 import { DressingForPicker } from "@/components/sections/DressingForPicker"
+import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
 import { SAMPLE_DATA } from "@/dummy/sampleData"
 import { cn } from "@/lib/utils"
@@ -14,10 +15,21 @@ function heroRoute(pathname: string): "home" | "rent" | "essentials" {
   return "home"
 }
 
-function SideImage({ src }: { src: string }) {
+function SideImage({
+  src,
+  priority,
+}: {
+  src: string
+  priority?: boolean
+}) {
   return (
     <div className="h-[min(70vh,34rem)] w-full min-w-0 overflow-hidden rounded bg-neutral-100 xl:h-[min(75vh,38rem)]">
-      <img src={src} alt="" className="h-full w-full object-cover" />
+      <AppImage
+        src={src}
+        alt=""
+        priority={priority}
+        className="h-full w-full object-cover"
+      />
     </div>
   )
 }
@@ -103,7 +115,7 @@ export function HeroSection() {
               )}
             >
               <div className="hidden min-w-0 lg:block">
-                <SideImage src={sideImageLeft} />
+                <SideImage src={sideImageLeft} priority />
               </div>
 
               <div className="min-w-0 text-center">{mainCopy}</div>

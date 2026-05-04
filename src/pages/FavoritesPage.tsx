@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 
+import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/features/auth/hooks"
 import * as favoritesApi from "@/features/favorites/api"
@@ -106,7 +107,7 @@ export function FavoritesPage() {
           </div>
         ) : ids.length === 0 ? (
           <div className="px-6 py-16 text-center">
-            <img src={EmptyStateImage} alt="Empty favorites" className="w-24 h-24 mb-8 sm:mb-12 mx-auto" />
+            <AppImage src={EmptyStateImage} alt="Empty favorites" className="mx-auto mb-8 h-24 w-24 sm:mb-12" />
             <p className="font-heading text-base sm:text-lg lg:text-xl text-black">
               You have not saved anything yet.
             </p>
@@ -126,7 +127,7 @@ export function FavoritesPage() {
                       className="relative w-40 aspect-3/4 shrink-0 overflow-hidden bg-zinc-100"
                     >
                       {product?.image[0] ? (
-                        <img
+                        <AppImage
                           src={product.image[0]}
                           alt=""
                           className="h-full w-full object-cover"

@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async"
 
 import { buildTitle, DEFAULT_DESCRIPTION } from "@/config/site"
 import { ReservationCalendar } from "@/components/ReservationCalendar"
+import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
 import { DotPulse } from "@/components/ui/dot-pulse"
 import { cn } from "@/lib/utils"
@@ -231,7 +232,7 @@ function ProductImageGallery({ product }: { product: CatalogProduct }) {
                   : "border-transparent opacity-80 hover:opacity-100 grayscale",
               )}
             >
-              <img
+              <AppImage
                 src={image}
                 alt=""
                 className="block aspect-square w-full object-cover"
@@ -243,9 +244,10 @@ function ProductImageGallery({ product }: { product: CatalogProduct }) {
 
       <div className="min-w-0 flex-1 overflow-hidden bg-zinc-50">
         {mainSrc ? (
-          <img
+          <AppImage
             src={mainSrc}
             alt={product.name}
+            priority
             className="block h-full w-full object-cover"
           />
         ) : (

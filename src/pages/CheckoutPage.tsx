@@ -5,6 +5,7 @@ import { toast } from "sonner"
 
 import { LineReservationDates } from "@/components/cart/LineReservationDates"
 import { SITE_LOGO_TEXT } from "@/components/layout/nav-config"
+import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
 import { DotPulse } from "@/components/ui/dot-pulse"
 import { Input } from "@/components/ui/input"
@@ -391,7 +392,7 @@ export function CheckoutPage() {
                         <li key={line.id} className="flex gap-4 py-4">
                           <div className="size-14 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
                             {img ? (
-                              <img
+                              <AppImage
                                 src={img}
                                 alt=""
                                 className="size-full object-cover"
@@ -431,7 +432,7 @@ export function CheckoutPage() {
                       <li key={row.key} className="flex gap-4 py-4">
                         <div className="size-14 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
                           {row.imageUrl ? (
-                            <img
+                            <AppImage
                               src={row.imageUrl}
                               alt=""
                               className="size-full object-cover"

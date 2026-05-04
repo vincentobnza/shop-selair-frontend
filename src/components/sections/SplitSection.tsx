@@ -1,5 +1,6 @@
-import { SAMPLE_DATA } from "@/dummy/sampleData"
+import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
+import { SAMPLE_DATA } from "@/dummy/sampleData"
 
 type SplitSectionProps = {
   title?: string
@@ -34,7 +35,7 @@ export function SplitSection({
         </div>
 
         <div className="sm:w-1/2">
-          <img src={image} alt={title} className="block h-auto w-full" />
+          <AppImage src={image} alt={title} className="block h-auto w-full" />
         </div>
       </div>
     </section>
