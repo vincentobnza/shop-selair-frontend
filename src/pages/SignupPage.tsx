@@ -83,7 +83,7 @@ export function SignupPage() {
               spellCheck={false}
               required
               className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
-              placeholder="Vincent Selair"
+              placeholder="Enter your full name"
             />
           </label>
 
@@ -102,7 +102,7 @@ export function SignupPage() {
               spellCheck={false}
               required
               className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
-              placeholder="you@example.com"
+              placeholder="Enter your email"
             />
           </label>
 
@@ -120,7 +120,7 @@ export function SignupPage() {
               required
               minLength={8}
               className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
-              placeholder="Create a password"
+              placeholder="Enter your password"
             />
           </label>
 
@@ -140,7 +140,7 @@ export function SignupPage() {
               required
               minLength={8}
               className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
-              placeholder="Repeat password"
+              placeholder="Confirm your password"
             />
           </label>
 
