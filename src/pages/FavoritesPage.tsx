@@ -11,9 +11,10 @@ import {
   removeLocalFavoriteId,
 } from "@/features/favorites/local-favorites"
 import { useFavoriteStore } from "@/features/favorites/favoritesStore"
+import { slugifyProductName } from "@/features/products/map"
 import { useCatalogProducts } from "@/features/products/queries"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import EmptyStateImage from '@/assets/empty_favorite.png'
+import EmptyStateImage from "@/assets/empty_favorite.png"
 
 const php = new Intl.NumberFormat("en-PH", {
   style: "currency",
@@ -80,7 +81,7 @@ export function FavoritesPage() {
         removeLocalFavoriteId(productId)
       }
     },
-    [isAuthenticated, loadFavorites],
+    [isAuthenticated, loadFavorites]
   )
 
   const showSkeleton =
@@ -90,8 +91,8 @@ export function FavoritesPage() {
   return (
     <main className="bg-white">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14 xl:py-24">
-        <div className="mb-10 flex justify-center items-center gap-3">
-          <h1 className="font-heading text-2xl text-center font-medium text-zinc-900 sm:text-3xl">
+        <div className="mb-10 flex items-center justify-center gap-3">
+          <h1 className="text-center font-heading text-2xl font-medium text-zinc-900 sm:text-3xl">
             All Favorites
           </h1>
         </div>
@@ -107,12 +108,20 @@ export function FavoritesPage() {
           </div>
         ) : ids.length === 0 ? (
           <div className="px-6 py-16 text-center">
-            <AppImage src={EmptyStateImage} alt="Empty favorites" className="mx-auto mb-8 h-24 w-24 sm:mb-12" />
-            <p className="font-heading text-base sm:text-lg lg:text-xl text-black">
+            <AppImage
+              src={EmptyStateImage}
+              alt="Empty favorites"
+              className="mx-auto mb-8 h-24 w-24 sm:mb-12"
+            />
+            <p className="font-heading text-base text-black sm:text-lg lg:text-xl">
               You have not saved anything yet.
             </p>
 
-            <Button variant="outline" asChild className="mt-8 rounded-full px-8">
+            <Button
+              variant="outline"
+              asChild
+              className="mt-8 rounded-full px-8"
+            >
               <Link to="/shop">Browse the shop</Link>
             </Button>
           </div>
@@ -123,8 +132,12 @@ export function FavoritesPage() {
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="flex gap-4">
                     <Link
-                      to={`/products/${id}`}
-                      className="relative w-40 aspect-3/4 shrink-0 overflow-hidden bg-zinc-100"
+                      to={
+                        product
+                          ? `/products/${slugifyProductName(product.name)}`
+                          : `/products/${id}`
+                      }
+                      className="relative aspect-3/4 w-40 shrink-0 overflow-hidden bg-zinc-100"
                     >
                       {product?.image[0] ? (
                         <AppImage
@@ -139,17 +152,21 @@ export function FavoritesPage() {
                         Wishlist
                       </p>
                       <Link
-                        to={`/products/${id}`}
-                        className="mt-1 block font-heading text-lg sm:text-xl lg:text-2xl font-medium text-zinc-900 hover:underline"
+                        to={
+                          product
+                            ? `/products/${slugifyProductName(product.name)}`
+                            : `/products/${id}`
+                        }
+                        className="mt-1 block font-heading text-lg font-medium text-zinc-900 hover:underline sm:text-xl lg:text-2xl"
                       >
                         {product?.name ?? "Product unavailable"}
                       </Link>
                       {/* BRAND */}
-                      <p className="text-xs sm:text-sm lg:text-base font-medium text-black/60">
+                      <p className="text-xs font-medium text-black/60 sm:text-sm lg:text-base">
                         {product?.brand ?? "Brand unavailable"}
                       </p>
                       {product ? (
-                        <p className="mt-2 text-base sm:text-lg lg:text-xl font-medium text-zinc-700">
+                        <p className="mt-2 text-base font-medium text-zinc-700 sm:text-lg lg:text-xl">
                           {php.format(product.price)}
                         </p>
                       ) : null}
@@ -157,7 +174,15 @@ export function FavoritesPage() {
                   </div>
                   <div className="flex shrink-0 flex-col items-start gap-2 sm:items-end">
                     <Button asChild variant="outline" className="rounded-full">
-                      <Link to={`/products/${id}`}>View Product</Link>
+                      <Link
+                        to={
+                          product
+                            ? `/products/${slugifyProductName(product.name)}`
+                            : `/products/${id}`
+                        }
+                      >
+                        View Product
+                      </Link>
                     </Button>
                     <button
                       type="button"

@@ -1,0 +1,82 @@
+import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react"
+import { useState, type ComponentProps } from "react"
+
+import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
+
+export type FloatingLabelInputProps = Omit<
+  ComponentProps<typeof Input>,
+  "placeholder"
+> & {
+  label: string
+}
+
+export function FloatingLabelInput({
+  label,
+  id,
+  className,
+  value,
+  onFocus,
+  onBlur,
+  type = "text",
+  ...rest
+}: FloatingLabelInputProps) {
+  const [focused, setFocused] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const str = value == null ? "" : String(value)
+  const floated = focused || str.length > 0
+  const isPassword = type === "password"
+  const inputType = isPassword && showPassword ? "text" : type
+
+  return (
+    <div className="relative">
+      <Input
+        id={id}
+        type={inputType}
+        value={value}
+        placeholder=" "
+        onFocus={(event) => {
+          setFocused(true)
+          onFocus?.(event)
+        }}
+        onBlur={(event) => {
+          setFocused(false)
+          onBlur?.(event)
+        }}
+        className={cn(
+          "h-12 min-h-12 w-full rounded-full border border-black bg-white px-5 pt-[1.35rem] pb-2 text-base leading-normal text-neutral-950 shadow-none sm:h-14 sm:min-h-14 sm:pt-7 sm:pb-2.5 sm:text-lg md:text-lg",
+          isPassword && "pr-12 sm:pr-14",
+          "placeholder:text-transparent",
+          "focus-visible:border-black focus-visible:ring-2 focus-visible:ring-neutral-950/15",
+          className,
+        )}
+        {...rest}
+      />
+      <label
+        htmlFor={id}
+        className={cn(
+          "pointer-events-none absolute left-5 origin-left font-sans transition-[top,transform,font-size] duration-200 ease-out text-neutral-500",
+          floated
+            ? "top-3 translate-y-0 text-[0.75rem] leading-tight sm:top-2 sm:text-sm"
+            : "top-1/2 -translate-y-1/2 text-base sm:text-lg",
+        )}
+      >
+        {label}
+      </label>
+      {isPassword ? (
+        <button
+          type="button"
+          className="touch-manipulation absolute right-0.5 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full text-neutral-700 transition-colors hover:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-neutral-950/25 focus-visible:outline-none sm:right-1 cursor-pointer"
+          aria-label={!showPassword ? "Hide password" : "Show password"}
+          onClick={() => setShowPassword((v) => !v)}
+        >
+          {!showPassword ? (
+            <EyeSlashIcon className="size-5 sm:size-[1.35rem]" weight="regular" />
+          ) : (
+            <EyeIcon className="size-5 sm:size-[1.35rem]" weight="regular" />
+          )}
+        </button>
+      ) : null}
+    </div>
+  )
+}

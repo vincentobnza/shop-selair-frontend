@@ -47,17 +47,12 @@ function safeBackPath(state: unknown): string {
 export function CheckoutPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const backTo = useMemo(
-    () => safeBackPath(location.state),
-    [location.state],
-  )
+  const backTo = useMemo(() => safeBackPath(location.state), [location.state])
 
   const { isAuthenticated } = useAuth()
   const apiCart = useCartStore((s) => s.apiCart)
   const guestLines = useCartStore((s) => s.guestLines)
-  const reservationByProductKey = useCartStore(
-    (s) => s.reservationByProductKey,
-  )
+  const reservationByProductKey = useCartStore((s) => s.reservationByProductKey)
   const loading = useCartStore((s) => s.loading)
   const load = useCartStore((s) => s.load)
   const { data: catalog = [] } = useCatalogProducts()
@@ -103,14 +98,16 @@ export function CheckoutPage() {
 
   const guestPesosTotal = useMemo(
     () => guestRows.reduce((s, r) => s + r.lineTotal, 0),
-    [guestRows],
+    [guestRows]
   )
 
   const subtotalLabel = useMemo(() => {
     if (!isAuthenticated) {
       return formatPhpAmount(guestPesosTotal)
     }
-    return formatPhpAmount((apiCart?.subtotal_cents ?? 0) / 100 + guestPesosTotal)
+    return formatPhpAmount(
+      (apiCart?.subtotal_cents ?? 0) / 100 + guestPesosTotal
+    )
   }, [isAuthenticated, apiCart, guestPesosTotal])
 
   const authPending = isAuthenticated && apiCart === null
@@ -155,7 +152,7 @@ export function CheckoutPage() {
 
           <Link
             to="/"
-            className="font-heading text-center text-sm font-normal uppercase tracking-wide text-neutral-900 sm:text-base"
+            className="text-center font-logo text-sm font-medium tracking-wide text-black uppercase sm:text-base"
           >
             {SITE_LOGO_TEXT}
           </Link>
@@ -168,8 +165,10 @@ export function CheckoutPage() {
             <DotPulse size="lg" />
           </div>
         ) : showFullEmpty ? (
-          <div className="mx-auto max-w-md  border border-neutral-200 bg-white px-6 py-12 text-center ">
-            <p className="font-heading text-lg text-neutral-900">Your bag is empty</p>
+          <div className="mx-auto max-w-md border border-neutral-200 bg-white px-6 py-12 text-center">
+            <p className="font-heading text-lg text-neutral-900">
+              Your bag is empty
+            </p>
             <p className="mt-2 text-sm text-neutral-600">
               Add something you love before checking out.
             </p>
@@ -190,8 +189,8 @@ export function CheckoutPage() {
               </div>
 
               <form onSubmit={onSubmit} className="space-y-8">
-                <div className=" border border-neutral-200 bg-white p-5  sm:p-6">
-                  <p className="text-xs font-medium uppercase tracking-wider text-neutral-500">
+                <div className="border border-neutral-200 bg-white p-5 sm:p-6">
+                  <p className="text-xs font-medium tracking-wider text-neutral-500 uppercase">
                     Contact
                   </p>
                   <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -232,8 +231,8 @@ export function CheckoutPage() {
                   </div>
                 </div>
 
-                <div className=" border border-neutral-200 bg-white p-5  sm:p-6">
-                  <p className="text-xs font-medium uppercase tracking-wider text-neutral-500">
+                <div className="border border-neutral-200 bg-white p-5 sm:p-6">
+                  <p className="text-xs font-medium tracking-wider text-neutral-500 uppercase">
                     Delivery
                   </p>
                   <div className="mt-4 grid gap-4">
@@ -353,8 +352,6 @@ export function CheckoutPage() {
                   </div>
                 </div>
 
-
-
                 <Button
                   type="submit"
                   className="h-14 w-full rounded-full px-8 text-base font-medium"
@@ -365,7 +362,7 @@ export function CheckoutPage() {
             </section>
 
             <aside className="order-1 lg:sticky lg:top-24 lg:order-2">
-              <div className=" border border-neutral-200 bg-white ">
+              <div className="border border-neutral-200 bg-white">
                 <div className="border-b border-neutral-100 px-5 py-4 sm:px-6">
                   <h2 className="font-heading text-lg font-medium text-neutral-950">
                     Order summary
@@ -379,21 +376,61 @@ export function CheckoutPage() {
                 <ul className="max-h-[min(52vh,420px)] divide-y divide-neutral-100 overflow-y-auto px-5 sm:px-6">
                   {isAuthenticated && apiRows.length > 0
                     ? apiRows.map((line: ApiCartLine) => {
-                      const cat = catalog.find(
-                        (c) => c.id === String(line.product_id),
-                      )
-                      const img = cat?.image?.[0]
-                      const product = line.product
-                      const name = product?.name ?? "Product unavailable"
-                      const unitCents = product?.price_cents ?? 0
-                      const resKey = `${line.product_id}::${line.size_label ?? ""}`
-                      const res = reservationByProductKey[resKey]
-                      return (
-                        <li key={line.id} className="flex gap-4 py-4">
+                        const cat = catalog.find(
+                          (c) => c.id === String(line.product_id)
+                        )
+                        const img = cat?.image?.[0]
+                        const product = line.product
+                        const name = product?.name ?? "Product unavailable"
+                        const unitCents = product?.price_cents ?? 0
+                        const resKey = `${line.product_id}::${line.size_label ?? ""}`
+                        const res = reservationByProductKey[resKey]
+                        return (
+                          <li key={line.id} className="flex gap-4 py-4">
+                            <div className="size-14 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
+                              {img ? (
+                                <AppImage
+                                  src={img}
+                                  alt=""
+                                  className="size-full object-cover"
+                                />
+                              ) : (
+                                <div className="size-full bg-neutral-200/80" />
+                              )}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-[11px] font-medium tracking-wide text-neutral-500 uppercase">
+                                {line.size_label
+                                  ? `Size ${line.size_label}`
+                                  : "Shop"}
+                              </p>
+                              <p className="mt-0.5 text-sm leading-snug font-medium text-neutral-900">
+                                {name}
+                              </p>
+                              <p className="mt-1 text-xs text-neutral-500">
+                                Qty {line.quantity}
+                              </p>
+                              <LineReservationDates
+                                start={res?.start}
+                                end={res?.end}
+                                className="text-neutral-600"
+                              />
+                            </div>
+                            <p className="shrink-0 text-sm font-semibold text-neutral-950 tabular-nums">
+                              {formatPhpFromCents(unitCents * line.quantity)}
+                            </p>
+                          </li>
+                        )
+                      })
+                    : null}
+
+                  {guestRows.length > 0
+                    ? guestRows.map((row) => (
+                        <li key={row.key} className="flex gap-4 py-4">
                           <div className="size-14 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
-                            {img ? (
+                            {row.imageUrl ? (
                               <AppImage
-                                src={img}
+                                src={row.imageUrl}
                                 alt=""
                                 className="size-full object-cover"
                               />
@@ -402,73 +439,33 @@ export function CheckoutPage() {
                             )}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">
-                              {line.size_label
-                                ? `Size ${line.size_label}`
-                                : "Shop"}
+                            <p className="text-[11px] font-medium tracking-wide text-neutral-500 uppercase">
+                              {row.subtitle}
                             </p>
-                            <p className="mt-0.5 text-sm font-medium leading-snug text-neutral-900">
-                              {name}
+                            <p className="mt-0.5 text-sm leading-snug font-medium text-neutral-900">
+                              {row.title}
                             </p>
                             <p className="mt-1 text-xs text-neutral-500">
-                              Qty {line.quantity}
+                              Qty {row.quantity}
                             </p>
                             <LineReservationDates
-                              start={res?.start}
-                              end={res?.end}
+                              start={row.rentalStart}
+                              end={row.rentalEnd}
                               className="text-neutral-600"
                             />
                           </div>
                           <p className="shrink-0 text-sm font-semibold text-neutral-950 tabular-nums">
-                            {formatPhpFromCents(unitCents * line.quantity)}
+                            {formatPhpAmount(row.lineTotal)}
                           </p>
                         </li>
-                      )
-                    })
-                    : null}
-
-                  {guestRows.length > 0
-                    ? guestRows.map((row) => (
-                      <li key={row.key} className="flex gap-4 py-4">
-                        <div className="size-14 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
-                          {row.imageUrl ? (
-                            <AppImage
-                              src={row.imageUrl}
-                              alt=""
-                              className="size-full object-cover"
-                            />
-                          ) : (
-                            <div className="size-full bg-neutral-200/80" />
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">
-                            {row.subtitle}
-                          </p>
-                          <p className="mt-0.5 text-sm font-medium leading-snug text-neutral-900">
-                            {row.title}
-                          </p>
-                          <p className="mt-1 text-xs text-neutral-500">
-                            Qty {row.quantity}
-                          </p>
-                          <LineReservationDates
-                            start={row.rentalStart}
-                            end={row.rentalEnd}
-                            className="text-neutral-600"
-                          />
-                        </div>
-                        <p className="shrink-0 text-sm font-semibold text-neutral-950 tabular-nums">
-                          {formatPhpAmount(row.lineTotal)}
-                        </p>
-                      </li>
-                    ))
+                      ))
                     : null}
                 </ul>
 
                 <div className="space-y-3 border-t border-neutral-100 px-5 py-5 sm:px-6">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-neutral-600">Subtotal</span>
-                    <span className="font-semibold tabular-nums text-neutral-950">
+                    <span className="font-semibold text-neutral-950 tabular-nums">
                       {subtotalLabel}
                     </span>
                   </div>
@@ -480,7 +477,7 @@ export function CheckoutPage() {
                     <span className="text-sm font-medium text-neutral-800">
                       Total
                     </span>
-                    <span className="text-lg font-semibold tabular-nums text-neutral-950">
+                    <span className="text-lg font-semibold text-neutral-950 tabular-nums">
                       {subtotalLabel}
                     </span>
                   </div>

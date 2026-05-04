@@ -17,5 +17,5 @@ export const categoryNavItems: CategoryItem[] = SHOP_FILTER_OPTIONS.map(
   (o) => ({
     label: o.label,
     to: shopFilterHref(o.id),
-  }),
+  })
 )

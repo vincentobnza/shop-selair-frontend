@@ -15,7 +15,8 @@ import { BagIcon } from "@phosphor-icons/react"
 import { ProductCard } from "@/components/ProductCard"
 import { ProductSizePicker } from "@/components/ProductSizePicker"
 import { useCartStore } from "@/features/cart/cartStore"
-import { useCatalogProduct, useCatalogProducts } from "@/features/products/queries"
+import { slugifyProductName } from "@/features/products/map"
+import { useCatalogProducts } from "@/features/products/queries"
 import type { CatalogProduct } from "@/features/products/types"
 import { toast } from "sonner"
 import { FaqSection } from "@/components/sections/FaqSection"
@@ -55,7 +56,7 @@ function ProductPurchasePanel({
         <span className="font-heading text-2xl font-bold text-zinc-900 sm:text-3xl">
           {currencyFormatter.format(product.price)}
         </span>
-        <span className="px-2 py-1 text-xs  text-zinc-600 sm:px-3 sm:text-sm">
+        <span className="px-2 py-1 text-xs text-zinc-600 sm:px-3 sm:text-sm">
           {product.duration} day rental
         </span>
       </div>
@@ -71,35 +72,35 @@ function ProductPurchasePanel({
         <ReservationCalendar range={range} setRange={onRangeChange} />
 
         <div className="border border-black bg-zinc-50/70">
-          <div className="grid gap-3 text-sm text-zinc-700 sm:grid-cols-2 p-4">
+          <div className="grid gap-3 p-4 text-sm text-zinc-700 sm:grid-cols-2">
             <div>
-              <p className="text-[10px] text-black font-semibold uppercase">
+              <p className="text-[10px] font-semibold text-black uppercase">
                 Start date
               </p>
-              <p className="font-medium text-sm md:text-base text-zinc-900">
+              <p className="text-sm font-medium text-zinc-900 md:text-base">
                 {range?.from ? format(range.from, "PPP") : "-"}
               </p>
             </div>
             <div>
-              <p className="text-[10px] text-black font-semibold uppercase">
+              <p className="text-[10px] font-semibold text-black uppercase">
                 Return date
               </p>
-              <p className="font-medium text-sm md:text text-zinc-900">
+              <p className="md:text text-sm font-medium text-zinc-900">
                 {range?.to ? format(range.to, "PPP") : "-"}
               </p>
             </div>
           </div>
 
-          <div className="border-t border-black py-2 px-4 bg-white">
+          <div className="border-t border-black bg-white px-4 py-2">
             <div className="flex items-baseline justify-between">
-              <p className="text-[10px] text-zinc-400 font-semibold uppercase">
+              <p className="text-[10px] font-semibold text-zinc-400 uppercase">
                 Rate
               </p>
               <p className="font-heading text-xl font-semibold text-zinc-900">
                 {currencyFormatter.format(totalRate)}
               </p>
             </div>
-            <p className="text-sm md:text-base  font-semibold text-black">
+            <p className="text-sm font-semibold text-black md:text-base">
               {currencyFormatter.format(Math.round(dailyRate))} / day
               {rentalDays
                 ? ` x ${rentalDays} day${rentalDays > 1 ? "s" : ""}`
@@ -116,19 +117,19 @@ function ProductPurchasePanel({
             onClick={() => {
               if (needsSize && !size) {
                 toast.error(
-                  "Please choose a size before reserving or adding to cart.",
+                  "Please choose a size before reserving or adding to cart."
                 )
                 return
               }
               if (!range?.from) {
                 toast.error(
-                  "Please select a start date to proceed with reservation.",
+                  "Please select a start date to proceed with reservation."
                 )
                 return
               }
               if (!range?.to) {
                 toast.error(
-                  "Please select a return date to complete your rental period.",
+                  "Please select a return date to complete your rental period."
                 )
                 return
               }
@@ -159,7 +160,7 @@ function ProductPurchasePanel({
             onClick={() => {
               if (needsSize && !size) {
                 toast.error(
-                  "Please choose a size before reserving or adding to cart.",
+                  "Please choose a size before reserving or adding to cart."
                 )
                 return
               }
@@ -167,9 +168,9 @@ function ProductPurchasePanel({
               const rental =
                 range?.from && range?.to
                   ? {
-                    start: format(range.from, "yyyy-MM-dd"),
-                    end: format(range.to, "yyyy-MM-dd"),
-                  }
+                      start: format(range.from, "yyyy-MM-dd"),
+                      end: format(range.to, "yyyy-MM-dd"),
+                    }
                   : undefined
               void addToCart(String(product.id), 1, size ?? undefined, rental)
                 .then(() => {
@@ -190,9 +191,7 @@ function ProductPurchasePanel({
             )}
           </Button>
         </div>
-
       </div>
-
     </>
   )
 }
@@ -201,14 +200,14 @@ function ProductImageGallery({ product }: { product: CatalogProduct }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const mainSrc =
     product.image[
-    Math.min(activeIndex, Math.max(0, product.image.length - 1))
+      Math.min(activeIndex, Math.max(0, product.image.length - 1))
     ] ?? ""
 
   return (
     <div
       className={cn(
         "flex flex-row items-start gap-3",
-        product.image.length <= 1 && "flex-col",
+        product.image.length <= 1 && "flex-col"
       )}
     >
       {product.image.length > 1 ? (
@@ -226,10 +225,10 @@ function ProductImageGallery({ product }: { product: CatalogProduct }) {
               aria-label={`View ${index + 1}`}
               onClick={() => setActiveIndex(index)}
               className={cn(
-                "mt-0.3 touch-manipulation w-full shrink-0 overflow-hidden border-2 bg-zinc-50 transition-colors cursor-pointer",
+                "mt-0.3 w-full shrink-0 cursor-pointer touch-manipulation overflow-hidden border-2 bg-zinc-50 transition-colors",
                 index === activeIndex
                   ? "border-zinc-200"
-                  : "border-transparent opacity-80 hover:opacity-100 grayscale",
+                  : "border-transparent opacity-80 grayscale hover:opacity-100"
               )}
             >
               <AppImage
@@ -259,19 +258,20 @@ function ProductImageGallery({ product }: { product: CatalogProduct }) {
 }
 
 export function ProductPage() {
-  const { productId } = useParams()
+  const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
-  const {
-    data: product,
-    isPending,
-    isError,
-  } = useCatalogProduct(productId)
-  const { data: catalog = [] } = useCatalogProducts()
+  const { data: catalog = [], isPending, isError } = useCatalogProducts()
+
+  const product = useMemo(
+    () => catalog.find((item) => slugifyProductName(item.name) === slug),
+    [catalog, slug]
+  )
 
   const range = useMemo<DateRange | undefined>(() => {
-    const startDateParam = searchParams.get("startDate") ?? searchParams.get("date")
+    const startDateParam =
+      searchParams.get("startDate") ?? searchParams.get("date")
     const returnDateParam = searchParams.get("returnDate")
 
     const from = startDateParam ? new Date(startDateParam) : undefined
@@ -298,7 +298,7 @@ export function ProductPage() {
 
   const handleRangeChange = (selectedRange: DateRange | undefined) => {
     if (!selectedRange?.from) {
-      navigate(`/products/${productId}`, { replace: true })
+      navigate(`/products/${slug}`, { replace: true })
       return
     }
 
@@ -309,7 +309,7 @@ export function ProductPage() {
       params.set("returnDate", formatDateForURL(selectedRange.to))
     }
 
-    navigate(`/products/${productId}?${params.toString()}`, {
+    navigate(`/products/${slug}?${params.toString()}`, {
       replace: true,
     })
   }
@@ -350,7 +350,9 @@ export function ProductPage() {
           <title>{buildTitle("Product not found")}</title>
         </Helmet>
         <section className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 lg:px-8">
-          <p className="font-heading text-lg text-zinc-900">Product not found</p>
+          <p className="font-heading text-lg text-zinc-900">
+            Product not found
+          </p>
           <Link
             to="/shop"
             className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-900 underline underline-offset-4"
@@ -380,8 +382,7 @@ export function ProductPage() {
         <div className="mb-6 flex items-center justify-between gap-4 sm:mb-8">
           <Link
             to="/shop"
-            className="text-sm font-medium text-zinc-900 transition-colors hover:text-zinc-900 flex items-center gap-2 border-b border-zinc-800 pb-0.5"
-
+            className="flex items-center gap-2 border-b border-zinc-800 pb-0.5 text-sm font-medium text-zinc-900 transition-colors hover:text-zinc-900"
           >
             <BagIcon size={16} weight="bold" />
             Back to shop
@@ -397,7 +398,7 @@ export function ProductPage() {
             <p className="font-heading text-sm font-medium text-zinc-700 uppercase">
               Selair Collection
             </p>
-            <h1 className="mt-3 font-heading text-3xl leading-tight font-medium  text-zinc-900 sm:text-4xl">
+            <h1 className="mt-3 font-heading text-3xl leading-tight font-medium text-zinc-900 sm:text-4xl">
               {product.name}
             </h1>
 
@@ -417,14 +418,18 @@ export function ProductPage() {
             />
           </div>
         </div>
-
       </section>
 
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <h1 className="mb-5 font-heading font-medium text-2xl text-zinc-900">Product Description</h1>
+        <h1 className="mb-5 font-heading text-2xl font-medium text-zinc-900">
+          Product Description
+        </h1>
         <ul className="mt-2">
           {product.description.map((item) => (
-            <li key={item} className="mt-2 ml-4 list-disc text-sm sm:text-base text-zinc-600">
+            <li
+              key={item}
+              className="mt-2 ml-4 list-disc text-sm text-zinc-600 sm:text-base"
+            >
               {item}
             </li>
           ))}
@@ -433,7 +438,7 @@ export function ProductPage() {
 
       <FaqSection />
       {relatedProducts.length > 0 ? (
-        <section className="px-4 py-10 sm:px-6 lg:px-8 mt-16 border-t border-zinc-200 pt-12">
+        <section className="mt-16 border-t border-zinc-200 px-4 py-10 pt-12 sm:px-6 lg:px-8">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-3 sm:gap-4">
             <div>
               <h2 className="font-heading text-2xl text-zinc-900">
@@ -459,10 +464,7 @@ export function ProductPage() {
         </section>
       ) : null}
 
-
-
       {/* FAQ's */}
-
     </main>
   )
 }

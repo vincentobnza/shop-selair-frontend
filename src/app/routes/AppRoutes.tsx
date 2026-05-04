@@ -17,12 +17,15 @@ export function AppRoutes() {
     <Routes>
       <Route element={<AppShell />}>
         <Route index element={<HomePage />} />
-        <Route path="products/:productId" element={<ProductPage />} />
+        <Route path="products/:slug" element={<ProductPage />} />
         <Route path="rent" element={<RentPage />} />
         <Route path="shop" element={<ShopPage />} />
         <Route path="favorites" element={<FavoritesPage />} />
         <Route path="essentials" element={<EssentialsPage />} />
-        <Route path="account" element={<Navigate to="/account/profile" replace />} />
+        <Route
+          path="account"
+          element={<Navigate to="/account/profile" replace />}
+        />
         <Route path="account/:slug" element={<AccountSectionPage />} />
       </Route>
       <Route path="login" element={<LoginPage />} />

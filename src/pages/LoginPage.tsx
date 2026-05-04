@@ -1,13 +1,23 @@
-import { type ChangeEvent, type FormEvent, useState } from "react"
+import {
+  type ChangeEvent,
+  type FormEvent,
+  useId,
+  useState,
+} from "react"
 import { Link } from "react-router-dom"
 
+import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout"
+import { FloatingLabelInput } from "@/components/auth/FloatingLabelInput"
 import { Button } from "@/components/ui/button"
 import { DotPulse } from "@/components/ui/dot-pulse"
-import { Input } from "@/components/ui/input"
 import { useLogin } from "@/features/auth/hooks"
+import { SAMPLE_DATA } from "@/dummy/sampleData"
 
 export function LoginPage() {
   const { run: submitLogin, error, pending, clearError } = useLogin()
+  const emailId = useId()
+  const passwordId = useId()
+  const rememberId = useId()
 
   const [form, setForm] = useState({
     email: "",
@@ -28,70 +38,71 @@ export function LoginPage() {
   }
 
   return (
-    <main className="relative flex min-h-svh items-center justify-center overflow-hidden bg-zinc-950 px-4 py-24">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(244,63,94,0.3),transparent_50%),radial-gradient(circle_at_bottom,rgba(251,146,60,0.25),transparent_45%)]" />
-
-      <section className="relative w-full max-w-md rounded border border-white/10 bg-white/95 p-7 shadow-2xl shadow-black/35 backdrop-blur sm:p-8">
-        <h1 className="mt-2 font-heading text-3xl text-zinc-900">
-          Sign in to Selair
+    <AuthSplitLayout
+      imageSrc={SAMPLE_DATA.HeroSection.sideImageLeft}
+      imageAlt=""
+    >
+      <div className="mt-10 sm:mt-12">
+        <h1 className="text-2xl font-semibold tracking-tight text-neutral-950 sm:text-[1.75rem]">
+          Log in
         </h1>
-        <p className="mt-2 text-sm text-zinc-600">
-          Manage your rentals, orders, and saved essentials in one place.
+        <p className="mt-2 max-w-sm text-base sm:text-lg leading-relaxed text-neutral-600">
+          Welcome back. Sign in to manage rentals and orders.
         </p>
 
-        <form
-          onSubmit={onSubmit}
-          className="auth-form mt-7 space-y-4"
-          autoComplete="off"
-        >
+        <form onSubmit={onSubmit} className="auth-form mt-8 space-y-3">
           {error ? (
             <p
-              className="border border-red-500/10 border-l-2 border-l-red-500 bg-red-50 px-3 py-2 text-sm text-red-600"
+              className="border-l-2 border-red-600 bg-red-50 px-3 py-2.5 text-sm text-red-800"
               role="alert"
             >
               {error}
             </p>
           ) : null}
 
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-zinc-700">Email</span>
-            <Input
-              type="email"
-              name="login-email"
-              value={form.email}
-              onChange={onChange("email")}
-              autoComplete="off"
-              autoCorrect="off"
-              spellCheck={false}
-              required
-              className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
-              placeholder="you@example.com"
-            />
-          </label>
+          <FloatingLabelInput
+            id={emailId}
+            label="Email"
+            type="email"
+            name="login-email"
+            value={form.email}
+            onChange={onChange("email")}
+            autoComplete="email"
+            autoCorrect="off"
+            spellCheck={false}
+            required
+          />
 
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-zinc-700">Password</span>
-            <Input
+          <div className="space-y-2">
+
+            <FloatingLabelInput
+              id={passwordId}
+              label="Password"
               type="password"
               name="login-password"
               value={form.password}
               onChange={onChange("password")}
-              autoComplete="off"
+              autoComplete="current-password"
               required
               minLength={8}
-              className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300"
-              placeholder="Enter your password"
             />
-          </label>
+          </div>
 
-          <label className="flex items-center gap-2 text-sm text-zinc-600">
+          <label
+            htmlFor={rememberId}
+            className="flex cursor-pointer items-center gap-3 text-sm sm:text-base text-neutral-700"
+          >
             <input
+              id={rememberId}
               type="checkbox"
               checked={form.remember}
               onChange={(event) =>
-                setForm((prev) => ({ ...prev, remember: event.target.checked }))
+                setForm((prev) => ({
+                  ...prev,
+                  remember: event.target.checked,
+                }))
               }
-              className="h-4 w-4 rounded border-zinc-300"
+              className="size-4 shrink-0 rounded-sm border-neutral-400 text-neutral-900 focus:ring-neutral-950/20 "
             />
             Keep me signed in
           </label>
@@ -100,23 +111,26 @@ export function LoginPage() {
             type="submit"
             size="lg"
             disabled={pending}
-            className="w-full rounded-xl text-sm"
+            className="h-12 sm:h-14 w-full rounded-full text-base sm:text-lg font-semibold tracking-[0.14em] uppercase"
           >
             {pending ? (
               <DotPulse label="Signing in" className="min-h-[1.25em]" />
             ) : (
-              "Sign in"
+              "Log in"
             )}
           </Button>
         </form>
 
-        <p className="mt-5 text-center text-sm text-zinc-600">
+        <p className="mt-8 text-center text-base sm:text-lg text-neutral-600">
           New to Selair?{" "}
-          <Link to="/signup" className="font-medium text-zinc-900 hover:underline">
-            Create an account
+          <Link
+            to="/signup"
+            className="ml-0.5 font-semibold text-neutral-950 underline-offset-4 hover:underline"
+          >
+            Sign up
           </Link>
         </p>
-      </section>
-    </main>
+      </div>
+    </AuthSplitLayout>
   )
 }
