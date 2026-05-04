@@ -62,6 +62,8 @@ export function ProductCard({
           type="button"
           aria-pressed={saved}
           aria-label={saved ? "Remove from favorites" : "Add to favorites"}
+          title={saved ? "Remove from favorites" : "Add to favorites"}
+          aria-controls="favorite-button"
           className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/70 shadow-sm ring-1 ring-black/2 transition hover:scale-105 active:scale-95 cursor-pointer"
           onClick={(e) => {
             e.preventDefault()

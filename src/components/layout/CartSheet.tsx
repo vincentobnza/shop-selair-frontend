@@ -91,7 +91,6 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
     return formatPhpAmount(apiPesos + guestPesosTotal)
   }, [isAuthenticated, apiCart, guestPesosTotal])
 
-  const authPending = isAuthenticated && apiCart === null
   const showEmptyAuth =
     isAuthenticated &&
     apiCart !== null &&
@@ -101,6 +100,8 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
   const showGuestEmpty = !isAuthenticated && guestLines.length === 0
   const hasBagItems = apiRows.length > 0 || guestRows.length > 0
   const showFullBagEmpty = showEmptyAuth || showGuestEmpty
+
+  const authCartLoading = isAuthenticated && loading
 
   useEffect(() => {
     if (!open) {
@@ -174,160 +175,162 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
             </header>
 
             <div className="flex-1 overflow-y-auto px-4 sm:px-5">
-              {(loading || authPending) && isAuthenticated ? (
-                <div className="min-h-[calc(100vh-250px)] flex items-center justify-center">
+              {authCartLoading ? (
+                <div className="flex min-h-[calc(100vh-250px)] items-center justify-center">
                   <DotPulse size="lg" />
                 </div>
-              ) : null}
+              ) : (
+                <>
+                  {showFullBagEmpty ? (
+                    <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center space-y-4">
+                      <img src={EmptyStateImage} alt="Empty shopping cart" className="mb-8 h-24 w-24 sm:mb-12 md:mb-16" />
+                      <h2 className="font-heading text-center text-sm font-medium text-black sm:text-base md:text-lg">
+                        Looks like your shopping bag is empty.
+                        {!isAuthenticated ? (
+                          <> Sign in to sync your cart across devices.</>
+                        ) : null}
+                      </h2>
+                      <Button variant="outline" className="mt-3 h-11 rounded-full px-8" onClick={handleContinueShopping}>
+                        Continue Shopping
+                      </Button>
+                    </div>
+                  ) : null}
 
-              {showFullBagEmpty ? (
-                <div className="space-y-4 flex flex-col items-center justify-center min-h-[calc(100vh-250px)]">
-                  <img src={EmptyStateImage} alt="Empty shopping cart" className="w-24 h-24 mb-8 sm:mb-12 md:mb-16" />
-                  <h2 className="text-sm sm:text-base md:text-lg font-medium text-black font-heading text-center">
-                    Looks like your shopping bag is empty.
-                    {!isAuthenticated ? (
-                      <> Sign in to sync your cart across devices.</>
-                    ) : null}
-                  </h2>
-                  <Button variant="outline" className="mt-3 h-11 rounded-full px-8" onClick={handleContinueShopping}>
-                    Continue Shopping
-                  </Button>
-                </div>
-              ) : null}
-
-              {isAuthenticated && apiRows.length > 0 ? (
-                <ul className="divide-y divide-black/10">
-                  {apiRows.map((line: ApiCartLine) => {
-                    const resKey = `${line.product_id}::${line.size_label ?? ""}`
-                    const res = reservationByProductKey[resKey]
-                    const name = line.product?.name ?? "Product unavailable"
-                    const unitCents = line.product?.price_cents ?? 0
-                    const cat = catalog.find(
-                      (c) => c.id === String(line.product_id),
-                    )
-                    const img = cat?.image?.[0]
-                    return (
-                      <li key={line.id} className="py-4">
-                        <div className="flex gap-4">
-                          <div className="size-16 shrink-0 overflow-hidden bg-zinc-100 sm:size-20">
-                            {img ? (
-                              <img
-                                src={img}
-                                alt=""
-                                className="size-full object-cover"
-                              />
-                            ) : (
-                              <div className="size-full bg-zinc-200/80" />
-                            )}
-                          </div>
-                          <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
-                            <div>
-                              <p className="text-xs font-medium uppercase text-zinc-500">
-                                {line.size_label
-                                  ? `Size ${line.size_label}`
-                                  : "Shop"}
-                              </p>
-                              <p className="mt-1 text-base font-medium text-zinc-900">
-                                {name}
-                              </p>
-                              <p className="mt-1 text-sm text-zinc-600">
-                                Qty {line.quantity}
-                              </p>
-                              <LineReservationDates
-                                start={res?.start}
-                                end={res?.end}
-                                className="text-zinc-600"
-                              />
-                            </div>
-
-                            <div className="shrink-0 text-right">
-                              <p className="text-base font-medium text-zinc-950 tabular-nums">
-                                {formatPhpFromCents(
-                                  unitCents * line.quantity,
+                  {isAuthenticated && apiRows.length > 0 ? (
+                    <ul className="divide-y divide-black/10">
+                      {apiRows.map((line: ApiCartLine) => {
+                        const resKey = `${line.product_id}::${line.size_label ?? ""}`
+                        const res = reservationByProductKey[resKey]
+                        const name = line.product?.name ?? "Product unavailable"
+                        const unitCents = line.product?.price_cents ?? 0
+                        const cat = catalog.find(
+                          (c) => c.id === String(line.product_id),
+                        )
+                        const img = cat?.image?.[0]
+                        return (
+                          <li key={line.id} className="py-4">
+                            <div className="flex gap-4">
+                              <div className="size-16 shrink-0 overflow-hidden bg-zinc-100 sm:size-20">
+                                {img ? (
+                                  <img
+                                    src={img}
+                                    alt=""
+                                    className="size-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="size-full bg-zinc-200/80" />
                                 )}
-                              </p>
-                              <button
-                                type="button"
-                                className="mt-2 text-xs font-medium text-zinc-500 underline"
-                                onClick={() => void removeApiLine(line.id)}
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </li>
-                    )
-                  })}
-                </ul>
-              ) : null}
+                              </div>
+                              <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
+                                <div>
+                                  <p className="text-xs font-medium uppercase text-zinc-500">
+                                    {line.size_label
+                                      ? `Size ${line.size_label}`
+                                      : "Shop"}
+                                  </p>
+                                  <p className="mt-1 text-base font-medium text-zinc-900">
+                                    {name}
+                                  </p>
+                                  <p className="mt-1 text-sm text-zinc-600">
+                                    Qty {line.quantity}
+                                  </p>
+                                  <LineReservationDates
+                                    start={res?.start}
+                                    end={res?.end}
+                                    className="text-zinc-600"
+                                  />
+                                </div>
 
-              {guestRows.length > 0 ? (
-                <div
-                  className={
-                    isAuthenticated && apiRows.length > 0
-                      ? "mt-6 border-t border-black/10 pt-6"
-                      : ""
-                  }
-                >
-
-                  <ul className="divide-y divide-black/10">
-                    {guestRows.map((row) => (
-                      <li key={row.key} className="py-4">
-                        <div className="flex gap-4">
-                          <div className="size-16 shrink-0 overflow-hidden bg-zinc-100 sm:size-20">
-                            {row.imageUrl ? (
-                              <img
-                                src={row.imageUrl}
-                                alt=""
-                                className="size-full object-cover"
-                              />
-                            ) : (
-                              <div className="size-full bg-zinc-200/80" />
-                            )}
-                          </div>
-                          <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
-                            <div>
-                              <p className="text-xs font-medium uppercase text-zinc-500">
-                                {row.subtitle}
-                              </p>
-                              <p className="mt-1 text-base font-medium text-zinc-900">
-                                {row.title}
-                              </p>
-                              <p className="mt-1 text-sm text-zinc-600">
-                                Qty {row.quantity}
-                              </p>
-                              <LineReservationDates
-                                start={row.rentalStart}
-                                end={row.rentalEnd}
-                                className="text-zinc-600"
-                              />
+                                <div className="shrink-0 text-right">
+                                  <p className="text-base font-medium text-zinc-950 tabular-nums">
+                                    {formatPhpFromCents(
+                                      unitCents * line.quantity,
+                                    )}
+                                  </p>
+                                  <button
+                                    type="button"
+                                    className="mt-2 text-xs font-medium text-zinc-500 underline"
+                                    onClick={() => void removeApiLine(line.id)}
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
+                              </div>
                             </div>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  ) : null}
 
-                            <div className="shrink-0 text-right">
-                              <p className="text-base font-medium tabular-nums text-zinc-950">
-                                {formatPhpAmount(row.lineTotal)}
-                              </p>
-                              <button
-                                type="button"
-                                className="mt-2 text-xs font-medium text-zinc-500 underline"
-                                onClick={() =>
-                                  removeGuestLine(row.productId, row.size)
-                                }
-                              >
-                                Remove
-                              </button>
+                  {guestRows.length > 0 ? (
+                    <div
+                      className={
+                        isAuthenticated && apiRows.length > 0
+                          ? "mt-6 border-t border-black/10 pt-6"
+                          : ""
+                      }
+                    >
+
+                      <ul className="divide-y divide-black/10">
+                        {guestRows.map((row) => (
+                          <li key={row.key} className="py-4">
+                            <div className="flex gap-4">
+                              <div className="size-16 shrink-0 overflow-hidden bg-zinc-100 sm:size-20">
+                                {row.imageUrl ? (
+                                  <img
+                                    src={row.imageUrl}
+                                    alt=""
+                                    className="size-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="size-full bg-zinc-200/80" />
+                                )}
+                              </div>
+                              <div className="flex min-w-0 flex-1 items-start justify-between gap-3">
+                                <div>
+                                  <p className="text-xs font-medium uppercase text-zinc-500">
+                                    {row.subtitle}
+                                  </p>
+                                  <p className="mt-1 text-base font-medium text-zinc-900">
+                                    {row.title}
+                                  </p>
+                                  <p className="mt-1 text-sm text-zinc-600">
+                                    Qty {row.quantity}
+                                  </p>
+                                  <LineReservationDates
+                                    start={row.rentalStart}
+                                    end={row.rentalEnd}
+                                    className="text-zinc-600"
+                                  />
+                                </div>
+
+                                <div className="shrink-0 text-right">
+                                  <p className="text-base font-medium tabular-nums text-zinc-950">
+                                    {formatPhpAmount(row.lineTotal)}
+                                  </p>
+                                  <button
+                                    type="button"
+                                    className="mt-2 text-xs font-medium text-zinc-500 underline"
+                                    onClick={() =>
+                                      removeGuestLine(row.productId, row.size)
+                                    }
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                </>
+              )}
             </div>
 
-            {hasBagItems ? (
+            {hasBagItems && !authCartLoading ? (
               <footer className="border-t border-black/10 px-4 py-4 sm:px-5">
                 <div className="mb-4 flex items-center justify-between">
                   <p className="text-sm text-zinc-600">Subtotal</p>
