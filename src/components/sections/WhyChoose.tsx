@@ -1,10 +1,10 @@
 import {
   CheckCircleIcon,
   SparkleIcon,
-  Wallet,
-  Leaf,
-  Package,
-  Palette,
+  WalletIcon,
+  LeafIcon,
+  PackageIcon,
+  PaletteIcon,
 } from "@phosphor-icons/react"
 
 const features = [
@@ -18,25 +18,25 @@ const features = [
     title: "Affordable Access",
     description:
       "Enjoy premium fashion at a fraction of the retail price through our rental model.",
-    icon: Wallet,
+    icon: WalletIcon,
   },
   {
     title: "Sustainable Fashion",
     description:
       "Make conscious choices by reducing fashion waste and extending garment lifecycles.",
-    icon: Leaf,
+    icon: LeafIcon,
   },
   {
     title: "Convenient Delivery",
     description:
       "Fast, reliable shipping with seamless returns directly to your doorstep.",
-    icon: Package,
+    icon: PackageIcon,
   },
   {
     title: "Expert Styling",
     description:
       "Get personalized recommendations from our team of fashion enthusiasts.",
-    icon: Palette,
+    icon: PaletteIcon,
   },
   {
     title: "Quality Guarantee",

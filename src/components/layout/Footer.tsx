@@ -1,5 +1,9 @@
 import { Link } from "react-router-dom"
-import { InstagramLogo, FacebookLogo, TwitterLogo } from "@phosphor-icons/react"
+import {
+  InstagramLogoIcon,
+  FacebookLogoIcon,
+  TwitterLogoIcon,
+} from "@phosphor-icons/react"
 
 import { Button } from "@/components/ui/button"
 
@@ -25,21 +29,21 @@ export function Footer() {
                 href="#"
                 className="text-zinc-600 hover:text-zinc-900"
               >
-                <InstagramLogo size={20} />
+                <InstagramLogoIcon size={20} />
               </a>
               <a
                 aria-label="Facebook"
                 href="#"
                 className="text-zinc-600 hover:text-zinc-900"
               >
-                <FacebookLogo size={20} />
+                <FacebookLogoIcon size={20} />
               </a>
               <a
                 aria-label="Twitter"
                 href="#"
                 className="text-zinc-600 hover:text-zinc-900"
               >
-                <TwitterLogo size={20} />
+                <TwitterLogoIcon size={20} />
               </a>
             </div>
           </div>
