@@ -15,13 +15,7 @@ function heroRoute(pathname: string): "home" | "rent" | "essentials" {
   return "home"
 }
 
-function SideImage({
-  src,
-  priority,
-}: {
-  src: string
-  priority?: boolean
-}) {
+function SideImage({ src, priority }: { src: string; priority?: boolean }) {
   return (
     <div className="h-[min(70vh,34rem)] w-full min-w-0 overflow-hidden rounded bg-neutral-100 xl:h-[min(75vh,38rem)]">
       <AppImage
@@ -40,22 +34,17 @@ export function HeroSection() {
 
   const eyebrow =
     route === "rent" ? "Formal moments made effortless" : undefined
-  const title =
-    route === "rent"
-      ? "Rent With Confidence"
-      : defaults.title
+  const title = route === "rent" ? "Rent With Confidence" : defaults.title
   const description =
     route === "rent"
       ? "Find polished formal wear for graduations, ceremonies, and special events with a smooth booking experience."
       : defaults.description
 
-  const ctaLabel =
-    route === "rent" ? "Browse Rentals" : defaults.ctaLabel
+  const ctaLabel = route === "rent" ? "Browse Rentals" : defaults.ctaLabel
   const ctaTo = route === "rent" ? "/rent" : "/shop"
   const secondaryCtaLabel =
     route === "rent" ? "Shop essentials" : defaults.ctaSecondaryLabel
-  const secondaryCtaTo =
-    route === "rent" ? "/shop" : defaults.ctaSecondaryTo
+  const secondaryCtaTo = route === "rent" ? "/shop" : defaults.ctaSecondaryTo
 
   const dressingFor = route === "home"
   const pickerCtaLabel = "Browse All Styles"
@@ -71,7 +60,7 @@ export function HeroSection() {
           {eyebrow}
         </p>
       ) : null}
-      <h1 className="font-heading mx-auto max-w-3xl text-[1.75rem] leading-snug text-neutral-900 sm:text-4xl md:text-5xl lg:text-6xl xl:text-[3.5rem] xl:leading-tight">
+      <h1 className="mx-auto max-w-3xl font-heading text-[1.75rem] leading-snug text-neutral-900 sm:text-4xl md:text-5xl lg:text-6xl xl:text-[3.5rem] xl:leading-tight">
         {title}
       </h1>
       <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-black sm:text-base">
@@ -80,20 +69,20 @@ export function HeroSection() {
 
       <div
         className={cn(
-          "mx-auto mt-8 flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center sm:gap-4",
+          "mx-auto mt-8 flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center sm:gap-4"
         )}
       >
         <Button
           variant="pill"
           asChild
-          className="h-11 w-full px-6 text-sm sm:text-base md:text-lg tracking-tighter font-medium touch-manipulation sm:h-auto sm:min-w-40 sm:w-auto sm:py-3"
+          className="h-11 w-full touch-manipulation px-6 font-heading text-sm font-medium tracking-tighter sm:h-auto sm:w-auto sm:min-w-40 sm:py-3 sm:text-base md:text-lg lg:text-xl"
         >
           <Link to={ctaTo}>{ctaLabel}</Link>
         </Button>
         <Button
           variant="outline"
           asChild
-          className="h-11 w-full rounded-full  px-6 text-sm sm:text-base md:text-lg tracking-tighter font-medium touch-manipulation sm:h-auto sm:min-w-40 sm:w-auto sm:py-3"
+          className="h-11 w-full touch-manipulation rounded-full px-6 font-heading text-sm font-medium tracking-tighter sm:h-auto sm:w-auto sm:min-w-40 sm:py-3 sm:text-base md:text-lg lg:text-xl"
         >
           <Link to={secondaryCtaTo}>{secondaryCtaLabel}</Link>
         </Button>
@@ -111,7 +100,7 @@ export function HeroSection() {
                 "grid gap-8 lg:items-center lg:gap-10 xl:gap-14",
                 dressingFor
                   ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,min(44rem,100%))_minmax(0,1fr)]"
-                  : "lg:grid-cols-[minmax(0,1fr)_minmax(0,38rem)_minmax(0,1fr)]",
+                  : "lg:grid-cols-[minmax(0,1fr)_minmax(0,38rem)_minmax(0,1fr)]"
               )}
             >
               <div className="hidden min-w-0 lg:block">
@@ -135,7 +124,7 @@ export function HeroSection() {
           <div
             className={cn(
               "text-center",
-              dressingFor ? "mx-auto max-w-4xl" : "mx-auto max-w-3xl",
+              dressingFor ? "mx-auto max-w-4xl" : "mx-auto max-w-3xl"
             )}
           >
             {mainCopy}

@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
 import * as cartApi from "@/features/cart/api"
+import * as reservationsApi from "@/features/reservations/api"
 import type { CartPayload } from "@/features/cart/types"
 import { ApiError } from "@/features/auth/errors"
 import { useAuthStore } from "@/features/auth/store"
@@ -27,7 +28,7 @@ function mergeGuestLines(
   productId: string,
   qty: number,
   size = "",
-  rental?: RentalWindow,
+  rental?: RentalWindow
 ): GuestCartLine[] {
   const next = [...lines]
   const i = next.findIndex((l) => lineMatch(l, productId, size))
@@ -35,18 +36,14 @@ function mergeGuestLines(
     next[i] = {
       ...next[i],
       quantity: next[i].quantity + qty,
-      ...(rental
-        ? { rentalStart: rental.start, rentalEnd: rental.end }
-        : {}),
+      ...(rental ? { rentalStart: rental.start, rentalEnd: rental.end } : {}),
     }
   } else {
     next.push({
       productId,
       quantity: qty,
       size,
-      ...(rental
-        ? { rentalStart: rental.start, rentalEnd: rental.end }
-        : {}),
+      ...(rental ? { rentalStart: rental.start, rentalEnd: rental.end } : {}),
     })
   }
   return next
@@ -63,7 +60,7 @@ type CartState = {
     productId: string,
     quantity?: number,
     size?: string,
-    rental?: RentalWindow,
+    rental?: RentalWindow
   ) => Promise<void>
   updateApiLine: (cartItemId: number, quantity: number) => Promise<void>
   removeApiLine: (cartItemId: number) => Promise<void>
@@ -97,8 +94,7 @@ export const useCartStore = create<CartState>()(
             const nextRes = { ...s.reservationByProductKey }
             for (const k of Object.keys(nextRes)) {
               const inApi = data.items.some(
-                (item) =>
-                  `${item.product_id}::${item.size_label ?? ""}` === k,
+                (item) => `${item.product_id}::${item.size_label ?? ""}` === k
               )
               if (!inApi) delete nextRes[k]
             }
@@ -113,7 +109,7 @@ export const useCartStore = create<CartState>()(
         productId: string,
         quantity = 1,
         size?: string,
-        rental?: RentalWindow,
+        rental?: RentalWindow
       ) => {
         const token = useAuthStore.getState().token
         const qty = Math.max(1, quantity)
@@ -129,18 +125,52 @@ export const useCartStore = create<CartState>()(
         const sizeKey = size ?? ""
 
         if (token) {
-          await cartApi.addCartItem(pid, qty, sizeKey || undefined)
-          await get().load()
-          if (rental?.start && rental?.end) {
-            set((s) => ({
-              reservationByProductKey: {
-                ...s.reservationByProductKey,
-                [`${productId}::${sizeKey}`]: {
-                  start: rental.start,
-                  end: rental.end,
-                },
-              },
-            }))
+          try {
+            await cartApi.addCartItem(pid, qty, sizeKey || undefined)
+            await get().load()
+            if (rental?.start && rental?.end) {
+              try {
+                await reservationsApi.createReservation({
+                  product_id: pid,
+                  quantity: qty,
+                  size: sizeKey || undefined,
+                  rental_start: rental.start,
+                  rental_end: rental.end,
+                })
+                set((s) => ({
+                  reservationByProductKey: {
+                    ...s.reservationByProductKey,
+                    [`${productId}::${sizeKey}`]: {
+                      start: rental.start,
+                      end: rental.end,
+                    },
+                  },
+                }))
+              } catch (e) {
+                // If reservation creation fails with validation (e.g. 422 availability),
+                // fall back to adding the guest line locally so user still sees the item.
+                if (e instanceof ApiError && e.status === 422) {
+                  set((s) => ({
+                    guestLines: mergeGuestLines(
+                      s.guestLines,
+                      productId,
+                      qty,
+                      sizeKey,
+                      rental
+                    ),
+                  }))
+                  return
+                }
+                throw e
+              }
+            }
+          } catch (err) {
+            // Preserve existing behavior: if adding to cart fails with validation,
+            // rethrow so UI can handle it.
+            if (err instanceof ApiError && err.status === 422) {
+              throw err
+            }
+            throw err
           }
           return
         }
@@ -151,7 +181,7 @@ export const useCartStore = create<CartState>()(
             productId,
             qty,
             sizeKey,
-            rental,
+            rental
           ),
         }))
       },
@@ -173,14 +203,16 @@ export const useCartStore = create<CartState>()(
         }
         set((s) => ({
           guestLines: s.guestLines.map((l) =>
-            lineMatch(l, productId, size) ? { ...l, quantity } : l,
+            lineMatch(l, productId, size) ? { ...l, quantity } : l
           ),
         }))
       },
 
       removeGuestLine: (productId: string, size = "") => {
         set((s) => ({
-          guestLines: s.guestLines.filter((l) => !lineMatch(l, productId, size)),
+          guestLines: s.guestLines.filter(
+            (l) => !lineMatch(l, productId, size)
+          ),
         }))
       },
 
@@ -197,8 +229,8 @@ export const useCartStore = create<CartState>()(
         guestLines: s.guestLines,
         reservationByProductKey: s.reservationByProductKey,
       }),
-    },
-  ),
+    }
+  )
 )
 
 export function useCartItemCount(): number {

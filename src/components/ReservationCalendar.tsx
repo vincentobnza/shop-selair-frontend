@@ -11,13 +11,28 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
+import { useMemo } from "react"
+import { useReservationsByProduct } from "@/features/reservations/queries"
+
 export function ReservationCalendar({
   range,
   setRange,
+  productId,
 }: {
   range: DateRange | undefined
   setRange: (range: DateRange | undefined) => void
+  productId?: string | number
 }) {
+  const { data: reservations = [] } = useReservationsByProduct(
+    productId ? String(productId) : undefined
+  )
+
+  const disabled = useMemo(() => {
+    return reservations.map((r) => ({
+      from: new Date(r.rentalStart),
+      to: new Date(r.rentalEnd),
+    }))
+  }, [reservations])
   const now = new Date()
   const startMonth = new Date(now.getFullYear(), now.getMonth(), 1)
   const endMonth = new Date(now.getFullYear() + 2, 11, 1)
@@ -46,7 +61,10 @@ export function ReservationCalendar({
           <CalendarDotsIcon data-icon="inline-end" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[calc(100vw-2rem)] p-0 sm:w-auto" align="center">
+      <PopoverContent
+        className="w-[calc(100vw-2rem)] p-0 sm:w-auto"
+        align="center"
+      >
         <Calendar
           mode="range"
           selected={range}
@@ -56,6 +74,7 @@ export function ReservationCalendar({
           captionLayout="dropdown"
           startMonth={startMonth}
           endMonth={endMonth}
+          disabled={disabled}
         />
       </PopoverContent>
     </Popover>

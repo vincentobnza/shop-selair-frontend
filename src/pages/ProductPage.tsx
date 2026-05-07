@@ -70,7 +70,11 @@ function ProductPurchasePanel({
       />
 
       <div className="mt-6 flex flex-col gap-2 sm:mt-8">
-        <ReservationCalendar range={range} setRange={onRangeChange} />
+        <ReservationCalendar
+          productId={product.id}
+          range={range}
+          setRange={onRangeChange}
+        />
 
         <div className="border border-black bg-zinc-50/70">
           <div className="grid gap-3 p-4 text-sm text-zinc-700 sm:grid-cols-2">
