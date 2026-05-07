@@ -117,38 +117,30 @@ export const useCartStore = create<CartState>()(
       ) => {
         const token = useAuthStore.getState().token
         const qty = Math.max(1, quantity)
-        const pid = Number(productId)
+        const pid = productId.trim()
+        if (pid === "") {
+          throw new ApiError(422, {
+            message: "Invalid product id.",
+            errors: {
+              product_id: ["Invalid product id."],
+            },
+          })
+        }
         const sizeKey = size ?? ""
 
         if (token) {
-          try {
-            await cartApi.addCartItem(pid, qty, sizeKey || undefined)
-            await get().load()
-            if (rental?.start && rental?.end) {
-              set((s) => ({
-                reservationByProductKey: {
-                  ...s.reservationByProductKey,
-                  [`${productId}::${sizeKey}`]: {
-                    start: rental.start,
-                    end: rental.end,
-                  },
+          await cartApi.addCartItem(pid, qty, sizeKey || undefined)
+          await get().load()
+          if (rental?.start && rental?.end) {
+            set((s) => ({
+              reservationByProductKey: {
+                ...s.reservationByProductKey,
+                [`${productId}::${sizeKey}`]: {
+                  start: rental.start,
+                  end: rental.end,
                 },
-              }))
-            }
-          } catch (e) {
-            if (e instanceof ApiError && e.status === 422) {
-              set((s) => ({
-                guestLines: mergeGuestLines(
-                  s.guestLines,
-                  productId,
-                  qty,
-                  sizeKey,
-                  rental,
-                ),
-              }))
-              return
-            }
-            throw e
+              },
+            }))
           }
           return
         }

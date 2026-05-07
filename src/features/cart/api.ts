@@ -10,7 +10,7 @@ export async function fetchCart(): Promise<CartPayload> {
 }
 
 export async function addCartItem(
-  productId: number,
+  productId: number | string,
   quantity = 1,
   size?: string,
 ): Promise<ApiCartLine> {

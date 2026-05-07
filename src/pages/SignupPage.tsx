@@ -54,10 +54,10 @@ export function SignupPage() {
       imageAlt=""
     >
       <div className="mt-10 sm:mt-12">
-        <h1 className="text-2xl font-semibold tracking-tight text-neutral-950 sm:text-[1.75rem]">
+        <h1 className="font-heading text-2xl font-semibold tracking-tight text-neutral-950 sm:text-3xl md:text-4xl">
           Sign up
         </h1>
-        <p className="mt-2 max-w-sm text-base sm:text-lg leading-relaxed text-neutral-600">
+        <p className="mt-2 max-w-sm text-base leading-relaxed text-neutral-600 sm:text-lg">
           Create an account to save favorites and check out faster.
         </p>
 
@@ -133,7 +133,7 @@ export function SignupPage() {
             minLength={8}
           />
 
-          <p className="text-sm sm:text-base leading-relaxed text-neutral-500">
+          <p className="text-sm leading-relaxed text-neutral-500 sm:text-base">
             By signing up, you agree to our terms and privacy practices.
           </p>
 
@@ -141,7 +141,7 @@ export function SignupPage() {
             type="submit"
             size="lg"
             disabled={pending}
-            className="h-12 sm:h-14 w-full rounded-full text-base sm:text-lg font-semibold tracking-[0.14em] uppercase"
+            className="h-12 w-full rounded-full text-base font-semibold tracking-[0.14em] uppercase sm:h-14 sm:text-lg"
           >
             {pending ? (
               <DotPulse label="Creating account" className="min-h-[1.25em]" />
@@ -151,7 +151,7 @@ export function SignupPage() {
           </Button>
         </form>
 
-        <p className="mt-8 text-center text-base sm:text-lg text-neutral-600">
+        <p className="mt-8 text-center text-base text-neutral-600 sm:text-lg">
           Already have an account?{" "}
           <Link
             to="/login"

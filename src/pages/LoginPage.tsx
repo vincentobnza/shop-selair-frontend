@@ -1,9 +1,4 @@
-import {
-  type ChangeEvent,
-  type FormEvent,
-  useId,
-  useState,
-} from "react"
+import { type ChangeEvent, type FormEvent, useId, useState } from "react"
 import { Link } from "react-router-dom"
 
 import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout"
@@ -26,11 +21,10 @@ export function LoginPage() {
   })
 
   const onChange =
-    (field: "email" | "password") =>
-      (event: ChangeEvent<HTMLInputElement>) => {
-        setForm((prev) => ({ ...prev, [field]: event.target.value }))
-        clearError()
-      }
+    (field: "email" | "password") => (event: ChangeEvent<HTMLInputElement>) => {
+      setForm((prev) => ({ ...prev, [field]: event.target.value }))
+      clearError()
+    }
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -43,10 +37,10 @@ export function LoginPage() {
       imageAlt=""
     >
       <div className="mt-10 sm:mt-12">
-        <h1 className="text-2xl font-semibold tracking-tight text-neutral-950 sm:text-[1.75rem]">
+        <h1 className="font-heading text-2xl font-semibold tracking-tight text-neutral-950 sm:text-3xl md:text-4xl">
           Log in
         </h1>
-        <p className="mt-2 max-w-sm text-base sm:text-lg leading-relaxed text-neutral-600">
+        <p className="mt-2 max-w-sm text-base leading-relaxed text-neutral-600 sm:text-lg">
           Welcome back. Sign in to manage rentals and orders.
         </p>
 
@@ -74,7 +68,6 @@ export function LoginPage() {
           />
 
           <div className="space-y-2">
-
             <FloatingLabelInput
               id={passwordId}
               label="Password"
@@ -90,7 +83,7 @@ export function LoginPage() {
 
           <label
             htmlFor={rememberId}
-            className="flex cursor-pointer items-center gap-3 text-sm sm:text-base text-neutral-700"
+            className="flex cursor-pointer items-center gap-3 text-sm text-neutral-700 sm:text-base"
           >
             <input
               id={rememberId}
@@ -102,7 +95,7 @@ export function LoginPage() {
                   remember: event.target.checked,
                 }))
               }
-              className="size-4 shrink-0 rounded-sm border-neutral-400 text-neutral-900 focus:ring-neutral-950/20 "
+              className="size-4 shrink-0 rounded-sm border-neutral-400 text-neutral-900 focus:ring-neutral-950/20"
             />
             Keep me signed in
           </label>
@@ -111,7 +104,7 @@ export function LoginPage() {
             type="submit"
             size="lg"
             disabled={pending}
-            className="h-12 sm:h-14 w-full rounded-full text-base sm:text-lg font-semibold tracking-[0.14em] uppercase"
+            className="h-12 w-full rounded-full text-base font-semibold tracking-[0.14em] uppercase sm:h-14 sm:text-lg"
           >
             {pending ? (
               <DotPulse label="Signing in" className="min-h-[1.25em]" />
@@ -121,7 +114,7 @@ export function LoginPage() {
           </Button>
         </form>
 
-        <p className="mt-8 text-center text-base sm:text-lg text-neutral-600">
+        <p className="mt-8 text-center text-base text-neutral-600 sm:text-lg">
           New to Selair?{" "}
           <Link
             to="/signup"

@@ -18,6 +18,7 @@ import { useCartStore } from "@/features/cart/cartStore"
 import { slugifyProductName } from "@/features/products/map"
 import { useCatalogProducts } from "@/features/products/queries"
 import type { CatalogProduct } from "@/features/products/types"
+import { toUserMessage } from "@/features/auth/errors"
 import { toast } from "sonner"
 import { FaqSection } from "@/components/sections/FaqSection"
 
@@ -144,8 +145,8 @@ function ProductPurchasePanel({
                     description: "Item added to cart successfully",
                   })
                 })
-                .catch(() => {
-                  toast.error("Could not add to cart")
+                .catch((error: unknown) => {
+                  toast.error(toUserMessage(error))
                 })
                 .finally(() => setAddingCart(false))
             }}
@@ -178,8 +179,8 @@ function ProductPurchasePanel({
                     description: "Item added to cart successfully",
                   })
                 })
-                .catch(() => {
-                  toast.error("Could not add to cart")
+                .catch((error: unknown) => {
+                  toast.error(toUserMessage(error))
                 })
                 .finally(() => setAddingCart(false))
             }}
