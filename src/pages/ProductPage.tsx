@@ -14,6 +14,8 @@ import { BagIcon } from "@phosphor-icons/react"
 
 import { ProductCard } from "@/components/ProductCard"
 import { ProductSizePicker } from "@/components/ProductSizePicker"
+import { ReviewsSection } from "@/components/product/ReviewsSection"
+import { StarRating } from "@/components/StarRating"
 import { useCartStore } from "@/features/cart/cartStore"
 import { slugifyProductName } from "@/features/products/map"
 import { useCatalogProducts } from "@/features/products/queries"
@@ -407,6 +409,18 @@ export function ProductPage() {
               {product.name}
             </h1>
 
+            {product.ratingCount > 0 ? (
+              <div className="mt-3 flex items-center gap-2">
+                <StarRating value={product.ratingAvg} size={16} />
+                <span className="text-sm font-medium text-zinc-900">
+                  {product.ratingAvg.toFixed(1)}
+                </span>
+                <span className="text-sm text-zinc-500">
+                  ({product.ratingCount} {product.ratingCount === 1 ? "review" : "reviews"})
+                </span>
+              </div>
+            ) : null}
+
             <p className="mt-4 max-w-xl text-base leading-7 text-zinc-600">
               A refined rental piece selected for modern occasions, designed to
               feel polished, effortless, and elegant.
@@ -440,6 +454,8 @@ export function ProductPage() {
           ))}
         </ul>
       </div>
+
+      <ReviewsSection productId={product.id} />
 
       <FaqSection />
       {relatedProducts.length > 0 ? (

@@ -13,6 +13,9 @@ export type ApiProductRow = {
   price_cents: number
   stock: number
   is_active: boolean
+  /** Aggregate review rating (0 when no reviews). Added by the marketplace API. */
+  rating_avg?: number
+  rating_count?: number
 }
 
 /** Normalized for UI (cards, filters, cart guest lines). */
@@ -26,4 +29,6 @@ export type CatalogProduct = {
   description: string[]
   shopTags: string[]
   sizes: { label: string; available: boolean }[]
+  ratingAvg: number
+  ratingCount: number
 }

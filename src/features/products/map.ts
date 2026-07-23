@@ -21,5 +21,7 @@ export function toCatalogProduct(row: ApiProductRow): CatalogProduct {
     description: row.highlights ?? [],
     shopTags: row.shop_tags ?? [],
     sizes: row.sizes ?? [],
+    ratingAvg: row.rating_avg ?? 0,
+    ratingCount: row.rating_count ?? 0,
   }
 }

@@ -2,6 +2,7 @@ import { HeartIcon } from "@phosphor-icons/react"
 import { Link } from "react-router-dom"
 
 import type { ShopProduct } from "@/components/shop/shop-filters"
+import { StarRating } from "@/components/StarRating"
 import { AppImage } from "@/components/ui/app-image"
 import { useFavorite } from "@/features/favorites/useFavorite"
 import { slugifyProductName } from "@/features/products/map"
@@ -135,6 +136,12 @@ export function ProductCard({
             currencyFormatter.format(product.price)
           )}
         </p>
+        {product.ratingCount > 0 ? (
+          <div className="mt-1 flex items-center gap-1">
+            <StarRating value={product.ratingAvg} size={12} />
+            <span className="text-xs text-zinc-500">({product.ratingCount})</span>
+          </div>
+        ) : null}
       </Link>
     </article>
   )

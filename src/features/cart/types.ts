@@ -3,6 +3,7 @@ export type ApiProduct = {
   name: string
   sku: string
   description?: string | null
+  images?: string[] | null
   price_cents: number
   stock: number
   is_active: boolean

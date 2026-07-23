@@ -76,13 +76,14 @@ export function Navbar() {
                 className="hidden h-3 w-px shrink-0 bg-neutral-300 sm:block"
               />
               <Button
-                type="button"
+                asChild
                 variant="ghost"
                 size="icon"
-                aria-label="Search"
                 className="hidden h-9 w-9 shrink-0 rounded-full text-black sm:inline-flex sm:h-10 sm:w-10"
               >
-                <MagnifyingGlassIcon size={22} weight="regular" />
+                <Link to="/search" aria-label="Search">
+                  <MagnifyingGlassIcon size={22} weight="regular" />
+                </Link>
               </Button>
 
               <Button
@@ -198,13 +199,14 @@ export function Navbar() {
                   {utilityLinks.howItWorks.label}
                 </Link>
                 <Button
-                  type="button"
+                  asChild
                   variant="ghost"
-                  aria-label="Search"
                   className="h-auto justify-start gap-2 px-0 py-1 font-normal text-black hover:bg-transparent"
                 >
-                  <MagnifyingGlassIcon size={20} weight="regular" />
-                  Search
+                  <Link to="/search" aria-label="Search" onClick={() => setMenuOpen(false)}>
+                    <MagnifyingGlassIcon size={20} weight="regular" />
+                    Search
+                  </Link>
                 </Button>
                 <div className="flex flex-wrap gap-2 border-t border-neutral-100 pt-3">
                   {isAuthenticated ? (
