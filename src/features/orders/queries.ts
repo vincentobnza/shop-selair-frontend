@@ -35,6 +35,17 @@ export function useCreateOrder() {
   })
 }
 
+export function useConfirmReceipt() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => ordersApi.confirmOrderReceived(id),
+    onSuccess: (order: Order) => {
+      qc.invalidateQueries({ queryKey: orderKeys.list() })
+      qc.setQueryData(orderKeys.detail(order.id), order)
+    },
+  })
+}
+
 export function useCancelOrder() {
   const qc = useQueryClient()
   return useMutation({

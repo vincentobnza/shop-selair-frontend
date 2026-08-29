@@ -7,10 +7,14 @@ import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
 import { DotPulse } from "@/components/ui/dot-pulse"
 import { toUserMessage } from "@/features/auth/errors"
-import { useCancelOrder, useOrder } from "@/features/orders/queries"
 import {
+  useCancelOrder,
+  useConfirmReceipt,
+  useOrder,
+} from "@/features/orders/queries"
+import {
+  buyerCan,
   formatDate,
-  isCancellable,
   paymentMethodLabel,
   PAYMENT_STATUS_LABEL,
 } from "@/features/orders/status"
@@ -40,6 +44,7 @@ export function OrderDetailPage() {
 
   const { data: order, isLoading, isError } = useOrder(id)
   const cancel = useCancelOrder()
+  const confirmReceipt = useConfirmReceipt()
 
   if (isLoading) {
     return (
@@ -58,6 +63,14 @@ export function OrderDetailPage() {
         </Button>
       </div>
     )
+  }
+
+  const onConfirmReceipt = () => {
+    if (!order) return
+    confirmReceipt.mutate(order.id, {
+      onSuccess: () => toast.success("Thanks — marked as received."),
+      onError: (e) => toast.error(toUserMessage(e)),
+    })
   }
 
   const onCancel = () => {
@@ -120,7 +133,8 @@ export function OrderDetailPage() {
                   ) : null}
                   {item.rental_start && item.rental_end ? (
                     <p className="mt-0.5 text-base text-ink-soft">
-                      Rental {item.rental_start} → {item.rental_end}
+                      Rental {formatDate(item.rental_start)} →{" "}
+                      {formatDate(item.rental_end)}
                     </p>
                   ) : null}
                   <p className="mt-1 text-base text-ink-soft">
@@ -192,7 +206,26 @@ export function OrderDetailPage() {
               </p>
             ) : null}
           </div>
-          {isCancellable(order.status) ? (
+          {buyerCan(order, "completed") ? (
+            <div className="rounded-sm bg-white p-5">
+              <h3 className="text-base font-medium text-ink">
+                Has it arrived?
+              </h3>
+              <p className="mt-1 text-base text-ink-soft">
+                Confirming closes the order. Do this once the pieces are in your
+                hands.
+              </p>
+              <Button
+                variant="pill"
+                onClick={onConfirmReceipt}
+                disabled={confirmReceipt.isPending}
+                className="mt-4 w-full"
+              >
+                {confirmReceipt.isPending ? "Confirming…" : "Mark as received"}
+              </Button>
+            </div>
+          ) : null}
+          {buyerCan(order, "cancelled") ? (
             <Button
               variant="outline"
               onClick={onCancel}

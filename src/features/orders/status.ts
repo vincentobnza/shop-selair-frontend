@@ -1,4 +1,4 @@
-import type { OrderStatus, PaymentStatus } from "./types"
+import type { Order, OrderStatus, PaymentStatus } from "./types"
 
 export const ORDER_STATUS_META: Record<
   OrderStatus,
@@ -30,6 +30,19 @@ export const ORDER_STATUS_META: Record<
   },
 }
 
+/**
+ * Lifecycle order, oldest state first — drives the order-history filter tabs
+ * so they always read in the order an order actually moves through.
+ */
+export const ORDER_STATUS_ORDER: OrderStatus[] = [
+  "pending",
+  "paid",
+  "processing",
+  "shipped",
+  "completed",
+  "cancelled",
+]
+
 export const PAYMENT_STATUS_LABEL: Record<PaymentStatus, string> = {
   pending: "Payment pending",
   paid: "Paid",
@@ -41,18 +54,25 @@ export function paymentMethodLabel(method: "cod" | "online"): string {
   return method === "cod" ? "Cash on Delivery" : "Online payment"
 }
 
-/** Statuses a buyer can still cancel. */
-export function isCancellable(status: OrderStatus): boolean {
-  return status === "pending" || status === "paid" || status === "processing"
+/**
+ * Whether the buyer may make a given move.
+ *
+ * The API sends `allowed_transitions` with every order it shows the buyer, so
+ * this reads the server's answer rather than keeping a second copy of the
+ * lifecycle that can drift. The fallback covers an older response shape.
+ */
+export function buyerCan(order: Order, to: OrderStatus): boolean {
+  if (order.allowed_transitions) {
+    return order.allowed_transitions.includes(to)
+  }
+  if (to === "cancelled") {
+    return (
+      order.status === "pending" ||
+      order.status === "paid" ||
+      order.status === "processing"
+    )
+  }
+  return to === "completed" && order.status === "shipped"
 }
 
-export function formatDate(iso: string | null): string {
-  if (!iso) return "—"
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return "—"
-  return d.toLocaleDateString("en-PH", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  })
-}
+export { formatDate } from "@/lib/dates"

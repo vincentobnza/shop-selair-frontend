@@ -48,7 +48,17 @@ export type Order = {
   shipping_address: ShippingAddress
   notes: string | null
   placed_at: string | null
+  paid_at: string | null
+  processing_at: string | null
+  shipped_at: string | null
+  completed_at: string | null
   cancelled_at: string | null
+  /**
+   * Statuses this buyer is allowed to move the order to, decided by the API's
+   * state machine. Never infer these client-side: the server is the authority,
+   * and a second copy of the rules here would drift out of step with it.
+   */
+  allowed_transitions?: OrderStatus[]
   items: OrderItem[]
 }
 

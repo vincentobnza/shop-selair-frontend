@@ -25,3 +25,9 @@ export async function cancelOrder(id: string): Promise<Order> {
   const res = await api.patch<{ data: Order }>(apiPath(`orders/${id}/cancel`))
   return res.data.data
 }
+
+/** Buyer confirms the parcel arrived — the only route from shipped to completed. */
+export async function confirmOrderReceived(id: string): Promise<Order> {
+  const res = await api.patch<{ data: Order }>(apiPath(`orders/${id}/receive`))
+  return res.data.data
+}

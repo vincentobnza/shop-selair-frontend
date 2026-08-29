@@ -23,6 +23,7 @@ import { BRAND, SERVICE_PROMISES } from "@/config/brand"
 import { buildTitle, DEFAULT_DESCRIPTION } from "@/config/site"
 import { toUserMessage } from "@/features/auth/errors"
 import { useCartStore } from "@/features/cart/cartStore"
+import { formatDate } from "@/lib/dates"
 import { useCartUiStore } from "@/features/cart/cartUiStore"
 import { useFavorite } from "@/features/favorites/useFavorite"
 import { slugifyProductName } from "@/features/products/map"
@@ -204,7 +205,7 @@ function ProductPurchasePanel({
           openCart(triggerRef.current)
           toast.success("Added to your bag", {
             description: rental
-              ? `Held for ${rental.start} to ${rental.end}.`
+              ? `Held for ${formatDate(rental.start)} to ${formatDate(rental.end)}.`
               : "Add your dates at checkout to confirm the reservation.",
           })
         })
