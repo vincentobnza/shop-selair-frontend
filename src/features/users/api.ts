@@ -17,8 +17,11 @@ export async function fetchMe(): Promise<ApiUser> {
 
 export async function updateProfile(
   userId: string,
-  input: { name?: string; email?: string },
+  input: { name?: string; email?: string }
 ): Promise<ApiUser> {
-  const res = await api.put<{ user: ApiUser }>(apiPath(`users/${userId}`), input)
+  const res = await api.put<{ user: ApiUser }>(
+    apiPath(`users/${userId}`),
+    input
+  )
   return res.data.user
 }

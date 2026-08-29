@@ -6,7 +6,8 @@ import type { ReviewInput } from "./types"
 
 export const reviewKeys = {
   all: ["reviews"] as const,
-  product: (productId: string) => [...reviewKeys.all, "product", productId] as const,
+  product: (productId: string) =>
+    [...reviewKeys.all, "product", productId] as const,
   mineForProduct: (productId: string) =>
     [...reviewKeys.all, "mine-for-product", productId] as const,
   mine: () => [...reviewKeys.all, "mine"] as const,
@@ -20,7 +21,10 @@ export function useProductReviews(productId: string | undefined) {
   })
 }
 
-export function useMyReviewForProduct(productId: string | undefined, enabled: boolean) {
+export function useMyReviewForProduct(
+  productId: string | undefined,
+  enabled: boolean
+) {
   return useQuery({
     queryKey: reviewKeys.mineForProduct(productId ?? ""),
     queryFn: () => reviewsApi.fetchMyReviewForProduct(productId as string),
@@ -39,7 +43,8 @@ export function useMyReviews(enabled = true) {
 export function useUpsertReview(productId: string) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (input: ReviewInput) => reviewsApi.upsertReview(productId, input),
+    mutationFn: (input: ReviewInput) =>
+      reviewsApi.upsertReview(productId, input),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: reviewKeys.product(productId) })
       qc.invalidateQueries({ queryKey: reviewKeys.mineForProduct(productId) })

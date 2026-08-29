@@ -1,293 +1,203 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import {
+  CoatHangerIcon,
   ListIcon,
   MagnifyingGlassIcon,
   ToteIcon as CartIcon,
-  XIcon,
-  HeartIcon,
+  UserIcon,
 } from "@phosphor-icons/react"
-
+import { BrowseDrawer } from "@/components/layout/BrowseDrawer"
 import { CartSheet } from "@/components/layout/CartSheet"
+import { NavSearch } from "@/components/layout/NavSearch"
 import { AccountMenu } from "@/components/layout/AccountMenu"
-import { ACCOUNT_MENU_LINKS } from "@/components/layout/account-menu-config"
-import {
-  categoryNavItems,
-  SITE_LOGO_TEXT,
-  utilityLinks,
-} from "@/components/layout/nav-config"
+import { SITE_LOGO_TEXT, utilityLinks } from "@/components/layout/nav-config"
 import { Button } from "@/components/ui/button"
+import { TooltipComponent } from "@/components/TooltipComponent"
 import { useAuth, useLogout } from "@/features/auth/hooks"
 import { useCartItemCount } from "@/features/cart/cartStore"
 import { useFavoriteCount } from "@/features/favorites/useFavoriteCount"
-import { cn } from "@/lib/utils"
-import { TooltipComponent } from "../TooltipComponent"
 
-const navPillClass =
-  "hidden h-auto min-h-9 px-4 py-2 text-xs font-medium tracking-wide sm:inline-flex sm:min-h-10 sm:text-sm"
-
-function CategoryLink({
-  to,
-  label,
-  accent,
-}: {
-  to: string
-  label: string
-  accent?: boolean
-}) {
-  const cls = cn(
-    "whitespace-nowrap text-[13px] leading-none transition-colors sm:text-sm",
-    accent
-      ? "text-nav-sale hover:text-nav-sale/90"
-      : "text-black hover:text-neutral-600",
-  )
-
-  return (
-    <Link to={to} className={cls}>
-      {label}
-    </Link>
-  )
-}
+const UTILITY_LINKS = [
+  utilityLinks.howItWorks,
+  utilityLinks.explore,
+  utilityLinks.fittings,
+] as const
 
 export function Navbar() {
   const { isAuthenticated } = useAuth()
   const { run: signOut, pending: signingOut } = useLogout()
   const cartItemCount = useCartItemCount()
   const favoriteCount = useFavoriteCount()
+  const { pathname, search } = useLocation()
 
   const [cartOpen, setCartOpen] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [browseOpen, setBrowseOpen] = useState(false)
 
+  /*
+   * A route change should never leave an overlay panel open behind the user —
+   * including on browser back/forward, where no link handler runs. Resetting
+   * during render (rather than in an effect) avoids the extra commit that a
+   * post-render setState would cost on every navigation.
+   */
+  const locationKey = `${pathname}${search}`
+  const [lastLocationKey, setLastLocationKey] = useState(locationKey)
+  if (locationKey !== lastLocationKey) {
+    setLastLocationKey(locationKey)
+    setBrowseOpen(false)
+  }
 
   return (
     <>
-      <header className="sticky top-10 z-50 w-full border-b border-neutral-200 bg-white">
-        <div className="px-4 sm:px-6 lg:px-10">
-          <div className="relative flex items-center justify-between gap-3 py-3 sm:gap-4 sm:py-3.5">
-            <div className="flex min-w-0 flex-1 items-center gap-2 text-sm sm:text-base text-black sm:gap-3 ">
-              <Link
-                to={utilityLinks.howItWorks.href}
-                className="hidden shrink-0 hover:text-neutral-600 sm:inline"
-              >
-                {utilityLinks.howItWorks.label}
+      <header className="sticky top-0 z-50 w-full border-b border-line/70 bg-paper">
+        <div className="relative flex items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+          {/* Left: browse + search */}
+          <div className="flex min-w-0 flex-1 items-center gap-1 sm:gap-4">
+            <button
+              type="button"
+              aria-label="Browse"
+              aria-expanded={browseOpen}
+              aria-controls="browse-drawer"
+              onClick={() => setBrowseOpen(true)}
+              className="hidden cursor-pointer items-center gap-2 rounded-full px-1 py-2 text-base text-ink transition-colors hover:text-brand sm:inline-flex"
+            >
+              <ListIcon size={20} weight="bold" />
+              Browse
+            </button>
+
+            <NavSearch className="hidden flex-1 sm:flex sm:max-w-md" />
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="Browse"
+              aria-expanded={browseOpen}
+              aria-controls="browse-drawer"
+              onClick={() => setBrowseOpen(true)}
+              className="inline-flex size-11 shrink-0 rounded-full text-ink sm:hidden"
+            >
+              <ListIcon size={22} weight="bold" />
+            </Button>
+
+            <Button
+              asChild
+              variant="ghost"
+              size="icon"
+              className="inline-flex size-11 shrink-0 rounded-full text-ink sm:hidden"
+            >
+              <Link to="/search" aria-label="Search">
+                <MagnifyingGlassIcon size={22} weight="regular" />
               </Link>
-              <span
-                aria-hidden
-                className="hidden h-3 w-px shrink-0 bg-neutral-300 sm:block"
-              />
+            </Button>
+          </div>
+
+          {/* Centre: wordmark */}
+          <Link
+            to="/"
+            className="absolute left-1/2 -translate-x-1/2 font-logo text-lg leading-none font-bold tracking-[-0.04em] text-ink sm:text-2xl"
+          >
+            {SITE_LOGO_TEXT.toLowerCase()}
+          </Link>
+
+          {/* Right: utility links + actions */}
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-1 sm:gap-2">
+            <nav aria-label="Utility" className="hidden lg:block">
+              <ul className="mr-6 flex items-center gap-5">
+                {UTILITY_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      to={link.href}
+                      className="text-base whitespace-nowrap text-ink transition-colors hover:text-brand"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <TooltipComponent side="bottom" content="Favorites">
               <Button
                 asChild
                 variant="ghost"
                 size="icon"
-                className="hidden h-9 w-9 shrink-0 rounded-full text-black sm:inline-flex sm:h-10 sm:w-10"
+                className="relative size-11 shrink-0 rounded-full text-ink"
               >
-                <Link to="/search" aria-label="Search">
-                  <MagnifyingGlassIcon size={22} weight="regular" />
-                </Link>
-              </Button>
-
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label={menuOpen ? "Close menu" : "Open menu"}
-                aria-expanded={menuOpen}
-                aria-controls="mobile-nav-panel"
-                onClick={() => setMenuOpen((v) => !v)}
-                className="inline-flex h-9 w-9 shrink-0 rounded-full text-black sm:hidden"
-              >
-                {menuOpen ? <XIcon size={22} weight="bold" /> : <ListIcon size={22} weight="bold" />}
-              </Button>
-            </div>
-
-            <Link
-              to="/"
-              className="font-logo absolute left-1/2 -translate-x-1/2 text-center text-base font-normal text-black uppercase sm:text-lg"
-            >
-              {SITE_LOGO_TEXT}
-            </Link>
-
-            <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
-              <TooltipComponent side="bottom" content="View all favorites">
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="icon"
-                  className="relative size-10 shrink-0 rounded-full text-black"
-                >
-                  <Link
-                    to="/favorites"
-                    aria-label={
-                      favoriteCount > 0
-                        ? `All favorites, ${favoriteCount} pieces`
-                        : "All favorites"
-                    }
-                  >
-                    <HeartIcon size={32} weight="regular" className="size-5" />
-
-                  </Link>
-                </Button>
-              </TooltipComponent>
-
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label="View cart"
-                aria-expanded={cartOpen}
-                aria-controls="cart-sheet"
-                onClick={() => setCartOpen(true)}
-                className="relative size-10 shrink-0 rounded-full text-black "
-              >
-                <CartIcon size={32} weight="regular" className="size-5" />
-                {
-                  cartItemCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full border border-neutral-200 bg-black px-1 text-[11px] font-medium text-white">
-                      {cartItemCount}
-                    </span>
-                  )
-                }
-              </Button>
-
-
-              {isAuthenticated ? (
-                <AccountMenu
-                  signingOut={signingOut}
-                  onSignOut={() => void signOut()}
-                />
-              ) : (
-                <div className="ml-2 flex gap-1">
-                  <Button variant="outline" asChild className={cn(navPillClass, "rounded-full")}>
-                    <Link to="/login">Sign In</Link>
-                  </Button>
-                  <Button variant="pill" asChild className={navPillClass}>
-                    <Link to="/signup">Join Now</Link>
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <nav
-            aria-label="Categories"
-            className="hidden border-t border-neutral-100 py-2.5 sm:block"
-          >
-            <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 md:gap-x-5 lg:flex-nowrap lg:justify-between lg:gap-x-3 ">
-              {categoryNavItems.map((item) => (
-                <li key={item.label}>
-                  <CategoryLink
-                    to={item.to}
-                    label={item.label}
-                    accent={item.variant === "accent"}
-                  />
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {menuOpen ? (
-            <div
-              id="mobile-nav-panel"
-              className="border-t border-neutral-100 pb-4 sm:hidden"
-            >
-              <div className="flex flex-col gap-3 pt-3">
                 <Link
-                  to={utilityLinks.howItWorks.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="text-sm text-black"
+                  to="/favorites"
+                  aria-label={
+                    favoriteCount > 0
+                      ? `Favorites, ${favoriteCount} pieces`
+                      : "Favorites"
+                  }
                 >
-                  {utilityLinks.howItWorks.label}
+                  <CoatHangerIcon
+                    size={22}
+                    weight="regular"
+                    className="size-5"
+                  />
+                  {favoriteCount > 0 ? (
+                    <span className="absolute -top-1 -right-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-brand px-1.5 text-base leading-none font-semibold text-white">
+                      {favoriteCount}
+                    </span>
+                  ) : null}
                 </Link>
+              </Button>
+            </TooltipComponent>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label={
+                cartItemCount > 0
+                  ? `View cart, ${cartItemCount} items`
+                  : "View cart"
+              }
+              aria-expanded={cartOpen}
+              aria-controls="cart-sheet"
+              onClick={() => setCartOpen(true)}
+              className="relative size-11 shrink-0 rounded-full text-ink"
+            >
+              <CartIcon size={22} weight="regular" className="size-5" />
+              {cartItemCount > 0 ? (
+                <span className="absolute -top-1 -right-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-brand px-1.5 text-base leading-none font-semibold text-white">
+                  {cartItemCount}
+                </span>
+              ) : null}
+            </Button>
+            {isAuthenticated ? (
+              <AccountMenu
+                signingOut={signingOut}
+                onSignOut={() => void signOut()}
+              />
+            ) : (
+              <>
+                <TooltipComponent side="bottom" content="Sign in">
+                  <Button
+                    asChild
+                    variant="ghost"
+                    size="icon"
+                    className="hidden size-11 shrink-0 rounded-full text-ink sm:inline-flex"
+                  >
+                    <Link to="/login" aria-label="Sign in">
+                      <UserIcon size={22} weight="regular" className="size-5" />
+                    </Link>
+                  </Button>
+                </TooltipComponent>
                 <Button
+                  variant="pill"
                   asChild
-                  variant="ghost"
-                  className="h-auto justify-start gap-2 px-0 py-1 font-normal text-black hover:bg-transparent"
+                  className="ml-1 hidden h-10 px-6 text-base font-semibold sm:inline-flex"
                 >
-                  <Link to="/search" aria-label="Search" onClick={() => setMenuOpen(false)}>
-                    <MagnifyingGlassIcon size={20} weight="regular" />
-                    Search
-                  </Link>
+                  <Link to="/signup">Join Now</Link>
                 </Button>
-                <div className="flex flex-wrap gap-2 border-t border-neutral-100 pt-3">
-                  {isAuthenticated ? (
-                    <div className="w-full">
-                      <p className="text-[11px] font-semibold tracking-[0.12em] text-black uppercase">
-                        My account
-                      </p>
-                      <ul className="mt-2 grid gap-0.5">
-                        {ACCOUNT_MENU_LINKS.map(({ label, to }) => (
-                          <li key={to}>
-                            <Link
-                              to={to}
-                              onClick={() => setMenuOpen(false)}
-                              className="block rounded-md py-2 text-sm sm:text-base text-black hover:bg-neutral-50"
-                            >
-                              {label}
-                            </Link>
-                          </li>
-                        ))}
-                        <li className="border-t border-neutral-100 pt-1">
-                          <button
-                            type="button"
-                            disabled={signingOut}
-                            className="w-full rounded-md py-2 text-left text-sm text-black hover:bg-neutral-50 disabled:opacity-50"
-                            onClick={() => {
-                              void signOut()
-                              setMenuOpen(false)
-                            }}
-                          >
-                            {signingOut ? "Signing out…" : "Sign Out"}
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  ) : (
-                    <>
-                      <Button
-                        variant="pill"
-                        asChild
-                        className="h-auto min-h-10 flex-1 basis-0 py-2.5 text-sm"
-                      >
-                        <Link to="/login" onClick={() => setMenuOpen(false)}>
-                          Sign In
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="pill"
-                        asChild
-                        className="h-auto min-h-10 flex-1 basis-0 py-2.5 text-sm"
-                      >
-                        <Link to="/signup" onClick={() => setMenuOpen(false)}>
-                          Join Now
-                        </Link>
-                      </Button>
-                    </>
-                  )}
-                </div>
-                <ul className="grid gap-2 border-t border-neutral-100 pt-3">
-                  {categoryNavItems.map((item) => (
-                    <li key={item.label}>
-                      <Link
-                        to={item.to}
-                        onClick={() => setMenuOpen(false)}
-                        className={cn(
-                          "block py-1 text-sm sm:text-base",
-                          item.variant === "accent"
-                            ? "font-medium text-nav-sale"
-                            : "text-black",
-                        )}
-                      >
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ) : null}
+              </>
+            )}
+          </div>
         </div>
       </header>
 
+      <BrowseDrawer open={browseOpen} onOpenChange={setBrowseOpen} />
       <CartSheet open={cartOpen} onOpenChange={setCartOpen} />
     </>
   )

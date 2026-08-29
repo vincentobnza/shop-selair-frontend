@@ -2,7 +2,6 @@
 import { format } from "date-fns"
 import { CalendarDotsIcon } from "@phosphor-icons/react"
 import type { DateRange } from "react-day-picker"
-
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -10,10 +9,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-
 import { useMemo } from "react"
 import { useReservationsByProduct } from "@/features/reservations/queries"
-
 export function ReservationCalendar({
   range,
   setRange,
@@ -55,7 +52,7 @@ export function ReservationCalendar({
         <Button
           variant={"outline"}
           data-empty={!range?.from}
-          className="h-12! w-full justify-between rounded-none! text-left text-sm font-medium data-[empty=true]:text-muted-foreground md:text-base!"
+          className="h-12! w-full justify-between rounded-sm! border-line text-left text-base font-medium data-[empty=true]:text-muted-foreground md:text-base!"
         >
           <span>{label}</span>
           <CalendarDotsIcon data-icon="inline-end" />

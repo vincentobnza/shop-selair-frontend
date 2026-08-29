@@ -16,10 +16,12 @@ export function absolutePath(path: string): string {
   return `${origin}${p}`
 }
 
-export const SITE_NAME = "Selair"
+import { BRAND } from "@/config/brand"
+
+export const SITE_NAME = BRAND.name
 
 export const DEFAULT_DESCRIPTION =
-  "Discover curated fashion, formal rentals, and everyday essentials. Shop with confidence or rent standout pieces for life’s moments—all in one Selair experience."
+  "Rent modern and classic Filipiniana, Barong Tagalog, boleros, pearls and kids' formal wear from Sselair — reserved by the date, fitted before you wear it, cleaning included. Philippines."
 
 export function buildTitle(pageLabel: string): string {
   const t = pageLabel.trim()

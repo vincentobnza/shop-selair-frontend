@@ -1,7 +1,6 @@
 import { ArrowLeftIcon, CheckCircleIcon } from "@phosphor-icons/react"
 import { Link, useParams, useSearchParams } from "react-router-dom"
 import { toast } from "sonner"
-
 import { OrderStatusBadge } from "@/components/orders/OrderStatusBadge"
 import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
@@ -15,7 +14,6 @@ import {
   PAYMENT_STATUS_LABEL,
 } from "@/features/orders/status"
 import { formatPhpFromCents } from "@/lib/money"
-
 export function OrderDetailPage() {
   const { id } = useParams<{ id: string }>()
   const [params] = useSearchParams()
@@ -35,7 +33,7 @@ export function OrderDetailPage() {
   if (isError || !order) {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-red-700">We couldn’t find this order.</p>
+        <p className="text-base text-red-700">We couldn’t find this order.</p>{" "}
         <Button variant="outline" asChild className="rounded-full">
           <Link to="/account/orders">Back to orders</Link>
         </Button>
@@ -56,20 +54,25 @@ export function OrderDetailPage() {
     <div className="space-y-6">
       <Link
         to="/account/orders"
-        className="inline-flex items-center gap-1.5 text-sm text-zinc-600 hover:text-zinc-900"
+        className="inline-flex items-center gap-1.5 text-base text-ink-soft hover:text-ink"
       >
         <ArrowLeftIcon size={16} /> Back to orders
       </Link>
 
       {justPlaced ? (
         <div className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-          <CheckCircleIcon size={24} weight="fill" className="mt-0.5 shrink-0 text-emerald-600" />
+          <CheckCircleIcon
+            size={24}
+            weight="fill"
+            className="mt-0.5 shrink-0 text-emerald-600"
+          />
           <div>
-            <p className="font-heading text-base font-medium text-emerald-900">
+            <p className="text-base font-medium text-emerald-900">
               Thank you! Your order is confirmed.
             </p>
-            <p className="mt-0.5 text-sm text-emerald-700">
-              We’ve received order {order.order_number}. A confirmation will follow shortly.
+            <p className="mt-0.5 text-base text-emerald-700">
+              We’ve received order {order.order_number}. A confirmation will
+              follow shortly.
             </p>
           </div>
         </div>
@@ -77,21 +80,21 @@ export function OrderDetailPage() {
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <h2 className="font-heading text-xl font-medium text-zinc-900">
-            {order.order_number}
-          </h2>
+          <h2 className="text-xl font-medium text-ink">{order.order_number}</h2>
           <OrderStatusBadge status={order.status} />
         </div>
-        <span className="text-sm text-zinc-500">Placed {formatDate(order.placed_at)}</span>
+        <span className="text-base text-ink-soft">
+          Placed {formatDate(order.placed_at)}
+        </span>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         {/* Items */}
-        <div className="rounded-xl border border-neutral-200 bg-white">
-          <ul className="divide-y divide-neutral-100 px-5">
+        <div className="rounded-sm bg-white">
+          <ul className="divide-y divide-line px-5">
             {order.items.map((item) => (
               <li key={item.id} className="flex gap-4 py-4">
-                <div className="size-16 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
+                <div className="size-16 shrink-0 overflow-hidden rounded-lg bg-pink-light">
                   {item.image_url ? (
                     <AppImage
                       src={item.image_url}
@@ -101,20 +104,25 @@ export function OrderDetailPage() {
                   ) : null}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-zinc-900">{item.product_name}</p>
+                  <p className="text-base font-medium text-ink">
+                    {item.product_name}
+                  </p>
                   {item.size_label ? (
-                    <p className="mt-0.5 text-xs text-zinc-500">Size {item.size_label}</p>
+                    <p className="mt-0.5 text-base text-ink-soft">
+                      Size {item.size_label}
+                    </p>
                   ) : null}
                   {item.rental_start && item.rental_end ? (
-                    <p className="mt-0.5 text-xs text-zinc-500">
+                    <p className="mt-0.5 text-base text-ink-soft">
                       Rental {item.rental_start} → {item.rental_end}
                     </p>
                   ) : null}
-                  <p className="mt-1 text-xs text-zinc-500">
-                    {formatPhpFromCents(item.unit_price_cents)} × {item.quantity}
+                  <p className="mt-1 text-base text-ink-soft">
+                    {formatPhpFromCents(item.unit_price_cents)} ×{" "}
+                    {item.quantity}
                   </p>
                 </div>
-                <p className="shrink-0 text-sm font-semibold text-zinc-950 tabular-nums">
+                <p className="shrink-0 text-base font-semibold text-ink tabular-nums">
                   {formatPhpFromCents(item.subtotal_cents)}
                 </p>
               </li>
@@ -124,10 +132,13 @@ export function OrderDetailPage() {
 
         {/* Summary + shipping */}
         <div className="space-y-6">
-          <div className="rounded-xl border border-neutral-200 bg-white p-5">
-            <h3 className="font-heading text-base font-medium text-zinc-900">Summary</h3>
-            <dl className="mt-4 space-y-2 text-sm">
-              <Row label="Subtotal" value={formatPhpFromCents(order.subtotal_cents)} />
+          <div className="rounded-sm bg-white p-5">
+            <h3 className="text-base font-medium text-ink">Summary</h3>{" "}
+            <dl className="mt-4 space-y-2 text-base">
+              <Row
+                label="Subtotal"
+                value={formatPhpFromCents(order.subtotal_cents)}
+              />
               {order.discount_cents > 0 ? (
                 <Row
                   label={`Discount${order.voucher_code ? ` (${order.voucher_code})` : ""}`}
@@ -143,23 +154,24 @@ export function OrderDetailPage() {
                     : formatPhpFromCents(order.shipping_cents)
                 }
               />
-              <div className="flex items-center justify-between border-t border-neutral-100 pt-3">
-                <span className="text-sm font-medium text-zinc-800">Total</span>
-                <span className="text-lg font-semibold text-zinc-950 tabular-nums">
+              <div className="flex items-center justify-between border-t border-line pt-3">
+                <span className="text-base font-medium text-ink">Total</span>{" "}
+                <span className="text-lg font-semibold text-ink tabular-nums">
                   {formatPhpFromCents(order.total_cents)}
                 </span>
               </div>
             </dl>
-            <p className="mt-4 text-xs text-zinc-500">
+            <p className="mt-4 text-base text-ink-soft">
               {paymentMethodLabel(order.payment_method)} ·{" "}
               {PAYMENT_STATUS_LABEL[order.payment_status]}
             </p>
           </div>
-
-          <div className="rounded-xl border border-neutral-200 bg-white p-5">
-            <h3 className="font-heading text-base font-medium text-zinc-900">Delivery</h3>
-            <address className="mt-3 text-sm text-zinc-600 not-italic">
-              <span className="font-medium text-zinc-900">{addr.recipient_name}</span>
+          <div className="rounded-sm bg-white p-5">
+            <h3 className="text-base font-medium text-ink">Delivery</h3>{" "}
+            <address className="mt-3 text-base text-ink-soft not-italic">
+              <span className="font-medium text-ink">
+                {addr.recipient_name}
+              </span>
               <br />
               {addr.phone}
               <br />
@@ -169,12 +181,11 @@ export function OrderDetailPage() {
               {addr.city}, {addr.region} {addr.postal_code}
             </address>
             {order.notes ? (
-              <p className="mt-3 border-t border-neutral-100 pt-3 text-xs text-zinc-500">
+              <p className="mt-3 border-t border-line pt-3 text-base text-ink-soft">
                 Notes: {order.notes}
               </p>
             ) : null}
           </div>
-
           {isCancellable(order.status) ? (
             <Button
               variant="outline"
@@ -202,8 +213,10 @@ function Row({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <dt className="text-zinc-600">{label}</dt>
-      <dd className={`tabular-nums ${valueClassName ?? "text-zinc-900"}`}>{value}</dd>
+      <dt className="text-ink-soft">{label}</dt>{" "}
+      <dd className={`tabular-nums ${valueClassName ?? "text-ink"}`}>
+        {value}
+      </dd>
     </div>
   )
 }

@@ -1,43 +1,43 @@
 import { AppImage } from "@/components/ui/app-image"
-import { Button } from "@/components/ui/button"
-import { SAMPLE_DATA } from "@/dummy/sampleData"
+import { PERKS_PANEL } from "@/dummy/sampleData"
 
-type SplitSectionProps = {
-  title?: string
-  description?: string
-  ctaLabel?: string
-  image?: string
-}
-
-export function SplitSection({
-  title = SAMPLE_DATA.ClothingRental.title,
-  description = SAMPLE_DATA.ClothingRental.description,
-  ctaLabel = SAMPLE_DATA.ClothingRental.ctaLabel,
-  image = SAMPLE_DATA.ClothingRental.image,
-}: SplitSectionProps) {
+/**
+ * Two-up card: soft image panel on the left, a short list of what the service
+ * includes on the right. Mirrors the perks card in the reference home page.
+ */
+export function SplitSection() {
   return (
-    <section id="rent" className="overflow-hidden bg-[#1f1c19]">
-      <div className="mx-auto flex max-w-6xl flex-col-reverse gap-8 px-4 py-12 sm:flex-row sm:items-center sm:gap-12 sm:px-6 lg:px-8 lg:py-24">
-        <div className="sm:w-1/2">
-          <h2 className="mb-4 font-heading text-3xl leading-tight text-white sm:mb-6 sm:text-5xl lg:text-6xl">
-            {title}
-          </h2>
-
-          <p className="mb-6 max-w-lg text-sm text-white/80 sm:mb-8 sm:text-base lg:text-lg">
-            {description}
-          </p>
-
-          <div>
-            <Button className="h-11 rounded border border-white/90 bg-transparent px-6 text-sm text-white hover:bg-white hover:text-[#0b0b0b]">
-              {ctaLabel}
-            </Button>
+    <section id="fittings" className="bg-paper">
+      <div className="mx-auto max-w-5xl px-4 pb-14 sm:px-6 sm:pb-20 lg:px-8">
+        <div className="grid overflow-hidden rounded-sm bg-white sm:grid-cols-2">
+          <div className="bg-pink">
+            <AppImage
+              src={PERKS_PANEL.image}
+              alt={PERKS_PANEL.imageAlt}
+              className="h-56 w-full object-cover sm:h-full sm:min-h-80"
+            />
           </div>
-        </div>
-
-        <div className="sm:w-1/2">
-          <AppImage src={image} alt={title} className="block h-auto w-full" />
+          <div className="flex flex-col justify-center gap-5 p-6 sm:p-10">
+            <h2 className="font-heading text-2xl font-medium text-ink sm:text-3xl">
+              {PERKS_PANEL.title}
+            </h2>
+            <dl className="grid gap-4">
+              {PERKS_PANEL.items.map((item) => (
+                <div key={item.title}>
+                  <dt className="text-base font-semibold text-ink">
+                    {item.title}
+                  </dt>
+                  <dd className="mt-1 text-base leading-relaxed text-ink-soft">
+                    {item.body}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </div>
       </div>
     </section>
   )
 }
+
+export default SplitSection

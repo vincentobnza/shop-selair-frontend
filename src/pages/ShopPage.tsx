@@ -1,122 +1,147 @@
+import { useDeferredValue, useMemo } from "react"
 import { Helmet } from "react-helmet-async"
 import { Link, useSearchParams } from "react-router-dom"
-
+import { ProductCard } from "@/components/ProductCard"
 import {
   filterShopProducts,
+  labelForOccasion,
   labelForShopFilter,
+  parseOccasion,
   parseShopFilter,
   SHOP_FILTER_OPTIONS,
   shopFilterHref,
 } from "@/components/shop/shop-filters"
-import { ProductCard } from "@/components/ProductCard"
 import { buildTitle } from "@/config/site"
+import { COLLECTIONS } from "@/config/brand"
 import { useCatalogProducts } from "@/features/products/queries"
 import { cn } from "@/lib/utils"
-
 export function ShopPage() {
   const [searchParams] = useSearchParams()
   const activeFilter = parseShopFilter(searchParams.get("filter"))
+  const occasion = parseOccasion(searchParams.get("occasion"))
+
   const { data: products = [], isPending, isError } = useCatalogProducts()
-  const visible = filterShopProducts(products, activeFilter)
+
+  /* Filtering is cheap but the grid re-render is not; defer it so the pill row
+     stays responsive while a large catalog re-lays out. */
+  const deferredFilter = useDeferredValue(activeFilter)
+  const deferredOccasion = useDeferredValue(occasion)
+  const visible = useMemo(
+    () => filterShopProducts(products, deferredFilter, deferredOccasion),
+    [products, deferredFilter, deferredOccasion]
+  )
+
   const filterLabel = labelForShopFilter(activeFilter)
+  const collectionBlurb = COLLECTIONS.find((c) => c.id === activeFilter)?.blurb
+
+  const heading = occasion
+    ? `Filipiniana for a ${labelForOccasion(occasion).toLowerCase()}`
+    : activeFilter === "all"
+      ? "Every piece we rent"
+      : filterLabel
+
   const pageTitle = buildTitle(
-    activeFilter === "all"
-      ? "Shop essentials with ease"
-      : `${filterLabel} · Shop`,
+    occasion ? `${labelForOccasion(occasion)} · Shop` : heading
   )
 
   return (
-    <main className="bg-white">
+    <main className="bg-paper">
       <Helmet>
         <title>{pageTitle}</title>
       </Helmet>
 
-      <div className="px-1 py-10 sm:py-12 lg:py-14">
-        <header className="px-4 sm:px-6 lg:px-8 border-b border-neutral-200 py-12 sm:py-16">
-          <h1 className="font-heading text-2xl font-medium tracking-tight text-zinc-900 sm:text-3xl">
-            Shop essentials with ease
+      <header className="border-b border-line px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+        <div className="mx-auto max-w-6xl text-center">
+          <p className="eyebrow">Shop</p>{" "}
+          <h1 className="mt-3 font-heading text-3xl font-medium text-ink sm:text-4xl">
+            {heading}
           </h1>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-600 sm:text-base">
-            Practical checkout and delivery—browse by category below.
+          <p className="mx-auto mt-2 max-w-xl text-base text-ink-soft">
+            {collectionBlurb ??
+              "Reserve by the date, fitted before you wear it, cleaning handled on our side."}
           </p>
+        </div>
+        <nav
+          aria-label="Collections"
+          className="mx-auto mt-8 no-scrollbar flex max-w-7xl gap-2 overflow-x-auto pb-1 sm:justify-center"
+        >
+          {SHOP_FILTER_OPTIONS.map(({ id, label }) => {
+            const active = activeFilter === id && !occasion
+            return (
+              <Link
+                key={id}
+                to={shopFilterHref(id)}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "flex min-h-9 shrink-0 items-center rounded-full border px-4 text-base transition-colors",
+                  active
+                    ? "border-brand text-brand"
+                    : "border-black text-ink hover:border-ink/30"
+                )}
+              >
+                {label}
+              </Link>
+            )
+          })}
+        </nav>
+      </header>
 
-          <nav
-            aria-label="Shop categories"
-            className="mt-8 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          >
-            {SHOP_FILTER_OPTIONS.map(({ id, label }) => {
-              const active = activeFilter === id
-              return (
-                <Link
-                  key={id}
-                  to={shopFilterHref(id)}
-                  className={cn(
-                    "shrink-0 rounded-full border px-3.5 py-2 text-xs font-medium transition-colors sm:text-sm",
-                    active
-                      ? "border-zinc-900 bg-zinc-900 text-white"
-                      : "border-neutral-200 bg-white text-zinc-800 hover:border-zinc-400",
-                  )}
-                >
-                  {label}
-                </Link>
-              )
-            })}
-          </nav>
-        </header>
-
-        <section className="pt-10" aria-live="polite">
-          {isError ? (
-            <p className="text-sm text-red-700">
-              Could not load the catalog. Ensure the API is running and try again.
+      <section
+        className="px-4 py-10 sm:px-6 lg:px-8"
+        aria-live="polite"
+        aria-busy={isPending}
+      >
+        {isError ? (
+          <p className="text-center text-base text-ink-soft">
+            We could not load the collection just now. Please refresh, or
+            message us and we will help you book directly.
+          </p>
+        ) : isPending ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                className="aspect-3/4 animate-pulse rounded-sm bg-pink-light"
+              />
+            ))}
+          </div>
+        ) : (
+          <div>
+            <p className="mb-6 text-base text-ink-soft">
+              {visible.length} {visible.length === 1 ? "piece" : "pieces"}
+              {occasion
+                ? ` for a ${labelForOccasion(occasion).toLowerCase()}`
+                : null}
             </p>
-          ) : isPending ? (
-            <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="aspect-[3/4] animate-pulse rounded-sm bg-zinc-100"
-                />
-              ))}
-            </div>
-          ) : (
-            <>
-              <p className="mb-6 text-sm text-zinc-500">
-                {visible.length}{" "}
-                {visible.length === 1 ? "piece" : "pieces"}
-                {activeFilter !== "all" ? (
-                  <>
-                    {" "}
-                    in <span className="font-medium text-zinc-800">{filterLabel}</span>
-                  </>
-                ) : null}
-              </p>
 
-              {visible.length > 0 ? (
-                <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {visible.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
-              ) : (
-                <div className="rounded-lg border border-dashed border-neutral-200 bg-zinc-50 px-6 py-14 text-center">
-                  <p className="font-heading text-base text-zinc-800">
-                    Nothing here yet
-                  </p>
-                  <p className="mt-2 text-sm text-zinc-600">
-                    Try another category or browse the full catalog.
-                  </p>
-                  <Link
-                    to="/shop"
-                    className="mt-6 inline-block text-sm font-medium text-zinc-900 underline underline-offset-4"
-                  >
-                    Browse all
-                  </Link>
-                </div>
-              )}
-            </>
-          )}
-        </section>
-      </div>
+            {visible.length > 0 ? (
+              <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                {visible.map((product) => (
+                  <li key={product.id}>
+                    <ProductCard product={product} />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="rounded-sm bg-pink-light px-6 py-16 text-center">
+                <p className="font-heading text-2xl font-medium text-ink">
+                  Nothing tagged here yet
+                </p>
+                <p className="mx-auto mt-2 max-w-sm text-base text-ink-soft">
+                  This collection has not been filled in yet. Browse everything
+                  we rent, or message us with your occasion and date.
+                </p>
+                <Link
+                  to="/shop"
+                  className="mt-6 inline-flex min-h-11 items-center text-base font-medium text-brand underline underline-offset-4"
+                >
+                  Browse all pieces
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
     </main>
   )
 }

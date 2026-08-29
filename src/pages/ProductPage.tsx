@@ -1,34 +1,138 @@
-import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom"
+import { useCallback, useMemo, useState } from "react"
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { Helmet } from "react-helmet-async"
-
-import { buildTitle, DEFAULT_DESCRIPTION } from "@/config/site"
+import { differenceInCalendarDays, format } from "date-fns"
+import type { DateRange } from "react-day-picker"
+import { ArrowLeftIcon, CoatHangerIcon } from "@phosphor-icons/react"
+import { toast } from "sonner"
+import { ProductCard } from "@/components/ProductCard"
+import { ProductSizePicker } from "@/components/ProductSizePicker"
 import { ReservationCalendar } from "@/components/ReservationCalendar"
+import { FaqSection } from "@/components/sections/FaqSection"
+import { PlanSection } from "@/components/sections/PlanSection"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
 import { DotPulse } from "@/components/ui/dot-pulse"
-import { cn } from "@/lib/utils"
-import { useMemo, useState } from "react"
-import { differenceInCalendarDays, format } from "date-fns"
-import type { DateRange } from "react-day-picker"
-import { BagIcon } from "@phosphor-icons/react"
-
-import { ProductCard } from "@/components/ProductCard"
-import { ProductSizePicker } from "@/components/ProductSizePicker"
-import { ReviewsSection } from "@/components/product/ReviewsSection"
-import { StarRating } from "@/components/StarRating"
+import { BRAND, SERVICE_PROMISES } from "@/config/brand"
+import { buildTitle, DEFAULT_DESCRIPTION } from "@/config/site"
+import { toUserMessage } from "@/features/auth/errors"
 import { useCartStore } from "@/features/cart/cartStore"
+import { useFavorite } from "@/features/favorites/useFavorite"
 import { slugifyProductName } from "@/features/products/map"
 import { useCatalogProducts } from "@/features/products/queries"
 import type { CatalogProduct } from "@/features/products/types"
-import { toUserMessage } from "@/features/auth/errors"
-import { toast } from "sonner"
-import { FaqSection } from "@/components/sections/FaqSection"
+import { cn } from "@/lib/utils"
 
-const currencyFormatter = new Intl.NumberFormat("en-PH", {
+const currencyFormatter = new Intl.NumberFormat(BRAND.locale, {
   style: "currency",
-  currency: "PHP",
+  currency: BRAND.currency,
   maximumFractionDigits: 0,
 })
+
+function formatDateForURL(date: Date): string {
+  return format(date, "yyyy-MM-dd")
+}
+
+/**
+ * Product imagery: a two-up mosaic from `sm` up, matching the reference product
+ * page. On phones the same markup becomes a horizontal snap gallery instead of
+ * a stack, so the size picker and the reserve button stay within a screen or
+ * two of the fold rather than sitting below several full-height photos.
+ */
+function ProductImageMosaic({ product }: { product: CatalogProduct }) {
+  const images = product.image.filter(Boolean).slice(0, 4)
+
+  if (images.length === 0) {
+    return <div className="aspect-3/4 w-full bg-pink-light" />
+  }
+
+  return (
+    <div
+      aria-label={`${product.name}, ${images.length} ${images.length === 1 ? "photo" : "photos"}`}
+      className="no-scrollbar flex snap-x snap-mandatory gap-px overflow-x-auto bg-line sm:grid sm:grid-cols-2 sm:overflow-visible"
+    >
+      {images.map((src, i) => {
+        /* An odd trailing image spans the full width rather than leaving a
+           hole in the grid, so a 1- or 3-image product still reads as a set. */
+        const spansFullWidth =
+          images.length % 2 === 1 && i === images.length - 1
+
+        return (
+          <div
+            key={`${src}-${i}`}
+            className={cn(
+              "w-full shrink-0 snap-start bg-pink-light sm:w-auto",
+              spansFullWidth && "sm:col-span-2"
+            )}
+          >
+            <AppImage
+              src={src}
+              alt={i === 0 ? product.name : `${product.name}, view ${i + 1}`}
+              priority={i === 0}
+              className={cn(
+                "w-full object-cover",
+                spansFullWidth ? "aspect-3/4 sm:aspect-3/2" : "aspect-3/4"
+              )}
+            />
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+/** The three-step service card repeated from the home page. */
+function HowRentingWorksCard() {
+  return (
+    <section
+      aria-labelledby="how-renting-works"
+      className="mt-8 rounded-2xl bg-white p-6 sm:rounded-3xl"
+    >
+      <h2
+        id="how-renting-works"
+        className="text-center font-heading text-2xl font-medium text-ink"
+      >
+        How renting from {BRAND.name} works
+      </h2>
+
+      <ol className="mt-6 grid gap-5">
+        {SERVICE_PROMISES.map((promise, i) => (
+          <li key={promise.title} className="flex gap-4">
+            <span
+              aria-hidden
+              className="flex size-9 shrink-0 items-center justify-center rounded-full bg-pink-light text-base font-semibold text-ink"
+            >
+              {i + 1}
+            </span>
+            <div>
+              <p className="text-base font-semibold text-ink">
+                {promise.title}
+              </p>{" "}
+              <p className="mt-1 text-base leading-relaxed text-ink-soft">
+                {promise.body}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <p className="mt-6 text-center">
+        <Link
+          to="/#how-it-works"
+          className="text-base font-medium text-brand underline-offset-4 hover:underline"
+        >
+          View full details
+        </Link>
+      </p>
+    </section>
+  )
+}
 
 type PurchasePanelProps = {
   product: CatalogProduct
@@ -53,17 +157,50 @@ function ProductPurchasePanel({
 
   const needsSize = product.sizes.length > 0
 
+  /* Both actions share the same validation and cart call; only the date
+     requirement differs, which keeps the two buttons honest about what they do. */
+  const submit = useCallback(
+    (requireDates: boolean) => {
+      if (needsSize && !size) {
+        toast.error("Please choose a size first.")
+        return
+      }
+      if (requireDates && !range?.from) {
+        toast.error("Please select a start date for your rental.")
+        return
+      }
+      if (requireDates && !range?.to) {
+        toast.error("Please select a return date to complete your rental.")
+        return
+      }
+
+      const rental =
+        range?.from && range?.to
+          ? {
+              start: formatDateForURL(range.from),
+              end: formatDateForURL(range.to),
+            }
+          : undefined
+
+      setAddingCart(true)
+      void addToCart(String(product.id), 1, size ?? undefined, rental)
+        .then(() => {
+          toast.success("Added to your bag", {
+            description: rental
+              ? `Held for ${rental.start} to ${rental.end}.`
+              : "Add your dates at checkout to confirm the reservation.",
+          })
+        })
+        .catch((error: unknown) => {
+          toast.error(toUserMessage(error))
+        })
+        .finally(() => setAddingCart(false))
+    },
+    [addToCart, needsSize, product.id, range, size]
+  )
+
   return (
     <>
-      <div className="mt-6 flex flex-wrap items-center gap-3 sm:mt-8 sm:gap-4">
-        <span className="font-heading text-2xl font-bold text-zinc-900 sm:text-3xl">
-          {currencyFormatter.format(product.price)}
-        </span>
-        <span className="px-2 py-1 text-xs text-zinc-600 sm:px-3 sm:text-sm">
-          {product.duration} day rental
-        </span>
-      </div>
-
       <ProductSizePicker
         sizes={product.sizes}
         value={size}
@@ -71,196 +208,75 @@ function ProductPurchasePanel({
         hint={needsSize && !size}
       />
 
-      <div className="mt-6 flex flex-col gap-2 sm:mt-8">
-        <ReservationCalendar
-          productId={product.id}
-          range={range}
-          setRange={onRangeChange}
-        />
-
-        <div className="border border-black bg-zinc-50/70">
-          <div className="grid gap-3 p-4 text-sm text-zinc-700 sm:grid-cols-2">
-            <div>
-              <p className="text-[10px] font-semibold text-black uppercase">
-                Start date
-              </p>
-              <p className="text-sm font-medium text-zinc-900 md:text-base">
-                {range?.from ? format(range.from, "PPP") : "-"}
-              </p>
-            </div>
-            <div>
-              <p className="text-[10px] font-semibold text-black uppercase">
-                Return date
-              </p>
-              <p className="md:text text-sm font-medium text-zinc-900">
-                {range?.to ? format(range.to, "PPP") : "-"}
-              </p>
-            </div>
-          </div>
-
-          <div className="border-t border-black bg-white px-4 py-2">
-            <div className="flex items-baseline justify-between">
-              <p className="text-[10px] font-semibold text-zinc-400 uppercase">
-                Rate
-              </p>
-              <p className="font-heading text-xl font-semibold text-zinc-900">
-                {currencyFormatter.format(totalRate)}
-              </p>
-            </div>
-            <p className="text-sm font-semibold text-black md:text-base">
+      <div className="mt-8">
+        <p className="text-base text-ink">
+          <span className="font-semibold">Your dates:</span>{" "}
+          <span className="text-ink-soft">
+            {range?.from
+              ? `${format(range.from, "d MMM yyyy")}${
+                  range.to ? ` — ${format(range.to, "d MMM yyyy")}` : ""
+                }`
+              : "Choose when you need it"}
+          </span>
+        </p>
+        <div className="mt-3">
+          <ReservationCalendar
+            productId={product.id}
+            range={range}
+            setRange={onRangeChange}
+          />
+        </div>
+        <dl className="mt-4 rounded-sm bg-white p-4">
+          <div className="flex items-baseline justify-between gap-4">
+            <dt className="text-base text-ink-soft">
               {currencyFormatter.format(Math.round(dailyRate))} / day
-              {rentalDays
-                ? ` x ${rentalDays} day${rentalDays > 1 ? "s" : ""}`
+              {rentalDays > 0
+                ? ` × ${rentalDays} day${rentalDays > 1 ? "s" : ""}`
                 : ""}
-            </p>
+            </dt>
+            <dd className="text-xl font-semibold text-ink">
+              {rentalDays > 0
+                ? currencyFormatter.format(Math.round(totalRate))
+                : currencyFormatter.format(product.price)}
+            </dd>
           </div>
-        </div>
+          {rentalDays === 0 ? (
+            <p className="mt-1 text-base text-ink-soft">
+              Base rate for a {product.duration}-day rental. Pick your dates to
+              see the total.
+            </p>
+          ) : null}
+        </dl>
+      </div>
 
-        <div className="flex flex-col gap-1">
-          <Button
-            type="button"
-            disabled={addingCart}
-            className="h-auto rounded-none px-6 py-4 text-sm sm:text-base"
-            onClick={() => {
-              if (needsSize && !size) {
-                toast.error(
-                  "Please choose a size before reserving or adding to cart."
-                )
-                return
-              }
-              if (!range?.from) {
-                toast.error(
-                  "Please select a start date to proceed with reservation."
-                )
-                return
-              }
-              if (!range?.to) {
-                toast.error(
-                  "Please select a return date to complete your rental period."
-                )
-                return
-              }
-              setAddingCart(true)
-              const rental = {
-                start: format(range.from, "yyyy-MM-dd"),
-                end: format(range.to, "yyyy-MM-dd"),
-              }
-              void addToCart(String(product.id), 1, size ?? undefined, rental)
-                .then(() => {
-                  toast.success("Added to cart", {
-                    description: "Item added to cart successfully",
-                  })
-                })
-                .catch((error: unknown) => {
-                  toast.error(toUserMessage(error))
-                })
-                .finally(() => setAddingCart(false))
-            }}
-          >
-            Reserve now
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            disabled={addingCart}
-            className="h-auto rounded-none border-black bg-transparent px-6 py-4 text-sm text-black sm:text-base"
-            onClick={() => {
-              if (needsSize && !size) {
-                toast.error(
-                  "Please choose a size before reserving or adding to cart."
-                )
-                return
-              }
-              setAddingCart(true)
-              const rental =
-                range?.from && range?.to
-                  ? {
-                      start: format(range.from, "yyyy-MM-dd"),
-                      end: format(range.to, "yyyy-MM-dd"),
-                    }
-                  : undefined
-              void addToCart(String(product.id), 1, size ?? undefined, rental)
-                .then(() => {
-                  toast.success("Added to cart", {
-                    description: "Item added to cart successfully",
-                  })
-                })
-                .catch((error: unknown) => {
-                  toast.error(toUserMessage(error))
-                })
-                .finally(() => setAddingCart(false))
-            }}
-          >
-            {addingCart ? (
-              <DotPulse label="Adding to cart" className="min-h-[1.25em]" />
-            ) : (
-              "Add to Cart"
-            )}
-          </Button>
-        </div>
+      <div className="mt-5 flex flex-col gap-2">
+        <Button
+          type="button"
+          variant="pill"
+          disabled={addingCart}
+          onClick={() => submit(true)}
+          className="h-14 w-full text-base font-semibold sm:h-15 sm:text-base"
+        >
+          {addingCart ? (
+            <DotPulse label="Reserving" className="min-h-[1.25em]" />
+          ) : (
+            "Reserve These Dates"
+          )}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={addingCart}
+          onClick={() => submit(false)}
+          className="h-14 w-full rounded-full border-ink/20 text-base font-semibold text-ink sm:h-15 sm:text-base"
+        >
+          Add to Bag
+        </Button>
+        <p className="text-center text-base text-ink-soft">
+          Rates and fitting slots are confirmed with you before payment.
+        </p>
       </div>
     </>
-  )
-}
-
-function ProductImageGallery({ product }: { product: CatalogProduct }) {
-  const [activeIndex, setActiveIndex] = useState(0)
-  const mainSrc =
-    product.image[
-      Math.min(activeIndex, Math.max(0, product.image.length - 1))
-    ] ?? ""
-
-  return (
-    <div
-      className={cn(
-        "flex flex-row items-start gap-3",
-        product.image.length <= 1 && "flex-col"
-      )}
-    >
-      {product.image.length > 1 ? (
-        <div
-          className="flex max-h-[min(70vh,32rem)] w-16 shrink-0 flex-col gap-2 overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] sm:w-18 [&::-webkit-scrollbar]:hidden"
-          role="tablist"
-          aria-label="Product views"
-        >
-          {product.image.map((image, index) => (
-            <button
-              key={`${image}-${index}`}
-              type="button"
-              role="tab"
-              aria-selected={index === activeIndex}
-              aria-label={`View ${index + 1}`}
-              onClick={() => setActiveIndex(index)}
-              className={cn(
-                "mt-0.3 w-full shrink-0 cursor-pointer touch-manipulation overflow-hidden border-2 bg-zinc-50 transition-colors",
-                index === activeIndex
-                  ? "border-zinc-200"
-                  : "border-transparent opacity-80 grayscale hover:opacity-100"
-              )}
-            >
-              <AppImage
-                src={image}
-                alt=""
-                className="block aspect-square w-full object-cover"
-              />
-            </button>
-          ))}
-        </div>
-      ) : null}
-
-      <div className="min-w-0 flex-1 overflow-hidden bg-zinc-50">
-        {mainSrc ? (
-          <AppImage
-            src={mainSrc}
-            alt={product.name}
-            priority
-            className="block h-full w-full object-cover"
-          />
-        ) : (
-          <div className="aspect-3/4 bg-zinc-100" />
-        )}
-      </div>
-    </div>
   )
 }
 
@@ -298,74 +314,69 @@ export function ProductPage() {
     return product.price / Math.max(product.duration, 1)
   }, [product])
 
-  const totalRate = useMemo(() => {
-    if (!rentalDays) return 0
-    return dailyRate * rentalDays
-  }, [dailyRate, rentalDays])
+  const totalRate = useMemo(
+    () => (rentalDays ? dailyRate * rentalDays : 0),
+    [dailyRate, rentalDays]
+  )
 
-  const handleRangeChange = (selectedRange: DateRange | undefined) => {
-    if (!selectedRange?.from) {
-      navigate(`/products/${slug}`, { replace: true })
-      return
-    }
+  const handleRangeChange = useCallback(
+    (selectedRange: DateRange | undefined) => {
+      if (!selectedRange?.from) {
+        navigate(`/products/${slug}`, { replace: true })
+        return
+      }
 
-    const params = new URLSearchParams()
-    params.set("startDate", formatDateForURL(selectedRange.from))
+      const params = new URLSearchParams()
+      params.set("startDate", formatDateForURL(selectedRange.from))
+      if (selectedRange.to) {
+        params.set("returnDate", formatDateForURL(selectedRange.to))
+      }
 
-    if (selectedRange.to) {
-      params.set("returnDate", formatDateForURL(selectedRange.to))
-    }
-
-    navigate(`/products/${slug}?${params.toString()}`, {
-      replace: true,
-    })
-  }
-
-  const formatDateForURL = (date: Date) => {
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, "0")
-    const day = String(date.getDate()).padStart(2, "0")
-    return `${year}-${month}-${day}`
-  }
+      navigate(`/products/${slug}?${params.toString()}`, { replace: true })
+    },
+    [navigate, slug]
+  )
 
   const relatedProducts = useMemo(() => {
     if (!product) return []
-    return catalog.filter((item) => item.id !== product.id).slice(0, 3)
+    return catalog.filter((item) => item.id !== product.id).slice(0, 8)
   }, [catalog, product])
 
   if (isPending) {
     return (
-      <main className="bg-white">
-        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
-          <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
-            <div className="aspect-3/4 animate-pulse bg-zinc-100" />
-            <div className="space-y-4 pt-6">
-              <div className="h-8 w-2/3 animate-pulse rounded bg-zinc-100" />
-              <div className="h-4 w-full animate-pulse rounded bg-zinc-100" />
-              <div className="h-4 w-5/6 animate-pulse rounded bg-zinc-100" />
-            </div>
+      <main className="bg-paper">
+        <div className="grid lg:grid-cols-[60%_40%]">
+          <div className="aspect-3/4 animate-pulse bg-pink-light lg:aspect-auto lg:min-h-160" />{" "}
+          <div className="space-y-4 px-4 py-10 sm:px-8">
+            <div className="h-8 w-2/3 animate-pulse rounded bg-pink-light" />{" "}
+            <div className="h-4 w-1/3 animate-pulse rounded bg-pink-light" />{" "}
+            <div className="h-24 w-full animate-pulse rounded bg-pink-light" />
           </div>
-        </section>
+        </div>
       </main>
     )
   }
 
   if (isError || !product) {
     return (
-      <main className="bg-white">
+      <main className="bg-paper">
         <Helmet>
-          <title>{buildTitle("Product not found")}</title>
+          <title>{buildTitle("Piece not found")}</title>{" "}
+          <meta name="robots" content="noindex" />
         </Helmet>
-        <section className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 lg:px-8">
-          <p className="font-heading text-lg text-zinc-900">
-            Product not found
+        <section className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
+          <h1 className="font-heading text-3xl font-medium text-ink">
+            We could not find that piece
+          </h1>
+          <p className="mt-2 text-base text-ink-soft">
+            It may have been renamed or is no longer available to rent.
           </p>
           <Link
             to="/shop"
-            className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-900 underline underline-offset-4"
+            className="mt-6 inline-flex min-h-11 items-center gap-2 text-base font-medium text-brand underline underline-offset-4"
           >
-            <BagIcon size={16} weight="bold" />
-            Back to shop
+            <ArrowLeftIcon size={16} weight="bold" />
+            Back to all pieces
           </Link>
         </section>
       </main>
@@ -376,116 +387,134 @@ export function ProductPage() {
   const pageDesc = product.description?.[0] ?? DEFAULT_DESCRIPTION
 
   return (
-    <main className="bg-white">
+    <main className="bg-paper">
       <Helmet>
         <title>{pageTitle}</title>
-        <meta name="description" content={pageDesc} />
-        <meta property="og:title" content={pageTitle} />
-        <meta name="twitter:title" content={pageTitle} />
-        <meta property="og:description" content={pageDesc} />
+        <meta name="description" content={pageDesc} />{" "}
+        <meta property="og:title" content={pageTitle} />{" "}
+        <meta name="twitter:title" content={pageTitle} />{" "}
+        <meta property="og:description" content={pageDesc} />{" "}
         <meta name="twitter:description" content={pageDesc} />
       </Helmet>
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
-        <div className="mb-6 flex items-center justify-between gap-4 sm:mb-8">
-          <Link
-            to="/shop"
-            className="flex items-center gap-2 border-b border-zinc-800 pb-0.5 text-sm font-medium text-zinc-900 transition-colors hover:text-zinc-900"
-          >
-            <BagIcon size={16} weight="bold" />
-            Back to shop
-          </Link>
+
+      <div className="grid lg:grid-cols-[60%_40%] lg:items-start">
+        <div className="lg:sticky lg:top-16">
+          <ProductImageMosaic key={product.id} product={product} />
         </div>
+        <div className="px-4 py-8 sm:px-10 md:px-12 lg:px-16 lg:py-12 xl:px-24">
+          <ProductHeader product={product} />
 
-        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
-          <div>
-            <ProductImageGallery key={product.id} product={product} />
-          </div>
+          <ProductPurchasePanel
+            key={product.id}
+            product={product}
+            range={range}
+            rentalDays={rentalDays}
+            dailyRate={dailyRate}
+            totalRate={totalRate}
+            onRangeChange={handleRangeChange}
+          />
 
-          <div className="lg:pt-6">
-            <p className="font-heading text-sm font-medium text-zinc-700 uppercase">
-              Selair Collection
-            </p>
-            <h1 className="mt-3 font-heading text-3xl leading-tight font-medium text-zinc-900 sm:text-4xl">
-              {product.name}
-            </h1>
+          <HowRentingWorksCard />
 
-            {product.ratingCount > 0 ? (
-              <div className="mt-3 flex items-center gap-2">
-                <StarRating value={product.ratingAvg} size={16} />
-                <span className="text-sm font-medium text-zinc-900">
-                  {product.ratingAvg.toFixed(1)}
-                </span>
-                <span className="text-sm text-zinc-500">
-                  ({product.ratingCount} {product.ratingCount === 1 ? "review" : "reviews"})
-                </span>
-              </div>
-            ) : null}
-
-            <p className="mt-4 max-w-xl text-base leading-7 text-zinc-600">
-              A refined rental piece selected for modern occasions, designed to
-              feel polished, effortless, and elegant.
-            </p>
-
-            <ProductPurchasePanel
-              key={product.id}
-              product={product}
-              range={range}
-              rentalDays={rentalDays}
-              dailyRate={dailyRate}
-              totalRate={totalRate}
-              onRangeChange={handleRangeChange}
-            />
-          </div>
+          {product.description.length > 0 ? (
+            <Accordion type="single" collapsible className="mt-8">
+              <AccordionItem value="details">
+                <AccordionTrigger className="py-4 text-base font-semibold text-ink hover:no-underline">
+                  The details
+                </AccordionTrigger>
+                <AccordionContent>
+                  <ul className="space-y-2">
+                    {product.description.map((item) => (
+                      <li
+                        key={item}
+                        className="ml-4 list-disc text-base leading-relaxed text-ink-soft"
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ) : null}
         </div>
-      </section>
-
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <h1 className="mb-5 font-heading text-2xl font-medium text-zinc-900">
-          Product Description
-        </h1>
-        <ul className="mt-2">
-          {product.description.map((item) => (
-            <li
-              key={item}
-              className="mt-2 ml-4 list-disc text-sm text-zinc-600 sm:text-base"
-            >
-              {item}
-            </li>
-          ))}
-        </ul>
       </div>
 
-      <ReviewsSection productId={product.id} />
-
-      <FaqSection />
       {relatedProducts.length > 0 ? (
-        <section className="mt-16 border-t border-zinc-200 px-4 py-10 pt-12 sm:px-6 lg:px-8">
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-3 sm:gap-4">
-            <div>
-              <h2 className="font-heading text-2xl text-zinc-900">
-                More to explore
-              </h2>
-              <p className="mt-2 text-sm text-zinc-500">
-                Similar pieces selected from the collection.
-              </p>
-            </div>
-            <Link
-              to="/shop"
-              className="text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900"
-            >
-              View all
-            </Link>
-          </div>
+        <section
+          aria-labelledby="related-heading"
+          className="border-t border-line py-12 sm:py-16"
+        >
+          <h2
+            id="related-heading"
+            className="px-4 text-center font-heading text-2xl font-medium text-ink sm:px-6 sm:text-3xl"
+          >
+            You may also like
+          </h2>
 
-          <div className="grid gap-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <ul className="mt-6 no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:px-6 lg:px-8">
             {relatedProducts.map((item) => (
-              <ProductCard key={item.id} product={item} />
+              <li
+                key={item.id}
+                className="w-[74%] shrink-0 snap-start sm:w-[38%] lg:w-[24%] xl:w-[20%]"
+              >
+                <ProductCard product={item} compact />
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
       ) : null}
 
-      {/* FAQ's */}
+      <PlanSection />
+      <FaqSection />
     </main>
+  )
+}
+
+/** Title block: rating, favourite toggle, name, collection and rate. */
+function ProductHeader({ product }: { product: CatalogProduct }) {
+  const { saved, toggle } = useFavorite(product.id)
+
+  return (
+    <header>
+      <div className="flex items-start justify-end gap-4">
+        <button
+          type="button"
+          aria-pressed={saved}
+          aria-label={
+            saved
+              ? `Remove ${product.name} from favorites`
+              : `Save ${product.name} to favorites`
+          }
+          onClick={() => void toggle()}
+          className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-white text-ink transition hover:scale-105 active:scale-95"
+        >
+          <CoatHangerIcon
+            size={18}
+            weight={saved ? "fill" : "regular"}
+            className={cn(saved && "text-brand")}
+          />
+        </button>
+      </div>
+
+      <h1 className="mt-3 font-heading text-4xl leading-tight font-medium text-ink sm:text-5xl">
+        {product.name}
+      </h1>
+
+      <p className="mt-2 flex flex-wrap items-center gap-x-2 text-base">
+        {product.brand ? (
+          <Link
+            to="/shop"
+            className="text-brand underline-offset-4 hover:underline"
+          >
+            {product.brand}
+          </Link>
+        ) : null}
+        <span className="text-ink-soft">
+          From {currencyFormatter.format(product.price)} · {product.duration}
+          -day rental
+        </span>
+      </p>
+    </header>
   )
 }

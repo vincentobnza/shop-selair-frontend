@@ -15,7 +15,7 @@ export function useFavorite(productId: string) {
   const toggleRemote = useFavoriteStore((s) => s.toggle)
 
   const [localIds, setLocalIds] = useState<string[]>(() =>
-    token ? [] : readLocalFavoriteIds(),
+    token ? [] : readLocalFavoriteIds()
   )
 
   useEffect(() => {

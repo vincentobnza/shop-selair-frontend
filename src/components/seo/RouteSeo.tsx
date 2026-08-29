@@ -1,6 +1,5 @@
 import { Helmet } from "react-helmet-async"
 import { useLocation } from "react-router-dom"
-
 import { getSeoForPath } from "@/components/seo/page-seo"
 import { absolutePath, getSiteOrigin, SITE_NAME } from "@/config/site"
 
@@ -19,30 +18,25 @@ export function RouteSeo() {
   return (
     <Helmet htmlAttributes={{ lang: "en" }}>
       <title>{seo.title}</title>
-      <meta name="description" content={seo.description} />
-      <link rel="canonical" href={canonical} />
-      <meta name="robots" content={seo.robots} />
-
-      <meta property="og:type" content="website" />
-      <meta property="og:site_name" content={SITE_NAME} />
-      <meta property="og:title" content={seo.title} />
-      <meta property="og:description" content={seo.description} />
-      <meta property="og:url" content={canonical} />
-      <meta property="og:locale" content="en_US" />
-
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={seo.title} />
+      <meta name="description" content={seo.description} />{" "}
+      <link rel="canonical" href={canonical} />{" "}
+      <meta name="robots" content={seo.robots} />{" "}
+      <meta property="og:type" content="website" />{" "}
+      <meta property="og:site_name" content={SITE_NAME} />{" "}
+      <meta property="og:title" content={seo.title} />{" "}
+      <meta property="og:description" content={seo.description} />{" "}
+      <meta property="og:url" content={canonical} />{" "}
+      <meta property="og:locale" content="en_US" />{" "}
+      <meta name="twitter:card" content="summary_large_image" />{" "}
+      <meta name="twitter:title" content={seo.title} />{" "}
       <meta name="twitter:description" content={seo.description} />
-
       {OG_IMAGE ? (
         <>
-          <meta property="og:image" content={OG_IMAGE} />
+          <meta property="og:image" content={OG_IMAGE} />{" "}
           <meta name="twitter:image" content={OG_IMAGE} />
         </>
       ) : null}
-
       <meta name="theme-color" content="#ffffff" />
-
       {showOrgJsonLd ? (
         <script type="application/ld+json">
           {JSON.stringify({

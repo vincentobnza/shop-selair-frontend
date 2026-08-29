@@ -1,21 +1,29 @@
-import {
-  SHOP_FILTER_OPTIONS,
-  shopFilterHref,
-} from "@/components/shop/shop-filters"
+import { BRAND, COLLECTIONS, OCCASIONS } from "@/config/brand"
+import { shopFilterHref } from "@/components/shop/shop-filters"
 
-export const SITE_LOGO_TEXT = "SHOP SELAIR"
+export const SITE_LOGO_TEXT = BRAND.wordmark
 
+/** Right-hand utility links in the header, mirroring the reference layout. */
 export const utilityLinks = {
-  howItWorks: { label: "How it Works", href: "/#why-selair" },
+  howItWorks: { label: "How It Works", href: "/#how-it-works" },
+  explore: { label: "Explore", href: "/shop" },
+  fittings: { label: "Fittings", href: "/#fittings" },
 } as const
 
-export type CategoryItem =
-  | { label: string; to: string; variant?: "default" }
-  | { label: string; to: string; variant: "accent" }
+export type CategoryItem = {
+  label: string
+  to: string
+  variant?: "default" | "accent"
+}
 
-export const categoryNavItems: CategoryItem[] = SHOP_FILTER_OPTIONS.map(
-  (o) => ({
-    label: o.label,
-    to: shopFilterHref(o.id),
-  })
-)
+/** Collections, used by the Browse panel and the mobile menu. */
+export const categoryNavItems: CategoryItem[] = COLLECTIONS.map((c) => ({
+  label: c.label,
+  to: shopFilterHref(c.id),
+}))
+
+/** Occasion shortcuts shown alongside collections in the Browse panel. */
+export const occasionNavItems: CategoryItem[] = OCCASIONS.map((o) => ({
+  label: o.label,
+  to: `/shop?occasion=${o.id}`,
+}))

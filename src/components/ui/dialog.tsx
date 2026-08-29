@@ -1,6 +1,5 @@
 import * as React from "react"
 import { Dialog as DialogPrimitive } from "radix-ui"
-
 import { cn } from "@/lib/utils"
 
 function Dialog({
@@ -30,7 +29,7 @@ function DialogOverlay({
       data-slot="dialog-overlay"
       className={cn(
         "fixed inset-0 z-50 bg-black/40 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
-        className,
+        className
       )}
       {...props}
     />
@@ -48,8 +47,8 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-[calc(100%-2rem)] max-w-lg max-h-[min(90vh,calc(100%-2rem))] -translate-x-1/2 -translate-y-1/2 gap-0 overflow-y-auto rounded-xl bg-white p-6 shadow-lg ring-1 ring-zinc-900/10 outline-none duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:p-8",
-          className,
+          "overlay-surface fixed top-1/2 left-1/2 z-50 grid max-h-[min(90vh,calc(100%-2rem))] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-0 overflow-y-auto duration-200 outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
+          className
         )}
         {...props}
       >
@@ -66,7 +65,7 @@ function DialogTitle({
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-lg font-semibold leading-none", className)}
+      className={cn("text-xl leading-tight font-semibold", className)}
       {...props}
     />
   )
@@ -79,7 +78,7 @@ function DialogDescription({
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={cn("text-sm text-zinc-500", className)}
+      className={cn("text-base text-ink-soft", className)}
       {...props}
     />
   )

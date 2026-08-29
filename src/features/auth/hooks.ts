@@ -29,7 +29,7 @@ export function useLogin() {
         setPending(false)
       }
     },
-    [login, navigate],
+    [login, navigate]
   )
 
   const clearError = useCallback(() => setError(null), [])
@@ -64,7 +64,7 @@ export function useRegister() {
         setPending(false)
       }
     },
-    [navigate, register],
+    [navigate, register]
   )
 
   const clearError = useCallback(() => setError(null), [])

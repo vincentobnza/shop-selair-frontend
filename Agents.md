@@ -132,6 +132,100 @@ Maximize React hooks usage when architecting component logic.
 5. Maintain strong contrast and readable touch targets.
 6. Avoid crowded screens; prioritize one primary action per view.
 
+### 6.1) Cards are borderless (mandatory)
+
+**Never put a border on a card.** A card is separated from the page by its
+*fill*, not by an outline.
+
+- Correct: `rounded-sm bg-white` on the `bg-paper` ground, or `rounded-sm bg-sage`
+  for a recessed block.
+- Wrong: `border border-line`, `border border-dashed`, or a ring used to fake one.
+- This covers every content container that reads as a card: product tiles,
+  order and address cards, review cards, empty states, summary panels.
+- Do not substitute a shadow for the border either. If a card is not reading as
+  separate, the ground is wrong — change the fill, not the edge.
+
+**What may still have a border:** form inputs, popovers, dropdown menus,
+dialogs, toasts, and the pill filters. These are chrome, not cards.
+
+### 6.2) Type scale: `text-base` is the default (mandatory)
+
+**Body copy is `text-base` (16px). It is the default for everything the visitor
+reads — do not fall back to `text-sm`.**
+
+- Never use `text-xs`, and never use an arbitrary size below 16px
+  (`text-[10px]` … `text-[15px]`). If a label feels too big at `text-base`, the
+  container is too small — grow the container.
+- `text-base` — paragraphs, FAQ and accordion answers, list bodies, card
+  captions, prices, nav and footer links, form fields, button labels, badges,
+  metadata, hints. In practice: everything.
+- `text-sm` is not a general-purpose size and should not appear in new work.
+- Headings use the display steps (`text-lg` … `text-5xl`); pick a step, do not
+  invent an arbitrary pixel value.
+
+Rationale: this reads on a phone in daylight, keeps contrast usable for older
+customers, and stops the interface drifting into unreadable micro-copy.
+
+### 6.3) No uppercase, no wide tracking (mandatory)
+
+**Never set `uppercase` on text, and never use positive letterspacing.**
+
+- No `uppercase` utility, and no `text-transform` in CSS. If a label needs to
+  read as a label, write it in sentence case and carry the emphasis with weight
+  and colour instead.
+- No `tracking-wide`, `tracking-wider`, `tracking-widest`, or arbitrary positive
+  values like `tracking-[0.12em]`. Letterspaced capitals are the one styling tic
+  this design does not use.
+- Negative tracking is fine and is already set globally: `-0.02em` on display
+  type, `-0.04em` on the wordmark. Do not add more per element.
+- This applies to eyebrows too. `.eyebrow` is now just `text-sm font-medium
+  text-ink-soft` — a section label in sentence case.
+
+### 6.4) Design tokens
+
+Use the semantic tokens in `src/index.css`, never raw Tailwind greys
+(`zinc-*`, `neutral-*`, `slate-*`) or hard-coded hex.
+
+The theme is three colours: **primary, light pink, pink.**
+
+| Token | Use |
+| --- | --- |
+| `bg-brand` / `text-brand` | Primary — CTAs, promo bar, links, active states |
+| `bg-pink-light` | Light pink — recessed sections, skeletons, footer ground |
+| `bg-pink` | Pink — accent panels and the footer keyline |
+| `bg-paper` | Page ground (near-white with a warm pink cast) |
+| `bg-white` | Cards and panels |
+| `text-ink` / `text-ink-soft` | Body text / secondary text |
+| `border-line` | Hairlines and rules (never card edges — see 6.1) |
+
+There is no green anywhere in the system. If you need another surface, reach for
+a different step of the pink scale, not a new hue.
+
+### 6.5) Typeface
+
+**One family for the whole system: Sharp Grotesk (Sharp Type).**
+
+`font-sans` (the default), `font-heading` and `font-logo` all resolve to the
+same stack. The three tokens exist only so the display or wordmark voice can be
+re-pointed later without touching every call site — do not treat them as
+different typefaces today.
+
+**Sharp Grotesk is a licensed commercial typeface.** It is what nuuly.com
+serves, because they hold a licence for it. It is not on Google Fonts, and its
+files must never be hotlinked from another site or taken from a "free font"
+mirror — those copies are unlicensed and this is a commercial storefront. Buy a
+webfont licence at sharptype.co, drop the `.woff2` files into
+`src/assets/fonts/`, and uncomment the `@font-face` block at the top of
+`src/index.css`.
+
+Until then the stack falls back to **Archivo** (OFL, Google Fonts), a grotesque
+with a width axis that sits far closer to Sharp Grotesk's proportions than a
+system sans — so the layout barely moves when the licensed files land.
+
+Display type is tracked at `-0.02em` globally (`h1`/`h2`/`h3` and
+`.font-heading`), the wordmark at `-0.04em`. Do not re-declare tracking per
+element, and never use positive tracking (see 6.3).
+
 ## 7) Mobile-First Standards (Mandatory)
 
 1. Design for small screens first, then progressively enhance for tablet/desktop.

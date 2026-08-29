@@ -1,6 +1,5 @@
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-
 export type AddressFormValue = {
   label: string
   recipient_name: string
@@ -33,16 +32,28 @@ type Props = {
 
 const inputClass = "h-11"
 
-export function AddressFields({ value, onChange, errors = {}, showLabel = true }: Props) {
+export function AddressFields({
+  value,
+  onChange,
+  errors = {},
+  showLabel = true,
+}: Props) {
   const field = (
     key: keyof AddressFormValue,
     label: string,
-    opts: { required?: boolean; autoComplete?: string; type?: string; placeholder?: string } = {},
+    opts: {
+      required?: boolean
+      autoComplete?: string
+      type?: string
+      placeholder?: string
+    } = {}
   ) => (
     <label className="block space-y-2">
-      <span className="text-sm font-medium text-zinc-800">
+      <span className="text-base font-medium text-ink">
         {label}
-        {!opts.required ? <span className="font-normal text-zinc-500"> (optional)</span> : null}
+        {!opts.required ? (
+          <span className="font-normal text-ink-soft"> (optional)</span>
+        ) : null}
       </span>
       <Input
         type={opts.type ?? "text"}
@@ -54,31 +65,56 @@ export function AddressFields({ value, onChange, errors = {}, showLabel = true }
         aria-invalid={Boolean(errors[key]?.length)}
       />
       {errors[key]?.[0] ? (
-        <span className="block text-xs text-red-700">{errors[key][0]}</span>
+        <span className="block text-base text-red-700">{errors[key][0]}</span>
       ) : null}
     </label>
   )
 
   return (
     <div className="grid gap-4">
-      {showLabel ? field("label", "Label", { placeholder: "Home, Office…" }) : null}
+      {showLabel
+        ? field("label", "Label", { placeholder: "Home, Office…" })
+        : null}{" "}
       <div className="grid gap-4 sm:grid-cols-2">
-        {field("recipient_name", "Full name", { required: true, autoComplete: "name" })}
-        {field("phone", "Mobile number", { required: true, autoComplete: "tel", type: "tel", placeholder: "+63 …" })}
+        {field("recipient_name", "Full name", {
+          required: true,
+          autoComplete: "name",
+        })}{" "}
+        {field("phone", "Mobile number", {
+          required: true,
+          autoComplete: "tel",
+          type: "tel",
+          placeholder: "+63 …",
+        })}
       </div>
-      {field("line1", "Address line 1", { required: true, autoComplete: "address-line1", placeholder: "Street, building, unit" })}
-      {field("line2", "Address line 2", { autoComplete: "address-line2" })}
+      {field("line1", "Address line 1", {
+        required: true,
+        autoComplete: "address-line1",
+        placeholder: "Street, building, unit",
+      })}{" "}
+      {field("line2", "Address line 2", { autoComplete: "address-line2" })}{" "}
       <div className="grid gap-4 sm:grid-cols-3">
-        {field("city", "City", { required: true, autoComplete: "address-level2" })}
-        {field("region", "Province / Region", { required: true, autoComplete: "address-level1" })}
-        {field("postal_code", "Postal code", { required: true, autoComplete: "postal-code" })}
+        {field("city", "City", {
+          required: true,
+          autoComplete: "address-level2",
+        })}{" "}
+        {field("region", "Province / Region", {
+          required: true,
+          autoComplete: "address-level1",
+        })}{" "}
+        {field("postal_code", "Postal code", {
+          required: true,
+          autoComplete: "postal-code",
+        })}
       </div>
     </div>
   )
 }
 
 /** Validates the required fields client-side; returns a field→messages map. */
-export function validateAddress(value: AddressFormValue): Record<string, string[]> {
+export function validateAddress(
+  value: AddressFormValue
+): Record<string, string[]> {
   const errors: Record<string, string[]> = {}
   const required: (keyof AddressFormValue)[] = [
     "recipient_name",

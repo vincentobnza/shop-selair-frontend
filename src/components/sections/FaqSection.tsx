@@ -4,80 +4,96 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { PRIMARY_CONTACT } from "@/config/brand"
 
+/**
+ * Rental FAQ. Answers describe how the service works without committing to
+ * figures (rates, deposits, fees) that are confirmed per booking — those are
+ * quoted by the shop, not by the site.
+ */
 const FAQ_ITEMS = [
   {
-    q: "How do event rentals work?",
-    a: "Pick your piece, choose your rental window (start and return dates), and check out. We ship so it arrives before your event, and you send it back in the prepaid packaging by the return date. Dry cleaning is included in your rental.",
+    q: "How does renting from Sselair work?",
+    a: "Pick your piece, choose the dates you need it, and check out. We hold the item for that window, get it to you before your event, and you send it back on your return date.",
   },
   {
-    q: "What if my event rental doesn't fit?",
-    a: "First, try the free backup size if your order included one. If it still isn’t right, contact us right away—unused items in original condition may be eligible for an exchange or size swap within the window stated in your order confirmation.",
+    q: "Can I try the piece on before my event?",
+    a: "Yes — book a fitting and we will pin and adjust beforehand. If you are outside Metro Manila, message us your measurements and we will advise on the closest fit and what can be adjusted.",
   },
   {
-    q: "Can I purchase my event rental?",
-    a: "When a buyout is available for your item, you’ll see the option in your account or on the product page. Pricing depends on the piece and how long you’ve rented; our team can confirm availability if you don’t see a buyout offer.",
+    q: "What if the fit is not right when it arrives?",
+    a: "Tell us as soon as it arrives. Depending on the piece and how much time is left before your date, we can look at a size swap, a light alteration, or an alternative from the same collection.",
   },
   {
-    q: "My event rental arrived early. What should I do?",
-    a: "That’s normal—we build in buffer so you’re not rushed. Keep the garment in its original packaging until you’re ready to wear it, and follow the same return date in your order. If you have a specific on-site event, you can still return on the scheduled day.",
+    q: "Do you rent Barong Tagalog and kids' pieces too?",
+    a: "We do. Barong in piña, jusi and organza for grooms, ninongs and guests, and formal pieces cut for children — so one occasion can be dressed from a single booking.",
   },
   {
-    q: "How do I make changes to my event rental?",
-    a: "For date or address changes, open your order in your account or message us with your order number. Changes are easiest before the order ships; after dispatch, options may be limited and fees can apply.",
+    q: "Are accessories included?",
+    a: "Pearls, brooches and boleros are booked as their own items and can be added to the same reservation so everything arrives together.",
   },
   {
-    q: "How do I cancel my event rental?",
-    a: "Cancel from your account when the option is available, or contact support. Refunds follow our cancellation policy: full or partial credit may apply depending on how close you are to the ship date—see your confirmation email for the exact terms.",
+    q: "Do I need to have the piece cleaned before returning it?",
+    a: "No. Send it back as it was worn — professional cleaning is handled on our side and is part of the rental.",
   },
   {
-    q: "Can I extend my event rental?",
-    a: "Yes, when the item is available. Request an extension before your return due date; we’ll confirm the new end date and any additional rental charge. Late returns without an approved extension may incur late fees.",
+    q: "What happens if something is damaged?",
+    a: "Normal wear from an event is expected and covered. Tell us straight away if something more serious happens; significant damage may carry a repair charge, and we will always confirm it with you first.",
   },
   {
-    q: "How do free backup sizes work?",
-    a: "On eligible styles, we may include a second size at no extra charge so you can try both and send back the one you don’t wear, using the same return kit. Only unworn items in original condition qualify—details are listed at checkout for qualifying products.",
+    q: "Can I extend my rental?",
+    a: "Often, yes — it depends on whether the piece is already reserved after your window. Ask before your return date so we can check the calendar and confirm the new end date.",
   },
   {
-    q: "What happens if I return my event rental late?",
-    a: "Returns after the due date may be charged a late fee per day until the item is back in our hands, up to the item’s retail value. If you’re at risk of missing the window, contact us before the due date to ask about an extension.",
+    q: "What if I return late?",
+    a: "A late return can leave the next customer without a piece for their own event, so late returns may carry a fee. If your plans shift, message us before the due date and we will work it out.",
   },
   {
-    q: "Do I have to send my original rental back in order to receive a replacement?",
-    a: "Usually yes—replacements and exchanges are processed once we have the original item back, or you may be asked to return it in the same shipment as the replacement, depending on the situation. Our support team will give you the exact steps for your case.",
+    q: "How do I change or cancel a booking?",
+    a: "Open the order in your account, or message us with your order number. Changes are easiest well before your start date; closer in, options are more limited.",
   },
 ] as const
 
 export function FaqSection() {
   return (
-    <section className="bg-zinc-50" id="faq" aria-labelledby="faq-heading">
+    <section className="bg-pink-light" id="faq" aria-labelledby="faq-heading">
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+        <p className="eyebrow text-center">Support</p>
         <h2
           id="faq-heading"
-          className="text-center font-heading text-2xl text-zinc-900 sm:text-3xl"
+          className="mt-3 text-center font-heading text-2xl font-medium text-ink sm:text-3xl"
         >
           Frequently asked questions
         </h2>
-        <p className="mx-auto mt-3 max-w-xl text-center text-sm text-zinc-600 sm:text-base">
-          Event rentals, fit, changes, and returns—quick answers below.
+        <p className="mx-auto mt-2 max-w-xl text-center text-base text-ink-soft">
+          Bookings, fittings, returns and everything in between.
         </p>
-
-        <Accordion
-          type="single"
-          collapsible
-          className="mt-10 w-full"
-        >
+        <Accordion type="single" collapsible className="mt-10 w-full">
           {FAQ_ITEMS.map((item, i) => (
-            <AccordionItem key={item.q} value={`item-${i}`}>
-              <AccordionTrigger className="text-left text-base font-medium text-zinc-900 hover:no-underline sm:py-4">
+            <AccordionItem key={item.q} value={`faq-${i}`}>
+              <AccordionTrigger className="py-4 text-left text-base font-semibold text-ink hover:no-underline">
                 {item.q}
               </AccordionTrigger>
               <AccordionContent>
-                <p className="text-zinc-600 leading-relaxed">{item.a}</p>
+                <p className="text-base leading-relaxed text-ink-soft">
+                  {item.a}
+                </p>
               </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
+        <p className="mt-10 text-center text-base text-ink-soft">
+          Still deciding?{" "}
+          <a
+            href={PRIMARY_CONTACT.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-brand underline-offset-4 hover:underline"
+          >
+            {PRIMARY_CONTACT.label}
+          </a>
+          .
+        </p>
       </div>
     </section>
   )

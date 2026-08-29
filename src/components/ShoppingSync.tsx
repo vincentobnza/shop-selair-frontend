@@ -1,9 +1,7 @@
 import { useEffect } from "react"
-
 import { useAuthStore } from "@/features/auth/store"
 import { useCartStore } from "@/features/cart/cartStore"
 import { useFavoriteStore } from "@/features/favorites/favoritesStore"
-
 export function ShoppingSync() {
   const token = useAuthStore((s) => s.token)
 

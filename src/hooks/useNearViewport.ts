@@ -16,7 +16,7 @@ export function useNearViewport(rootMargin = "320px") {
           io.disconnect()
         }
       },
-      { rootMargin },
+      { rootMargin }
     )
     io.observe(el)
     return () => io.disconnect()

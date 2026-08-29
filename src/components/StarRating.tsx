@@ -1,5 +1,4 @@
 import { StarIcon } from "@phosphor-icons/react"
-
 import { cn } from "@/lib/utils"
 
 type StarRatingProps = {
@@ -17,7 +16,13 @@ type StarRatingProps = {
  * Read-only or interactive 5-star rating. Uses the storefront's amber accent
  * for filled stars and zinc for empty, matching the neutral design system.
  */
-export function StarRating({ value, size = 16, className, onChange, ariaLabel }: StarRatingProps) {
+export function StarRating({
+  value,
+  size = 16,
+  className,
+  onChange,
+  ariaLabel,
+}: StarRatingProps) {
   const rounded = Math.round(value)
   const stars = [1, 2, 3, 4, 5]
 
@@ -41,7 +46,7 @@ export function StarRating({ value, size = 16, className, onChange, ariaLabel }:
             <StarIcon
               size={size + 6}
               weight={star <= value ? "fill" : "regular"}
-              className={star <= value ? "text-amber-500" : "text-zinc-300"}
+              className={star <= value ? "text-amber-500" : "text-line"}
             />
           </button>
         ))}
@@ -50,13 +55,16 @@ export function StarRating({ value, size = 16, className, onChange, ariaLabel }:
   }
 
   return (
-    <span className={cn("inline-flex items-center gap-0.5", className)} aria-label={ariaLabel}>
+    <span
+      className={cn("inline-flex items-center gap-0.5", className)}
+      aria-label={ariaLabel}
+    >
       {stars.map((star) => (
         <StarIcon
           key={star}
           size={size}
           weight={star <= rounded ? "fill" : "regular"}
-          className={star <= rounded ? "text-amber-500" : "text-zinc-300"}
+          className={star <= rounded ? "text-amber-500" : "text-line"}
         />
       ))}
     </span>

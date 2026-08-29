@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { MapPinIcon, PlusIcon } from "@phosphor-icons/react"
 import { toast } from "sonner"
-
 import {
   AddressFields,
   EMPTY_ADDRESS,
@@ -19,7 +18,6 @@ import {
   useUpdateAddress,
 } from "@/features/addresses/queries"
 import type { Address } from "@/features/addresses/types"
-
 export function AddressesPage() {
   const { data: addresses, isLoading } = useAddresses()
   const create = useCreateAddress()
@@ -93,17 +91,16 @@ export function AddressesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="font-heading text-xl font-medium text-zinc-900">Addresses</h2>
+        <h2 className="text-xl font-medium text-ink">Addresses</h2>
         {editing === null ? (
           <Button variant="outline" className="rounded-full" onClick={openNew}>
             <PlusIcon size={16} /> Add address
           </Button>
         ) : null}
       </div>
-
       {editing !== null ? (
-        <div className="rounded-xl border border-neutral-200 bg-white p-5 sm:p-6">
-          <h3 className="mb-4 font-heading text-base font-medium text-zinc-900">
+        <div className="rounded-sm bg-white p-5 sm:p-6">
+          <h3 className="mb-4 text-base font-medium text-ink">
             {editing === "new" ? "New address" : "Edit address"}
           </h3>
           <AddressFields
@@ -117,39 +114,46 @@ export function AddressesPage() {
               onClick={submit}
               disabled={create.isPending || update.isPending}
             >
-              {create.isPending || update.isPending ? "Saving…" : "Save address"}
+              {create.isPending || update.isPending
+                ? "Saving…"
+                : "Save address"}
             </Button>
-            <Button variant="ghost" className="rounded-full" onClick={() => setEditing(null)}>
+            <Button
+              variant="ghost"
+              className="rounded-full"
+              onClick={() => setEditing(null)}
+            >
               Cancel
             </Button>
           </div>
         </div>
       ) : null}
-
       {!addresses || addresses.length === 0 ? (
         editing === null ? (
-          <div className="flex flex-col items-center rounded-lg border border-dashed border-neutral-200 bg-zinc-50 px-6 py-16 text-center">
-            <MapPinIcon size={40} className="text-zinc-300" />
-            <p className="mt-3 font-heading text-lg text-zinc-900">No saved addresses</p>
-            <p className="mt-1 text-sm text-zinc-600">Add one to speed up checkout.</p>
+          <div className="flex flex-col items-center rounded-sm bg-pink-light px-6 py-16 text-center">
+            <MapPinIcon size={40} className="text-line" />{" "}
+            <p className="mt-3 text-lg text-ink">No saved addresses</p>{" "}
+            <p className="mt-1 text-base text-ink-soft">
+              Add one to speed up checkout.
+            </p>
           </div>
         ) : null
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2">
           {addresses.map((a) => (
-            <li key={a.id} className="rounded-xl border border-neutral-200 bg-white p-5">
+            <li key={a.id} className="rounded-sm bg-white p-5">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-zinc-900">
+                <span className="text-base font-medium text-ink">
                   {a.label || "Address"}
                 </span>
                 {a.is_default ? (
-                  <span className="rounded-full bg-zinc-900 px-2 py-0.5 text-[11px] font-medium text-white">
+                  <span className="rounded-full bg-ink px-2 py-0.5 text-base font-medium text-white">
                     Default
                   </span>
                 ) : null}
               </div>
-              <address className="mt-2 text-sm text-zinc-600 not-italic">
-                <span className="font-medium text-zinc-900">{a.recipient_name}</span>
+              <address className="mt-2 text-base text-ink-soft not-italic">
+                <span className="font-medium text-ink">{a.recipient_name}</span>
                 <br />
                 {a.phone}
                 <br />
@@ -158,28 +162,29 @@ export function AddressesPage() {
                 <br />
                 {a.city}, {a.region} {a.postal_code}
               </address>
-              <div className="mt-4 flex flex-wrap gap-2 border-t border-neutral-100 pt-3 text-sm">
+              <div className="mt-4 flex flex-wrap gap-2 border-t border-line pt-3 text-base">
                 <button
-                  className="font-medium text-zinc-700 hover:text-zinc-900"
+                  className="font-medium text-ink-soft hover:text-ink"
                   onClick={() => openEdit(a)}
                 >
                   Edit
                 </button>
                 {!a.is_default ? (
                   <>
-                    <span className="text-zinc-300">·</span>
+                    <span className="text-line">·</span>
                     <button
-                      className="font-medium text-zinc-700 hover:text-zinc-900"
+                      className="font-medium text-ink-soft hover:text-ink"
                       onClick={() =>
                         setDefault.mutate(a.id, {
-                          onSuccess: () => toast.success("Default address set."),
+                          onSuccess: () =>
+                            toast.success("Default address set."),
                           onError: (e) => toast.error(toUserMessage(e)),
                         })
                       }
                     >
                       Set default
                     </button>
-                    <span className="text-zinc-300">·</span>
+                    <span className="text-line">·</span>
                     <button
                       className="font-medium text-red-700 hover:text-red-800"
                       onClick={() =>

@@ -12,13 +12,21 @@ export async function createAddress(input: AddressInput): Promise<Address> {
   return res.data.data
 }
 
-export async function updateAddress(id: string, input: Partial<AddressInput>): Promise<Address> {
-  const res = await api.put<{ data: Address }>(apiPath(`addresses/${id}`), input)
+export async function updateAddress(
+  id: string,
+  input: Partial<AddressInput>
+): Promise<Address> {
+  const res = await api.put<{ data: Address }>(
+    apiPath(`addresses/${id}`),
+    input
+  )
   return res.data.data
 }
 
 export async function setDefaultAddress(id: string): Promise<Address> {
-  const res = await api.patch<{ data: Address }>(apiPath(`addresses/${id}/default`))
+  const res = await api.patch<{ data: Address }>(
+    apiPath(`addresses/${id}/default`)
+  )
   return res.data.data
 }
 

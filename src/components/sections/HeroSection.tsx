@@ -1,138 +1,165 @@
-import { Link, useLocation } from "react-router-dom"
-
-import { DressingForPicker } from "@/components/sections/DressingForPicker"
+import { useCallback, useEffect, useState } from "react"
+import { Link } from "react-router-dom"
+import useEmblaCarousel from "embla-carousel-react"
+import {
+  CaretLeftIcon,
+  CaretRightIcon,
+  PauseIcon,
+  PlayIcon,
+} from "@phosphor-icons/react"
 import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
-import { SAMPLE_DATA } from "@/dummy/sampleData"
+import { HERO_SLIDES } from "@/dummy/sampleData"
 import { cn } from "@/lib/utils"
 
-const defaults = SAMPLE_DATA.HeroSection
+const AUTOPLAY_MS = 6500
 
-function heroRoute(pathname: string): "home" | "rent" | "essentials" {
-  const p = pathname.replace(/\/$/, "") || "/"
-  if (p === "/rent") return "rent"
-  if (p === "/essentials") return "essentials"
-  return "home"
-}
-
-function SideImage({ src, priority }: { src: string; priority?: boolean }) {
-  return (
-    <div className="h-[min(70vh,34rem)] w-full min-w-0 overflow-hidden rounded bg-neutral-100 xl:h-[min(75vh,38rem)]">
-      <AppImage
-        src={src}
-        alt=""
-        priority={priority}
-        className="h-full w-full object-cover"
-      />
-    </div>
-  )
-}
-
+/**
+ * Full-bleed hero carousel: a wide panel carrying the overlay copy plus a
+ * narrow companion panel from `lg` up, with edge chevrons, a play/pause control
+ * and dot pagination — the layout used in DESIGN_REFERENCE/home.png.
+ *
+ * Autoplay is implemented here rather than via the embla autoplay plugin so it
+ * can honour `prefers-reduced-motion` and stop permanently once the visitor
+ * takes control.
+ */
 export function HeroSection() {
-  const { pathname } = useLocation()
-  const route = heroRoute(pathname)
+  const [emblaRef, embla] = useEmblaCarousel({ loop: true })
+  const [selected, setSelected] = useState(0)
+  const [playing, setPlaying] = useState(true)
 
-  const eyebrow =
-    route === "rent" ? "Formal moments made effortless" : undefined
-  const title = route === "rent" ? "Rent With Confidence" : defaults.title
-  const description =
-    route === "rent"
-      ? "Find polished formal wear for graduations, ceremonies, and special events with a smooth booking experience."
-      : defaults.description
+  useEffect(() => {
+    if (!embla) return
+    const onSelect = () => setSelected(embla.selectedScrollSnap())
+    onSelect()
+    embla.on("select", onSelect)
+    return () => {
+      embla.off("select", onSelect)
+    }
+  }, [embla])
 
-  const ctaLabel = route === "rent" ? "Browse Rentals" : defaults.ctaLabel
-  const ctaTo = route === "rent" ? "/rent" : "/shop"
-  const secondaryCtaLabel =
-    route === "rent" ? "Shop essentials" : defaults.ctaSecondaryLabel
-  const secondaryCtaTo = route === "rent" ? "/shop" : defaults.ctaSecondaryTo
+  useEffect(() => {
+    if (!embla || !playing) return
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    if (reduced) return
 
-  const dressingFor = route === "home"
-  const pickerCtaLabel = "Browse All Styles"
+    const id = window.setInterval(() => embla.scrollNext(), AUTOPLAY_MS)
+    return () => window.clearInterval(id)
+  }, [embla, playing])
 
-  const sideImageLeft = defaults.sideImageLeft
-  const sideImageRight = defaults.sideImageRight
-  const showSides = Boolean(sideImageLeft && sideImageRight)
+  /* Any manual navigation means the visitor is driving — stop moving under them. */
+  const stopAutoplay = useCallback(() => setPlaying(false), [])
 
-  const mainCopy = (
-    <>
-      {eyebrow ? (
-        <p className="mb-3 text-xs font-medium tracking-[0.2em] text-neutral-500 uppercase sm:text-sm">
-          {eyebrow}
-        </p>
-      ) : null}
-      <h1 className="mx-auto max-w-3xl font-heading text-[1.75rem] leading-snug text-neutral-900 sm:text-4xl md:text-5xl lg:text-6xl xl:text-[3.5rem] xl:leading-tight">
-        {title}
-      </h1>
-      <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-black sm:text-base">
-        {description}
-      </p>
+  const scrollPrev = useCallback(() => {
+    stopAutoplay()
+    embla?.scrollPrev()
+  }, [embla, stopAutoplay])
 
-      <div
-        className={cn(
-          "mx-auto mt-8 flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center sm:gap-4"
-        )}
-      >
-        <Button
-          variant="pill"
-          asChild
-          className="h-11 w-full touch-manipulation px-6 font-heading text-sm font-medium tracking-tighter sm:h-auto sm:w-auto sm:min-w-40 sm:py-3 sm:text-base md:text-lg lg:text-xl"
-        >
-          <Link to={ctaTo}>{ctaLabel}</Link>
-        </Button>
-        <Button
-          variant="outline"
-          asChild
-          className="h-11 w-full touch-manipulation rounded-full px-6 font-heading text-sm font-medium tracking-tighter sm:h-auto sm:w-auto sm:min-w-40 sm:py-3 sm:text-base md:text-lg lg:text-xl"
-        >
-          <Link to={secondaryCtaTo}>{secondaryCtaLabel}</Link>
-        </Button>
-      </div>
-    </>
-  )
+  const scrollNext = useCallback(() => {
+    stopAutoplay()
+    embla?.scrollNext()
+  }, [embla, stopAutoplay])
 
   return (
-    <section className="bg-white px-4 py-14 sm:py-16 md:py-20 lg:py-24 xl:py-32">
-      <div className="mx-auto max-w-screen-2xl">
-        {showSides ? (
-          <div className="flex flex-col gap-12 lg:gap-16">
-            <div
-              className={cn(
-                "grid gap-8 lg:items-center lg:gap-10 xl:gap-14",
-                dressingFor
-                  ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,min(44rem,100%))_minmax(0,1fr)]"
-                  : "lg:grid-cols-[minmax(0,1fr)_minmax(0,38rem)_minmax(0,1fr)]"
-              )}
-            >
-              <div className="hidden min-w-0 lg:block">
-                <SideImage src={sideImageLeft} priority />
+    <section aria-label="Featured collections" className="bg-paper">
+      <div className="relative">
+        <div ref={emblaRef} className="overflow-hidden">
+          <div className="flex touch-pan-y">
+            {HERO_SLIDES.map((slide, i) => (
+              <div
+                key={slide.id}
+                className="min-w-0 shrink-0 grow-0 basis-full"
+                aria-roledescription="slide"
+                aria-label={`${i + 1} of ${HERO_SLIDES.length}`}
+              >
+                <div className="grid lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+                  <div className="relative min-w-0">
+                    <AppImage
+                      src={slide.image}
+                      alt={slide.imageAlt}
+                      priority={i === 0}
+                      className="h-[62vh] max-h-[38rem] min-h-[24rem] w-full object-cover"
+                    />
+                    <div
+                      aria-hidden
+                      className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/35 to-black/15"
+                    />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+                      <h2 className="max-w-2xl font-heading text-3xl leading-tight font-medium text-white drop-shadow-sm sm:text-5xl lg:text-[3.25rem]">
+                        {slide.title}
+                      </h2>
+                      <p className="mt-3 max-w-xl text-base text-white">
+                        {slide.subtitle}
+                      </p>
+                      <Button
+                        variant="pill"
+                        asChild
+                        className="mt-6 h-11 px-8 text-base font-semibold"
+                      >
+                        <Link to={slide.ctaTo}>{slide.ctaLabel}</Link>
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="hidden min-w-0 lg:block">
+                    <AppImage
+                      src={slide.sideImage}
+                      alt={slide.sideImageAlt}
+                      className="h-[62vh] max-h-[38rem] min-h-[24rem] w-full object-cover"
+                    />
+                  </div>
+                </div>
               </div>
-
-              <div className="min-w-0 text-center">{mainCopy}</div>
-
-              <div className="hidden min-w-0 lg:block">
-                <SideImage src={sideImageRight} />
-              </div>
-            </div>
-
-            {dressingFor ? (
-              <div className="mx-auto w-full max-w-5xl">
-                <DressingForPicker ctaLabel={pickerCtaLabel} />
-              </div>
-            ) : null}
+            ))}
           </div>
-        ) : (
-          <div
+        </div>
+        <button
+          type="button"
+          onClick={scrollPrev}
+          aria-label="Previous slide"
+          className="absolute top-1/2 left-3 z-10 flex size-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/75 text-ink backdrop-blur-sm transition hover:bg-white sm:left-5"
+        >
+          <CaretLeftIcon size={18} weight="bold" />
+        </button>
+        <button
+          type="button"
+          onClick={scrollNext}
+          aria-label="Next slide"
+          className="absolute top-1/2 right-3 z-10 flex size-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/75 text-ink backdrop-blur-sm transition hover:bg-white sm:right-5"
+        >
+          <CaretRightIcon size={18} weight="bold" />
+        </button>
+        <button
+          type="button"
+          onClick={() => setPlaying((v) => !v)}
+          aria-label={playing ? "Pause slideshow" : "Play slideshow"}
+          className="absolute right-3 bottom-3 z-10 flex size-9 cursor-pointer items-center justify-center rounded-full bg-white/75 text-ink backdrop-blur-sm transition hover:bg-white sm:right-5 sm:bottom-5"
+        >
+          {playing ? (
+            <PauseIcon size={14} weight="fill" />
+          ) : (
+            <PlayIcon size={14} weight="fill" />
+          )}
+        </button>
+      </div>
+      <div className="flex items-center justify-center gap-2.5 py-5">
+        {HERO_SLIDES.map((slide, i) => (
+          <button
+            key={slide.id}
+            type="button"
+            aria-label={`Go to slide ${i + 1}`}
+            aria-current={i === selected}
+            onClick={() => {
+              stopAutoplay()
+              embla?.scrollTo(i)
+            }}
             className={cn(
-              "text-center",
-              dressingFor ? "mx-auto max-w-4xl" : "mx-auto max-w-3xl"
+              "size-2 cursor-pointer rounded-full transition-colors",
+              i === selected ? "bg-brand" : "bg-line"
             )}
-          >
-            {mainCopy}
-            {dressingFor ? (
-              <DressingForPicker ctaLabel={pickerCtaLabel} />
-            ) : null}
-          </div>
-        )}
+          />
+        ))}
       </div>
     </section>
   )

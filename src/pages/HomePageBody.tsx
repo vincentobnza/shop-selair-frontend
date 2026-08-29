@@ -1,17 +1,22 @@
-import { HeroSection } from "@/components/sections/HeroSection"
-import { NewArrival } from "@/components/sections/NewArrival"
-import { SplitSection } from "@/components/sections/SplitSection"
-import { WhyChoose } from "@/components/sections/WhyChoose"
-import { FollowInstagram } from "@/components/sections/FollowInstagram"
+import { CollectionRail } from "@/components/sections/CollectionRail"
+import { EditorialTiles } from "@/components/sections/EditorialTiles"
 import { FaqSection } from "@/components/sections/FaqSection"
-
+import { FollowInstagram } from "@/components/sections/FollowInstagram"
+import { HeroSection } from "@/components/sections/HeroSection"
+import { OccasionPicker } from "@/components/sections/OccasionPicker"
+import { PlanSection } from "@/components/sections/PlanSection"
+import { SplitSection } from "@/components/sections/SplitSection"
+import { StatementBand } from "@/components/sections/StatementBand"
 export default function HomePageBody() {
   return (
     <>
       <HeroSection />
-      <NewArrival />
+      <StatementBand />
+      <EditorialTiles />
+      <CollectionRail />
+      <OccasionPicker />
+      <PlanSection />
       <SplitSection />
-      <WhyChoose />
       <FaqSection />
       <FollowInstagram />
     </>

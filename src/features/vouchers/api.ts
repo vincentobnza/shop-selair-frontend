@@ -13,11 +13,14 @@ export type VoucherPreview = {
 /** Validate a voucher against a subtotal; throws ApiError(422) when invalid. */
 export async function previewVoucher(
   code: string,
-  subtotalCents: number,
+  subtotalCents: number
 ): Promise<VoucherPreview> {
-  const res = await api.post<{ data: VoucherPreview }>(apiPath("vouchers/preview"), {
-    code,
-    subtotal_cents: subtotalCents,
-  })
+  const res = await api.post<{ data: VoucherPreview }>(
+    apiPath("vouchers/preview"),
+    {
+      code,
+      subtotal_cents: subtotalCents,
+    }
+  )
   return res.data.data
 }

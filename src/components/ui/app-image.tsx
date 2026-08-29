@@ -1,5 +1,4 @@
 import type { ImgHTMLAttributes } from "react"
-
 export type AppImageProps = ImgHTMLAttributes<HTMLImageElement> & {
   /** Above-the-fold / LCP: eager load + high fetch priority */
   priority?: boolean

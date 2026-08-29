@@ -1,26 +1,31 @@
-import { HeartIcon } from "@phosphor-icons/react"
+import { CoatHangerIcon } from "@phosphor-icons/react"
 import { Link } from "react-router-dom"
-
 import type { ShopProduct } from "@/components/shop/shop-filters"
-import { StarRating } from "@/components/StarRating"
 import { AppImage } from "@/components/ui/app-image"
+import { BRAND } from "@/config/brand"
 import { useFavorite } from "@/features/favorites/useFavorite"
 import { slugifyProductName } from "@/features/products/map"
 import { cn } from "@/lib/utils"
 
-const currencyFormatter = new Intl.NumberFormat("en-PH", {
+const currencyFormatter = new Intl.NumberFormat(BRAND.locale, {
   style: "currency",
-  currency: "PHP",
+  currency: BRAND.currency,
   maximumFractionDigits: 0,
 })
 
 export type ProductCardProps = {
   product: ShopProduct
   className?: string
-  /** Narrow carousel: single image, “From” price, bolder brand */
+  /** Narrow rail variant: tighter type, single image, no hover swap. */
   compact?: boolean
 }
 
+/**
+ * Product tile in the reference house style: a borderless white card whose
+ * fill separates it from the paper ground, a favourite toggle floating over
+ * the image, and a centred caption of name + collection + price. A second
+ * image, when the catalog supplies one, cross-fades on hover.
+ */
 export function ProductCard({
   product,
   className,
@@ -29,13 +34,20 @@ export function ProductCard({
   const to = `/products/${slugifyProductName(product.name)}`
   const { saved, toggle } = useFavorite(product.id)
   const hasSwap = !compact && Boolean(product.image?.[1])
+  const bookable =
+    product.sizes.length === 0 || product.sizes.some((s) => s.available)
 
   return (
-    <article className={cn("group relative my-2 overflow-hidden", className)}>
+    <article
+      className={cn(
+        "group relative flex h-full flex-col overflow-hidden rounded-sm bg-white",
+        className
+      )}
+    >
       <div className="relative">
         <Link to={to} className="block">
           <div
-            className="relative w-full overflow-hidden"
+            className="relative w-full overflow-hidden bg-pink-light"
             style={{ aspectRatio: "3 / 4" }}
           >
             {hasSwap ? (
@@ -43,12 +55,12 @@ export function ProductCard({
                 <AppImage
                   src={product.image?.[0]}
                   alt={product.name}
-                  className="absolute inset-0 h-full w-full object-cover transition-all duration-500 ease-out group-hover:opacity-0"
+                  className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-out group-hover:opacity-0"
                 />
                 <AppImage
                   src={product.image![1]}
-                  alt={`${product.name} (alternate view)`}
-                  className="absolute inset-0 h-full w-full object-cover opacity-0 transition-all duration-500 ease-out group-hover:opacity-100"
+                  alt={`${product.name}, alternate view`}
+                  className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100"
                 />
               </>
             ) : (
@@ -58,90 +70,66 @@ export function ProductCard({
                 className="absolute inset-0 h-full w-full object-cover"
               />
             )}
+
+            {!bookable ? (
+              <span className="absolute bottom-2 left-2 rounded-full bg-white/90 px-2.5 py-1 text-base font-semibold text-ink">
+                Fully booked
+              </span>
+            ) : null}
           </div>
         </Link>
-
         <button
           type="button"
           aria-pressed={saved}
-          aria-label={saved ? "Remove from favorites" : "Add to favorites"}
-          title={saved ? "Remove from favorites" : "Add to favorites"}
-          aria-controls="favorite-button"
-          className="absolute top-2 right-2 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/70 shadow-sm ring-1 ring-black/2 transition hover:scale-105 active:scale-95"
+          aria-label={
+            saved
+              ? `Remove ${product.name} from favorites`
+              : `Save ${product.name} to favorites`
+          }
+          className="absolute top-2 right-2 z-10 flex size-9 cursor-pointer items-center justify-center rounded-full bg-white/90 text-ink shadow-sm transition hover:scale-105 active:scale-95"
           onClick={(e) => {
             e.preventDefault()
             void toggle()
           }}
         >
-          <HeartIcon
-            size={20}
+          <CoatHangerIcon
+            size={18}
             weight={saved ? "fill" : "regular"}
-            className={saved ? "text-black" : "text-zinc-900"}
+            className={saved ? "text-brand" : "text-ink"}
           />
         </button>
       </div>
 
-      <Link to={to} className="mt-4 block">
-        <div className="space-y-0.5">
-          <div className="flex items-center justify-between">
-            <h2
-              className={cn(
-                "line-clamp-1 font-heading font-medium text-zinc-900",
-                compact ? "text-sm" : "text-sm md:text-base"
-              )}
-            >
-              {product.name}
-            </h2>
-
-            {product.sizes.length > 0 ? (
-              <div className="mr-2 flex max-w-[58%] shrink-0 flex-wrap items-center justify-end gap-x-1.5 gap-y-0.5">
-                {product.sizes.map((opt) => (
-                  <span
-                    key={opt.label}
-                    title={opt.available ? undefined : "Unavailable"}
-                    className={cn(
-                      "font-heading text-sm font-medium",
-                      opt.available
-                        ? "text-zinc-900"
-                        : "text-zinc-400 line-through decoration-zinc-400"
-                    )}
-                  >
-                    {opt.label}
-                  </span>
-                ))}
-              </div>
-            ) : null}
-          </div>
-          {product.brand ? (
-            <p
-              className={cn(
-                compact
-                  ? "text-sm font-bold text-zinc-900"
-                  : "text-xs font-medium text-muted-foreground"
-              )}
-            >
-              {product.brand}
-            </p>
-          ) : null}
-        </div>
-        <p
+      <Link
+        to={to}
+        className="flex flex-1 flex-col items-center gap-2 px-4 py-4 text-center sm:py-5"
+      >
+        <h3
           className={cn(
-            "mt-2 text-sm font-bold",
-            compact ? "text-orange-900" : "text-primary"
+            "line-clamp-2 text-ink",
+            compact ? "text-base" : "text-base sm:text-lg"
           )}
         >
-          {compact ? (
-            <>From {currencyFormatter.format(product.price)}</>
-          ) : (
-            currencyFormatter.format(product.price)
-          )}
-        </p>
-        {product.ratingCount > 0 ? (
-          <div className="mt-1 flex items-center gap-1">
-            <StarRating value={product.ratingAvg} size={12} />
-            <span className="text-xs text-zinc-500">({product.ratingCount})</span>
-          </div>
+          {product.name}
+        </h3>
+
+        {product.brand ? (
+          <p className="text-base font-semibold text-ink-soft">
+            {product.brand}
+          </p>
         ) : null}
+
+        {/* Price is the decision point on a browse grid — it gets its own line
+            and the largest weight in the caption. */}
+        <p
+          className={cn(
+            "mt-auto pt-1 font-semibold text-ink",
+            compact ? "text-lg" : "text-lg sm:text-xl"
+          )}
+        >
+          <span className="text-base font-normal text-ink-soft">From </span>
+          {currencyFormatter.format(product.price)}
+        </p>
       </Link>
     </article>
   )

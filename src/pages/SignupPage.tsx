@@ -1,13 +1,11 @@
 import { type FormEvent, useId, useState } from "react"
 import { Link } from "react-router-dom"
-
 import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout"
 import { FloatingLabelInput } from "@/components/auth/FloatingLabelInput"
 import { Button } from "@/components/ui/button"
 import { DotPulse } from "@/components/ui/dot-pulse"
 import { useRegister } from "@/features/auth/hooks"
 import { SAMPLE_DATA } from "@/dummy/sampleData"
-
 export function SignupPage() {
   const { run: submitRegister, error, pending, clearError } = useRegister()
   const nameId = useId()
@@ -54,17 +52,16 @@ export function SignupPage() {
       imageAlt=""
     >
       <div className="mt-10 sm:mt-12">
-        <h1 className="font-heading text-2xl font-semibold tracking-tight text-neutral-950 sm:text-3xl md:text-4xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl md:text-4xl">
           Sign up
         </h1>
-        <p className="mt-2 max-w-sm text-base leading-relaxed text-neutral-600 sm:text-lg">
+        <p className="mt-2 max-w-sm text-base leading-relaxed text-ink-soft sm:text-lg">
           Create an account to save favorites and check out faster.
         </p>
-
         <form onSubmit={onSubmit} className="auth-form mt-8 space-y-3">
           {displayError ? (
             <p
-              className="border-l-2 border-red-600 bg-red-50 px-3 py-2.5 text-sm text-red-800"
+              className="border-l-2 border-red-600 bg-red-50 px-3 py-2.5 text-base text-red-800"
               role="alert"
             >
               {displayError}
@@ -133,7 +130,7 @@ export function SignupPage() {
             minLength={8}
           />
 
-          <p className="text-sm leading-relaxed text-neutral-500 sm:text-base">
+          <p className="text-base leading-relaxed text-ink-soft sm:text-base">
             By signing up, you agree to our terms and privacy practices.
           </p>
 
@@ -141,7 +138,7 @@ export function SignupPage() {
             type="submit"
             size="lg"
             disabled={pending}
-            className="h-12 w-full rounded-full text-base font-semibold tracking-[0.14em] uppercase sm:h-14 sm:text-lg"
+            className="h-12 w-full rounded-full text-base font-semibold sm:h-14 sm:text-lg"
           >
             {pending ? (
               <DotPulse label="Creating account" className="min-h-[1.25em]" />
@@ -150,12 +147,11 @@ export function SignupPage() {
             )}
           </Button>
         </form>
-
-        <p className="mt-8 text-center text-base text-neutral-600 sm:text-lg">
+        <p className="mt-8 text-center text-base text-ink-soft sm:text-lg">
           Already have an account?{" "}
           <Link
             to="/login"
-            className="ml-0.5 font-semibold text-neutral-950 underline-offset-4 hover:underline"
+            className="ml-0.5 font-semibold text-ink underline-offset-4 hover:underline"
           >
             Log in
           </Link>

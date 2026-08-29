@@ -1,9 +1,5 @@
 import { ACCOUNT_SECTION_TITLES } from "@/config/account-routes"
-import {
-  buildTitle,
-  DEFAULT_DESCRIPTION,
-  SITE_NAME,
-} from "@/config/site"
+import { buildTitle, DEFAULT_DESCRIPTION, SITE_NAME } from "@/config/site"
 
 export type PageSeo = {
   title: string
@@ -61,7 +57,7 @@ export function getSeoForPath(pathname: string): PageSeo {
   if (path.startsWith("/products/")) {
     return pageSeo(
       "Product details",
-      "View photos, pricing, rental dates, and description for this Selair listing.",
+      "View photos, pricing, rental dates, and description for this Selair listing."
     )
   }
 
@@ -70,7 +66,7 @@ export function getSeoForPath(pathname: string): PageSeo {
     const segment = ACCOUNT_SECTION_TITLES[slug] ?? "Account"
     return pageSeo(
       segment,
-      `Manage ${segment.toLowerCase()} and preferences in your Selair account.`,
+      `Manage ${segment.toLowerCase()} and preferences in your Selair account.`
     )
   }
 

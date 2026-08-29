@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState, type FormEvent } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { CaretLeftIcon, TagIcon } from "@phosphor-icons/react"
 import { toast } from "sonner"
-
 import {
   AddressFields,
   EMPTY_ADDRESS,
@@ -31,14 +30,17 @@ const FREE_SHIPPING_THRESHOLD_CENTS = 200000
 
 function computeShipping(subtotalCents: number): number {
   if (subtotalCents <= 0) return 0
-  return subtotalCents >= FREE_SHIPPING_THRESHOLD_CENTS ? 0 : SHIPPING_FLAT_CENTS
+  return subtotalCents >= FREE_SHIPPING_THRESHOLD_CENTS
+    ? 0
+    : SHIPPING_FLAT_CENTS
 }
 
 type LocationState = { backTo?: string }
 function safeBackPath(state: unknown): string {
   if (state && typeof state === "object" && "backTo" in state) {
     const v = (state as LocationState).backTo
-    if (typeof v === "string" && v.startsWith("/") && !v.startsWith("//")) return v
+    if (typeof v === "string" && v.startsWith("/") && !v.startsWith("//"))
+      return v
   }
   return "/shop"
 }
@@ -57,13 +59,16 @@ export function CheckoutPage() {
   const { data: addresses = [] } = useAddresses(isAuthenticated)
   const createOrder = useCreateOrder()
 
-  const [selectedAddressId, setSelectedAddressId] = useState<string | "new">("new")
+  const [selectedAddressId, setSelectedAddressId] = useState<string | "new">(
+    "new"
+  )
   const [newAddress, setNewAddress] = useState<AddressFormValue>(EMPTY_ADDRESS)
   const [saveAddress, setSaveAddress] = useState(true)
-  const [addressErrors, setAddressErrors] = useState<Record<string, string[]>>({})
+  const [addressErrors, setAddressErrors] = useState<Record<string, string[]>>(
+    {}
+  )
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "online">("cod")
   const [notes, setNotes] = useState("")
-
   const [voucherInput, setVoucherInput] = useState("")
   const [voucher, setVoucher] = useState<VoucherPreview | null>(null)
   const [voucherError, setVoucherError] = useState<string | null>(null)
@@ -118,7 +123,11 @@ export function CheckoutPage() {
       const key = `${line.product_id}::${line.size_label ?? ""}`
       const res = reservationByProductKey[key]
       if (res?.start && res?.end) {
-        rentals.push({ cart_item_id: line.id, rental_start: res.start, rental_end: res.end })
+        rentals.push({
+          cart_item_id: line.id,
+          rental_start: res.start,
+          rental_end: res.end,
+        })
       }
     }
     return rentals.length > 0 ? rentals : undefined
@@ -167,9 +176,9 @@ export function CheckoutPage() {
   if (!isAuthenticated) {
     return (
       <CheckoutShell backTo={backTo} navigate={navigate}>
-        <div className="mx-auto max-w-md rounded-xl border border-neutral-200 bg-white px-6 py-12 text-center">
-          <p className="font-heading text-lg text-zinc-900">Sign in to check out</p>
-          <p className="mt-2 text-sm text-zinc-600">
+        <div className="mx-auto max-w-md rounded-sm bg-white px-6 py-12 text-center">
+          <p className="text-lg text-ink">Sign in to check out</p>{" "}
+          <p className="mt-2 text-base text-ink-soft">
             Log in to place your order securely and track it in your account.
           </p>
           <Button className="mt-6 h-11 w-full max-w-xs rounded-full" asChild>
@@ -177,9 +186,9 @@ export function CheckoutPage() {
               Sign in
             </Link>
           </Button>
-          <p className="mt-3 text-sm text-zinc-500">
+          <p className="mt-3 text-base text-ink-soft">
             New here?{" "}
-            <Link to="/signup" className="font-medium text-zinc-800 hover:underline">
+            <Link to="/signup" className="font-medium text-ink hover:underline">
               Create an account
             </Link>
           </p>
@@ -188,7 +197,7 @@ export function CheckoutPage() {
     )
   }
 
-  if ((loading || apiCart === null)) {
+  if (loading || apiCart === null) {
     return (
       <CheckoutShell backTo={backTo} navigate={navigate}>
         <div className="flex min-h-[40vh] items-center justify-center">
@@ -201,9 +210,11 @@ export function CheckoutPage() {
   if (items.length === 0) {
     return (
       <CheckoutShell backTo={backTo} navigate={navigate}>
-        <div className="mx-auto max-w-md rounded-xl border border-neutral-200 bg-white px-6 py-12 text-center">
-          <p className="font-heading text-lg text-zinc-900">Your bag is empty</p>
-          <p className="mt-2 text-sm text-zinc-600">Add something you love before checking out.</p>
+        <div className="mx-auto max-w-md rounded-sm bg-white px-6 py-12 text-center">
+          <p className="text-lg text-ink">Your bag is empty</p>{" "}
+          <p className="mt-2 text-base text-ink-soft">
+            Add something you love before checking out.
+          </p>{" "}
           <Button className="mt-6 h-11 w-full max-w-xs rounded-full" asChild>
             <Link to="/shop">Continue shopping</Link>
           </Button>
@@ -220,15 +231,19 @@ export function CheckoutPage() {
       >
         <section className="order-2 space-y-8 lg:order-1">
           <div>
-            <h1 className="font-heading text-2xl font-medium tracking-tight text-zinc-950 sm:text-3xl">
+            <h1 className="text-2xl font-medium tracking-tight text-ink sm:text-3xl">
               Checkout
             </h1>
-            <p className="mt-1 text-sm text-zinc-600">Delivery, payment, and you’re done.</p>
+            <p className="mt-1 text-base text-ink-soft">
+              Delivery, payment, and you’re done.
+            </p>
           </div>
 
           {/* Delivery address */}
-          <div className="rounded-xl border border-neutral-200 bg-white p-5 sm:p-6">
-            <p className="text-xs font-medium tracking-wider text-zinc-500 uppercase">Delivery address</p>
+          <div className="rounded-sm bg-white p-5 sm:p-6">
+            <p className="text-base font-medium text-ink-soft">
+              Delivery address
+            </p>{" "}
             <div className="mt-4 space-y-3">
               {addresses.map((a) => (
                 <label
@@ -236,8 +251,8 @@ export function CheckoutPage() {
                   className={cn(
                     "flex cursor-pointer items-start gap-3 rounded-lg border p-3.5 transition",
                     selectedAddressId === a.id
-                      ? "border-zinc-900 ring-1 ring-zinc-900"
-                      : "border-neutral-200 hover:border-neutral-300",
+                      ? "border-ink ring-1 ring-ink"
+                      : "border-line hover:border-ink/30"
                   )}
                 >
                   <input
@@ -247,17 +262,18 @@ export function CheckoutPage() {
                     checked={selectedAddressId === a.id}
                     onChange={() => setSelectedAddressId(a.id)}
                   />
-                  <span className="min-w-0 text-sm">
-                    <span className="font-medium text-zinc-900">
+                  <span className="min-w-0 text-base">
+                    <span className="font-medium text-ink">
                       {a.recipient_name}
-                      {a.label ? ` · ${a.label}` : ""}
+                      {a.label ? ` · ${a.label}` : ""}{" "}
                       {a.is_default ? " · Default" : ""}
                     </span>
-                    <span className="mt-0.5 block text-zinc-600">
+                    <span className="mt-0.5 block text-ink-soft">
                       {a.line1}
-                      {a.line2 ? `, ${a.line2}` : ""}, {a.city}, {a.region} {a.postal_code}
+                      {a.line2 ? `, ${a.line2}` : ""}, {a.city}, {a.region}{" "}
+                      {a.postal_code}
                     </span>
-                    <span className="text-zinc-500">{a.phone}</span>
+                    <span className="text-ink-soft">{a.phone}</span>
                   </span>
                 </label>
               ))}
@@ -266,8 +282,8 @@ export function CheckoutPage() {
                 className={cn(
                   "flex cursor-pointer items-center gap-3 rounded-lg border p-3.5 transition",
                   selectedAddressId === "new"
-                    ? "border-zinc-900 ring-1 ring-zinc-900"
-                    : "border-neutral-200 hover:border-neutral-300",
+                    ? "border-ink ring-1 ring-ink"
+                    : "border-line hover:border-ink/30"
                 )}
               >
                 <input
@@ -277,18 +293,22 @@ export function CheckoutPage() {
                   checked={selectedAddressId === "new"}
                   onChange={() => setSelectedAddressId("new")}
                 />
-                <span className="text-sm font-medium text-zinc-900">Use a new address</span>
+                <span className="text-base font-medium text-ink">
+                  Use a new address
+                </span>
               </label>
 
               {selectedAddressId === "new" ? (
-                <div className="rounded-lg border border-neutral-200 p-4">
+                <div className="rounded-lg border border-line p-4">
                   <AddressFields
                     value={newAddress}
-                    onChange={(patch) => setNewAddress((s) => ({ ...s, ...patch }))}
+                    onChange={(patch) =>
+                      setNewAddress((s) => ({ ...s, ...patch }))
+                    }
                     errors={addressErrors}
                     showLabel={false}
                   />
-                  <label className="mt-4 flex items-center gap-2 text-sm text-zinc-700">
+                  <label className="mt-4 flex items-center gap-2 text-base text-ink-soft">
                     <input
                       type="checkbox"
                       className="accent-zinc-900"
@@ -303,8 +323,8 @@ export function CheckoutPage() {
           </div>
 
           {/* Payment */}
-          <div className="rounded-xl border border-neutral-200 bg-white p-5 sm:p-6">
-            <p className="text-xs font-medium tracking-wider text-zinc-500 uppercase">Payment</p>
+          <div className="rounded-sm bg-white p-5 sm:p-6">
+            <p className="text-base font-medium text-ink-soft">Payment</p>{" "}
             <div className="mt-4 space-y-3">
               <PaymentOption
                 checked={paymentMethod === "cod"}
@@ -322,8 +342,8 @@ export function CheckoutPage() {
           </div>
 
           {/* Notes */}
-          <div className="rounded-xl border border-neutral-200 bg-white p-5 sm:p-6">
-            <p className="text-xs font-medium tracking-wider text-zinc-500 uppercase">
+          <div className="rounded-sm bg-white p-5 sm:p-6">
+            <p className="text-base font-medium text-ink-soft">
               Delivery notes <span className="lowercase">(optional)</span>
             </p>
             <textarea
@@ -331,27 +351,29 @@ export function CheckoutPage() {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Gate code, landmarks, delivery window…"
-              className="mt-3 min-h-20 w-full resize-y rounded-lg border border-neutral-200 bg-white px-3 py-2.5 text-sm text-zinc-900 outline-none transition focus-visible:border-neutral-400 focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="mt-3 min-h-20 w-full resize-y rounded-sm bg-white px-3 py-2.5 text-base text-ink transition outline-none focus-visible:border-ink/30 focus-visible:ring-3 focus-visible:ring-ring/50"
             />
           </div>
         </section>
 
         {/* Summary */}
         <aside className="order-1 lg:sticky lg:top-24 lg:order-2">
-          <div className="rounded-xl border border-neutral-200 bg-white">
-            <div className="border-b border-neutral-100 px-5 py-4 sm:px-6">
-              <h2 className="font-heading text-lg font-medium text-zinc-950">Order summary</h2>
-              <p className="mt-0.5 text-xs text-zinc-500">
+          <div className="rounded-sm bg-white">
+            <div className="border-b border-line px-5 py-4 sm:px-6">
+              <h2 className="text-lg font-medium text-ink">Order summary</h2>{" "}
+              <p className="mt-0.5 text-base text-ink-soft">
                 {items.length} {items.length === 1 ? "item" : "items"}
               </p>
             </div>
-
-            <ul className="max-h-[min(46vh,380px)] divide-y divide-neutral-100 overflow-y-auto px-5 sm:px-6">
+            <ul className="max-h-[min(46vh,380px)] divide-y divide-line overflow-y-auto px-5 sm:px-6">
               {items.map((line) => {
-                const res = reservationByProductKey[`${line.product_id}::${line.size_label ?? ""}`]
+                const res =
+                  reservationByProductKey[
+                    `${line.product_id}::${line.size_label ?? ""}`
+                  ]
                 return (
                   <li key={line.id} className="flex gap-4 py-4">
-                    <div className="size-14 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
+                    <div className="size-14 shrink-0 overflow-hidden rounded-lg bg-pink-light">
                       {line.product?.images?.[0] ? (
                         <AppImage
                           src={line.product.images[0]}
@@ -361,34 +383,41 @@ export function CheckoutPage() {
                       ) : null}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[11px] font-medium tracking-wide text-zinc-500 uppercase">
+                      <p className="text-base font-medium text-ink-soft">
                         {line.size_label ? `Size ${line.size_label}` : "Shop"}
                       </p>
-                      <p className="mt-0.5 text-sm leading-snug font-medium text-zinc-900">
+                      <p className="mt-0.5 text-base leading-snug font-medium text-ink">
                         {line.product?.name ?? "Product"}
                       </p>
-                      <p className="mt-1 text-xs text-zinc-500">Qty {line.quantity}</p>
-                      <LineReservationDates start={res?.start} end={res?.end} className="text-zinc-600" />
+                      <p className="mt-1 text-base text-ink-soft">
+                        Qty {line.quantity}
+                      </p>{" "}
+                      <LineReservationDates
+                        start={res?.start}
+                        end={res?.end}
+                        className="text-ink-soft"
+                      />
                     </div>
-                    <p className="shrink-0 text-sm font-semibold text-zinc-950 tabular-nums">
-                      {formatPhpFromCents((line.product?.price_cents ?? 0) * line.quantity)}
+                    <p className="shrink-0 text-base font-semibold text-ink tabular-nums">
+                      {formatPhpFromCents(
+                        (line.product?.price_cents ?? 0) * line.quantity
+                      )}
                     </p>
                   </li>
                 )
               })}
             </ul>
-
             {/* Voucher */}
-            <div className="border-t border-neutral-100 px-5 py-4 sm:px-6">
+            <div className="border-t border-line px-5 py-4 sm:px-6">
               {voucher ? (
-                <div className="flex items-center justify-between rounded-lg bg-emerald-50 px-3 py-2 text-sm">
+                <div className="flex items-center justify-between rounded-lg bg-emerald-50 px-3 py-2 text-base">
                   <span className="inline-flex items-center gap-1.5 font-medium text-emerald-800">
                     <TagIcon size={16} weight="fill" /> {voucher.code}
                   </span>
                   <button
                     type="button"
                     onClick={removeVoucher}
-                    className="text-xs font-medium text-emerald-700 hover:text-emerald-900"
+                    className="text-base font-medium text-emerald-700 hover:text-emerald-900"
                   >
                     Remove
                   </button>
@@ -397,9 +426,11 @@ export function CheckoutPage() {
                 <div className="flex gap-2">
                   <Input
                     value={voucherInput}
-                    onChange={(e) => setVoucherInput(e.target.value.toUpperCase())}
+                    onChange={(e) =>
+                      setVoucherInput(e.target.value.toUpperCase())
+                    }
                     placeholder="Voucher code"
-                    className="h-10 flex-1 uppercase"
+                    className="h-10 flex-1"
                   />
                   <Button
                     type="button"
@@ -412,40 +443,42 @@ export function CheckoutPage() {
                   </Button>
                 </div>
               )}
-              {voucherError ? <p className="mt-2 text-xs text-red-700">{voucherError}</p> : null}
+              {voucherError ? (
+                <p className="mt-2 text-base text-red-700">{voucherError}</p>
+              ) : null}
             </div>
-
             {/* Totals */}
-            <div className="space-y-2.5 border-t border-neutral-100 px-5 py-5 text-sm sm:px-6">
+            <div className="space-y-2.5 border-t border-line px-5 py-5 text-base sm:px-6">
               <div className="flex justify-between">
-                <span className="text-zinc-600">Subtotal</span>
-                <span className="font-medium text-zinc-900 tabular-nums">
+                <span className="text-ink-soft">Subtotal</span>{" "}
+                <span className="font-medium text-ink tabular-nums">
                   {formatPhpFromCents(subtotalCents)}
                 </span>
               </div>
               {discountCents > 0 ? (
                 <div className="flex justify-between">
-                  <span className="text-zinc-600">Discount</span>
+                  <span className="text-ink-soft">Discount</span>{" "}
                   <span className="font-medium text-emerald-700 tabular-nums">
                     −{formatPhpFromCents(discountCents)}
                   </span>
                 </div>
               ) : null}
               <div className="flex justify-between">
-                <span className="text-zinc-600">Shipping</span>
-                <span className="text-zinc-900 tabular-nums">
-                  {shippingCents === 0 ? "Free" : formatPhpFromCents(shippingCents)}
+                <span className="text-ink-soft">Shipping</span>{" "}
+                <span className="text-ink tabular-nums">
+                  {shippingCents === 0
+                    ? "Free"
+                    : formatPhpFromCents(shippingCents)}
                 </span>
               </div>
-              <div className="flex items-center justify-between border-t border-neutral-100 pt-3">
-                <span className="font-medium text-zinc-800">Total</span>
-                <span className="text-lg font-semibold text-zinc-950 tabular-nums">
+              <div className="flex items-center justify-between border-t border-line pt-3">
+                <span className="font-medium text-ink">Total</span>{" "}
+                <span className="text-lg font-semibold text-ink tabular-nums">
                   {formatPhpFromCents(totalCents)}
                 </span>
               </div>
             </div>
           </div>
-
           <Button
             type="submit"
             disabled={createOrder.isPending}
@@ -471,29 +504,31 @@ function CheckoutShell({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-svh bg-neutral-50 text-zinc-900">
-      <header className="sticky top-0 z-20 border-b border-neutral-200 bg-white/95 backdrop-blur">
+    <div className="min-h-svh bg-pink-light text-ink">
+      <header className="sticky top-0 z-20 border-b border-line bg-white/95 backdrop-blur">
         <div className="relative flex min-h-14 items-center justify-center px-4 sm:min-h-16 sm:px-6">
           <div className="absolute left-4 sm:left-6">
             <Button
               type="button"
               variant="ghost"
-              className="min-h-11 touch-manipulation gap-1.5 px-2 text-zinc-700 sm:px-3"
+              className="min-h-11 touch-manipulation gap-1.5 px-2 text-ink-soft sm:px-3"
               onClick={() => navigate(backTo)}
             >
-              <CaretLeftIcon className="size-5" weight="bold" />
-              <span className="text-sm font-medium">Back</span>
+              <CaretLeftIcon className="size-5" weight="bold" />{" "}
+              <span className="text-base font-medium">Back</span>
             </Button>
           </div>
           <Link
             to="/"
-            className="text-center font-logo text-sm font-medium tracking-wide text-black uppercase sm:text-base"
+            className="text-center font-logo text-base font-medium text-ink sm:text-base"
           >
             {SITE_LOGO_TEXT}
           </Link>
         </div>
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:py-10">{children}</main>
+      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:py-10">
+        {children}
+      </main>
     </div>
   )
 }
@@ -513,7 +548,9 @@ function PaymentOption({
     <label
       className={cn(
         "flex cursor-pointer items-start gap-3 rounded-lg border p-3.5 transition",
-        checked ? "border-zinc-900 ring-1 ring-zinc-900" : "border-neutral-200 hover:border-neutral-300",
+        checked
+          ? "border-ink ring-1 ring-ink"
+          : "border-line hover:border-ink/30"
       )}
     >
       <input
@@ -523,9 +560,9 @@ function PaymentOption({
         checked={checked}
         onChange={onSelect}
       />
-      <span className="text-sm">
-        <span className="font-medium text-zinc-900">{title}</span>
-        <span className="mt-0.5 block text-zinc-500">{subtitle}</span>
+      <span className="text-base">
+        <span className="font-medium text-ink">{title}</span>{" "}
+        <span className="mt-0.5 block text-ink-soft">{subtitle}</span>
       </span>
     </label>
   )

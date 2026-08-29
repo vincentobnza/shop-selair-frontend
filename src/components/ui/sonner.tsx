@@ -7,45 +7,19 @@ import {
   XCircleIcon,
   SpinnerIcon,
 } from "@phosphor-icons/react"
-
 import { cn } from "@/lib/utils"
 
-function useHtmlClassTheme(): "light" | "dark" {
-  const [theme, setTheme] = React.useState<"light" | "dark">(() =>
-    typeof document !== "undefined" &&
-      document.documentElement.classList.contains("dark")
-      ? "dark"
-      : "light",
-  )
-
-  React.useEffect(() => {
-    const el = document.documentElement
-    const sync = () =>
-      setTheme(el.classList.contains("dark") ? "dark" : "light")
-    sync()
-    const obs = new MutationObserver(sync)
-    obs.observe(el, { attributes: true, attributeFilter: ["class"] })
-    return () => obs.disconnect()
-  }, [])
-
-  return theme
-}
-
 const Toaster = ({ className, toastOptions, ...props }: ToasterProps) => {
-  const theme = useHtmlClassTheme()
-
   return (
     <Sonner
-      theme={theme}
+      theme="light"
       className={cn("toaster group font-sans", className)}
       icons={{
         success: (
           <CheckCircleIcon className="size-5 text-accent" weight="fill" />
         ),
         info: <InfoIcon className="size-5 text-foreground" weight="regular" />,
-        warning: (
-          <WarningIcon className="size-5 text-nav-sale" weight="fill" />
-        ),
+        warning: <WarningIcon className="size-5 text-nav-sale" weight="fill" />,
         error: (
           <XCircleIcon className="size-5 text-destructive" weight="fill" />
         ),
@@ -65,48 +39,48 @@ const Toaster = ({ className, toastOptions, ...props }: ToasterProps) => {
         ...toastOptions,
         classNames: {
           toast: cn(
-            "border-border bg-popover gap-3 border border-black! p-4 text-popover-foreground shadow-2xl!",
+            "gap-3 rounded-[1.5rem] border-0! bg-popover p-5 text-base text-popover-foreground shadow-2xl!",
             "rounded-[var(--radius)]",
-            toastOptions?.classNames?.toast,
+            toastOptions?.classNames?.toast
           ),
           title: cn(
-            "font-heading text-base! leading-snug font-medium text-foreground",
-            toastOptions?.classNames?.title,
+            "text-base! leading-snug font-medium text-foreground",
+            toastOptions?.classNames?.title
           ),
           description: cn(
-            "text-sm leading-snug text-muted-foreground",
-            toastOptions?.classNames?.description,
+            "text-base leading-snug text-muted-foreground",
+            toastOptions?.classNames?.description
           ),
           content: cn(
             "flex min-w-0 flex-1 flex-col gap-0.5",
-            toastOptions?.classNames?.content,
+            toastOptions?.classNames?.content
           ),
-          icon: cn("mt-0.5 shrink-0 mr-2!", toastOptions?.classNames?.icon),
+          icon: cn("mt-0.5 mr-2! shrink-0", toastOptions?.classNames?.icon),
           closeButton: cn(
             "cursor-pointer border-0 bg-transparent text-muted-foreground opacity-80 transition-colors",
             "hover:bg-muted hover:text-foreground hover:opacity-100",
             "rounded-[min(var(--radius-md),10px)] p-1",
-            toastOptions?.classNames?.closeButton,
+            toastOptions?.classNames?.closeButton
           ),
           success: cn(
             "border-l-[3px] border-l-accent",
-            toastOptions?.classNames?.success,
+            toastOptions?.classNames?.success
           ),
           error: cn(
             "border-l-[3px] border-l-destructive",
-            toastOptions?.classNames?.error,
+            toastOptions?.classNames?.error
           ),
           warning: cn(
             "border-l-[3px] border-l-nav-sale",
-            toastOptions?.classNames?.warning,
+            toastOptions?.classNames?.warning
           ),
           info: cn(
             "border-l-[3px] border-l-primary",
-            toastOptions?.classNames?.info,
+            toastOptions?.classNames?.info
           ),
           loading: cn(
             "border-l-[3px] border-l-muted-foreground/50",
-            toastOptions?.classNames?.loading,
+            toastOptions?.classNames?.loading
           ),
           default: cn(toastOptions?.classNames?.default),
         },

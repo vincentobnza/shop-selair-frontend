@@ -12,7 +12,7 @@ export async function fetchCart(): Promise<CartPayload> {
 export async function addCartItem(
   productId: number | string,
   quantity = 1,
-  size?: string,
+  size?: string
 ): Promise<ApiCartLine> {
   const body: Record<string, number | string> = {
     product_id: productId,
@@ -27,11 +27,11 @@ export async function addCartItem(
 
 export async function updateCartItem(
   cartItemId: number,
-  quantity: number,
+  quantity: number
 ): Promise<ApiCartLine> {
   const res = await api.patch<{ data: ApiCartLine }>(
     apiPath(`cart/items/${cartItemId}`),
-    { quantity },
+    { quantity }
   )
   return res.data.data
 }

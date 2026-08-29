@@ -15,7 +15,7 @@ export function LineReservationDates({
   if (!start || !end) return null
 
   return (
-    <div className={cn("mt-2 text-xs", className)}>
+    <div className={cn("mt-2 text-base", className)}>
       <p>Start: {formatReservationDate(start)}</p>
       <p className="mt-0.5">Finish: {formatReservationDate(end)}</p>
     </div>

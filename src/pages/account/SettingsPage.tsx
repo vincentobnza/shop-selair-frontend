@@ -2,14 +2,12 @@ import { useState } from "react"
 import { CaretRightIcon } from "@phosphor-icons/react"
 import { Link, useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-
 import { Button } from "@/components/ui/button"
 import { toUserMessage } from "@/features/auth/errors"
 import { useAuth } from "@/features/auth/hooks"
 import { useAuthStore } from "@/features/auth/store"
 import { api } from "@/lib/axios"
 import { apiPath } from "@/lib/api-base"
-
 export function SettingsPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -33,10 +31,13 @@ export function SettingsPage() {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h2 className="font-heading text-xl font-medium text-zinc-900">Settings</h2>
-
-      <div className="divide-y divide-neutral-100 rounded-xl border border-neutral-200 bg-white">
-        <SettingLink to="/account/profile" title="Profile" subtitle="Update your name and email" />
+      <h2 className="text-xl font-medium text-ink">Settings</h2>{" "}
+      <div className="divide-y divide-line rounded-sm bg-white">
+        <SettingLink
+          to="/account/profile"
+          title="Profile"
+          subtitle="Update your name and email"
+        />
         <SettingLink
           to="/account/addresses"
           title="Addresses"
@@ -48,11 +49,13 @@ export function SettingsPage() {
           subtitle="Order updates and promotions"
         />
       </div>
-
       <div className="rounded-xl border border-red-200 bg-red-50/40 p-5">
-        <h3 className="font-heading text-base font-medium text-red-900">Deactivate account</h3>
-        <p className="mt-1 text-sm text-red-700/90">
-          This disables your account and signs you out. You can reactivate by contacting support.
+        <h3 className="text-base font-medium text-red-900">
+          Deactivate account
+        </h3>{" "}
+        <p className="mt-1 text-base text-red-700/90">
+          This disables your account and signs you out. You can reactivate by
+          contacting support.
         </p>
         {confirming ? (
           <div className="mt-4 flex flex-wrap gap-3">
@@ -97,12 +100,15 @@ function SettingLink({
   subtitle: string
 }) {
   return (
-    <Link to={to} className="flex items-center justify-between px-5 py-4 hover:bg-zinc-50">
+    <Link
+      to={to}
+      className="flex items-center justify-between px-5 py-4 hover:bg-pink-light"
+    >
       <div>
-        <p className="text-sm font-medium text-zinc-900">{title}</p>
-        <p className="text-xs text-zinc-500">{subtitle}</p>
+        <p className="text-base font-medium text-ink">{title}</p>{" "}
+        <p className="text-base text-ink-soft">{subtitle}</p>
       </div>
-      <CaretRightIcon size={18} className="text-zinc-400" />
+      <CaretRightIcon size={18} className="text-ink-soft" />
     </Link>
   )
 }

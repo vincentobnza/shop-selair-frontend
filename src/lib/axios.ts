@@ -35,5 +35,5 @@ api.interceptors.response.use(
       return Promise.reject(new ApiError(status, body))
     }
     return Promise.reject(error)
-  },
+  }
 )

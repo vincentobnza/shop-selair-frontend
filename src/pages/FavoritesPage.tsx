@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom"
-
 import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/features/auth/hooks"
@@ -92,17 +91,16 @@ export function FavoritesPage() {
     <main className="bg-white">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14 xl:py-24">
         <div className="mb-10 flex items-center justify-center gap-3">
-          <h1 className="text-center font-heading text-2xl font-medium text-zinc-900 sm:text-3xl">
+          <h1 className="text-center text-2xl font-medium text-ink sm:text-3xl">
             All Favorites
           </h1>
         </div>
-
         {showSkeleton ? (
           <div className="grid gap-6 sm:grid-cols-2">
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="h-36 animate-pulse rounded-lg bg-zinc-100"
+                className="h-36 animate-pulse rounded-lg bg-pink-light"
               />
             ))}
           </div>
@@ -113,7 +111,7 @@ export function FavoritesPage() {
               alt="Empty favorites"
               className="mx-auto mb-8 h-24 w-24 sm:mb-12"
             />
-            <p className="font-heading text-base text-black sm:text-lg lg:text-xl">
+            <p className="text-base text-ink sm:text-lg lg:text-xl">
               You have not saved anything yet.
             </p>
 
@@ -126,7 +124,7 @@ export function FavoritesPage() {
             </Button>
           </div>
         ) : (
-          <ul className="divide-y divide-black/10 border-t border-black/10">
+          <ul className="divide-y divide-black/10 border-t border-line">
             {rows.map(({ id, product }) => (
               <li key={id} className="py-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -137,7 +135,7 @@ export function FavoritesPage() {
                           ? `/products/${slugifyProductName(product.name)}`
                           : `/products/${id}`
                       }
-                      className="relative aspect-3/4 w-40 shrink-0 overflow-hidden bg-zinc-100"
+                      className="relative aspect-3/4 w-40 shrink-0 overflow-hidden bg-pink-light"
                     >
                       {product?.image[0] ? (
                         <AppImage
@@ -148,7 +146,7 @@ export function FavoritesPage() {
                       ) : null}
                     </Link>
                     <div>
-                      <p className="text-xs font-medium text-zinc-500 uppercase">
+                      <p className="text-base font-medium text-ink-soft">
                         Wishlist
                       </p>
                       <Link
@@ -157,16 +155,16 @@ export function FavoritesPage() {
                             ? `/products/${slugifyProductName(product.name)}`
                             : `/products/${id}`
                         }
-                        className="mt-1 block font-heading text-lg font-medium text-zinc-900 hover:underline sm:text-xl lg:text-2xl"
+                        className="mt-1 block text-lg font-medium text-ink hover:underline sm:text-xl lg:text-2xl"
                       >
                         {product?.name ?? "Product unavailable"}
                       </Link>
                       {/* BRAND */}
-                      <p className="text-xs font-medium text-black/60 sm:text-sm lg:text-base">
+                      <p className="text-base font-medium text-black/60 sm:text-base lg:text-base">
                         {product?.brand ?? "Brand unavailable"}
                       </p>
                       {product ? (
-                        <p className="mt-2 text-base font-medium text-zinc-700 sm:text-lg lg:text-xl">
+                        <p className="mt-2 text-base font-medium text-ink-soft sm:text-lg lg:text-xl">
                           {php.format(product.price)}
                         </p>
                       ) : null}
@@ -186,7 +184,7 @@ export function FavoritesPage() {
                     </Button>
                     <button
                       type="button"
-                      className="text-sm font-medium text-zinc-500 underline"
+                      className="text-base font-medium text-ink-soft underline"
                       onClick={() => void remove(id)}
                     >
                       Remove
