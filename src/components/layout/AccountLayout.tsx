@@ -56,7 +56,7 @@ export function AccountLayout() {
 
   return (
     <main className="bg-paper">
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
         <header className="mb-8">
           <p className="eyebrow">My account</p>
           <h1 className="mt-2 font-heading text-3xl leading-tight font-medium text-ink sm:text-4xl">
@@ -64,7 +64,7 @@ export function AccountLayout() {
           </h1>
         </header>
 
-        <div className="grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-10">
+        <div className="grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-16 xl:gap-20">
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div className="flex items-center gap-4 rounded-[1.75rem] bg-white p-6">
               <span

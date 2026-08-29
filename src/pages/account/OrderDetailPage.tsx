@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, CheckCircleIcon } from "@phosphor-icons/react"
+import { CheckCircleIcon } from "@phosphor-icons/react"
 import { Link, useParams, useSearchParams } from "react-router-dom"
 import { toast } from "sonner"
 import { OrderStatusBadge } from "@/components/orders/OrderStatusBadge"
@@ -55,9 +55,9 @@ export function OrderDetailPage() {
     <div className="space-y-6">
       <Link
         to="/account/orders"
-        className="inline-flex items-center gap-1.5 text-base text-ink-soft hover:text-ink"
+        className="mb-10 inline-flex items-center gap-1.5 text-base text-ink-soft underline hover:text-ink"
       >
-        <ArrowLeftIcon size={16} /> Back to orders
+        Back to orders
       </Link>
 
       {justPlaced ? (
