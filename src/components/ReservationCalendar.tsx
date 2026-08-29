@@ -6,6 +6,7 @@ import type { DateRange } from "react-day-picker"
 
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
+import { useMediaQuery } from "@/hooks/useMediaQuery"
 import { useProductAvailability } from "@/features/reservations/queries"
 
 type ReservationCalendarProps = {
@@ -28,6 +29,8 @@ export function ReservationCalendar({
   productId,
 }: ReservationCalendarProps) {
   const [open, setOpen] = useState(false)
+  /* Two months side by side only fit from the `sm` breakpoint up. */
+  const wide = useMediaQuery("(min-width: 40rem)")
 
   const { data: availability } = useProductAvailability(
     productId ? String(productId) : undefined
@@ -138,30 +141,24 @@ export function ReservationCalendar({
               </header>
 
               {/* Only the calendar scrolls, so the actions below stay put. */}
+              {/*
+                One calendar, not two hidden behind breakpoints: a second
+                mounted copy keeps its own displayed month and its own
+                selection highlights, which is what made a range spanning two
+                months look duplicated.
+              */}
               <div className="flex min-h-0 flex-1 justify-center overflow-y-auto px-5 pt-4">
                 <Calendar
                   mode="range"
                   selected={range}
                   onSelect={setRange}
                   defaultMonth={range?.from}
-                  numberOfMonths={1}
+                  numberOfMonths={wide ? 2 : 1}
+                  showOutsideDays={false}
                   captionLayout="dropdown"
                   startMonth={startMonth}
                   endMonth={endMonth}
                   disabled={disabled}
-                  className="sm:hidden"
-                />
-                <Calendar
-                  mode="range"
-                  selected={range}
-                  onSelect={setRange}
-                  defaultMonth={range?.from}
-                  numberOfMonths={2}
-                  captionLayout="dropdown"
-                  startMonth={startMonth}
-                  endMonth={endMonth}
-                  disabled={disabled}
-                  className="hidden sm:block"
                 />
               </div>
 

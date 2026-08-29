@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { LineReservationDates } from "@/components/cart/LineReservationDates"
 import { AppImage } from "@/components/ui/app-image"
@@ -15,6 +15,11 @@ import { DotPulse } from "../ui/dot-pulse"
 type CartSheetProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
+  /**
+   * Where to put focus when the drawer closes, when the opener knows better
+   * than the document does — see `cartUiStore`.
+   */
+  returnFocusTo?: HTMLElement | null
 }
 
 function formatPhpFromCents(cents: number): string {
@@ -33,7 +38,11 @@ function formatPhpAmount(pesos: number): string {
   }).format(pesos)
 }
 
-export function CartSheet({ open, onOpenChange }: CartSheetProps) {
+export function CartSheet({
+  open,
+  onOpenChange,
+  returnFocusTo,
+}: CartSheetProps) {
   const { isAuthenticated } = useAuth()
   const apiCart = useCartStore((s) => s.apiCart)
   const guestLines = useCartStore((s) => s.guestLines)
@@ -100,6 +109,36 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
 
   const authCartLoading = isAuthenticated && loading
 
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const returnFocusRef = useRef<HTMLElement | null>(null)
+
+  /*
+   * Move focus into the drawer, and put it back where it came from on close.
+   *
+   * This matters more now that the drawer can open itself after a reservation:
+   * a keyboard or screen-reader user who pressed "Reserve These Dates" would
+   * otherwise be left tabbing through the page behind the overlay, with no idea
+   * a dialog had appeared. On the way out, focus returns to whatever opened it
+   * — the cart button, or the reserve button they just pressed — unless that
+   * element has since left the page.
+   */
+  useEffect(() => {
+    if (!open) return
+
+    returnFocusRef.current =
+      returnFocusTo ?? (document.activeElement as HTMLElement | null)
+    const focusTimer = window.setTimeout(
+      () => closeButtonRef.current?.focus(),
+      0
+    )
+
+    return () => {
+      window.clearTimeout(focusTimer)
+      const previous = returnFocusRef.current
+      if (previous && document.contains(previous)) previous.focus()
+    }
+  }, [open, returnFocusTo])
+
   useEffect(() => {
     if (!open) {
       return
@@ -161,6 +200,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
 
               <button
                 type="button"
+                ref={closeButtonRef}
                 onClick={() => onOpenChange(false)}
                 aria-label="Close cart"
                 className="flex size-11 cursor-pointer items-center justify-center rounded-full text-brand transition-colors hover:bg-pink-light"

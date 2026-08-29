@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useMemo, useRef, useState } from "react"
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { Helmet } from "react-helmet-async"
 import { differenceInCalendarDays, format } from "date-fns"
@@ -23,6 +23,7 @@ import { BRAND, SERVICE_PROMISES } from "@/config/brand"
 import { buildTitle, DEFAULT_DESCRIPTION } from "@/config/site"
 import { toUserMessage } from "@/features/auth/errors"
 import { useCartStore } from "@/features/cart/cartStore"
+import { useCartUiStore } from "@/features/cart/cartUiStore"
 import { useFavorite } from "@/features/favorites/useFavorite"
 import { slugifyProductName } from "@/features/products/map"
 import { useCatalogProducts } from "@/features/products/queries"
@@ -152,6 +153,14 @@ function ProductPurchasePanel({
   onRangeChange,
 }: PurchasePanelProps) {
   const addToCart = useCartStore((s) => s.addItem)
+  const openCart = useCartUiStore((s) => s.openCart)
+  /*
+   * The button that started the add, captured while it still has focus: both
+   * buttons disable themselves during the request, and a disabled button drops
+   * focus to the body — so by the time the drawer opens there is nothing left
+   * to hand focus back to on close.
+   */
+  const triggerRef = useRef<HTMLButtonElement | null>(null)
   const [addingCart, setAddingCart] = useState(false)
   const [size, setSize] = useState<string | null>(null)
 
@@ -185,6 +194,14 @@ function ProductPurchasePanel({
       setAddingCart(true)
       void addToCart(String(product.id), 1, size ?? undefined, rental)
         .then(() => {
+          /*
+           * Show the bag rather than only announcing it. Reserving dates is the
+           * moment a customer wants to see what they are holding — the piece,
+           * the dates, the total — and the drawer answers all three without
+           * leaving the product page. It opens only after the line is actually
+           * in the bag, so it never shows a bag that does not yet contain it.
+           */
+          openCart(triggerRef.current)
           toast.success("Added to your bag", {
             description: rental
               ? `Held for ${rental.start} to ${rental.end}.`
@@ -196,7 +213,7 @@ function ProductPurchasePanel({
         })
         .finally(() => setAddingCart(false))
     },
-    [addToCart, needsSize, product.id, range, size]
+    [addToCart, needsSize, openCart, product.id, range, size]
   )
 
   return (
@@ -254,7 +271,10 @@ function ProductPurchasePanel({
           type="button"
           variant="pill"
           disabled={addingCart}
-          onClick={() => submit(true)}
+          onClick={(event) => {
+            triggerRef.current = event.currentTarget
+            submit(true)
+          }}
           className="h-14 w-full text-base font-semibold sm:h-15 sm:text-base"
         >
           {addingCart ? (
@@ -267,7 +287,10 @@ function ProductPurchasePanel({
           type="button"
           variant="outline"
           disabled={addingCart}
-          onClick={() => submit(false)}
+          onClick={(event) => {
+            triggerRef.current = event.currentTarget
+            submit(false)
+          }}
           className="h-14 w-full rounded-full border-ink/20 text-base font-semibold text-ink sm:h-15 sm:text-base"
         >
           Add to Bag
@@ -505,7 +528,7 @@ function ProductHeader({ product }: { product: CatalogProduct }) {
         {product.brand ? (
           <Link
             to="/shop"
-            className="text-brand underline-offset-4 hover:underline"
+            className="font-bold text-black underline-offset-4 hover:underline"
           >
             {product.brand}
           </Link>

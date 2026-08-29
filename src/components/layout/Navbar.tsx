@@ -9,6 +9,7 @@ import {
 } from "@phosphor-icons/react"
 import { BrowseDrawer } from "@/components/layout/BrowseDrawer"
 import { CartSheet } from "@/components/layout/CartSheet"
+import { useCartUiStore } from "@/features/cart/cartUiStore"
 import { NavSearch } from "@/components/layout/NavSearch"
 import { AccountMenu } from "@/components/layout/AccountMenu"
 import { SITE_LOGO_TEXT, utilityLinks } from "@/components/layout/nav-config"
@@ -31,7 +32,10 @@ export function Navbar() {
   const favoriteCount = useFavoriteCount()
   const { pathname, search } = useLocation()
 
-  const [cartOpen, setCartOpen] = useState(false)
+  /* Shared, so adding a piece from anywhere can bring the bag forward. */
+  const cartOpen = useCartUiStore((s) => s.open)
+  const setCartOpen = useCartUiStore((s) => s.setCartOpen)
+  const cartReturnFocusTo = useCartUiStore((s) => s.returnFocusTo)
   const [browseOpen, setBrowseOpen] = useState(false)
 
   /*
@@ -206,7 +210,11 @@ export function Navbar() {
       </header>
 
       <BrowseDrawer open={browseOpen} onOpenChange={setBrowseOpen} />
-      <CartSheet open={cartOpen} onOpenChange={setCartOpen} />
+      <CartSheet
+        open={cartOpen}
+        onOpenChange={setCartOpen}
+        returnFocusTo={cartReturnFocusTo}
+      />
     </>
   )
 }

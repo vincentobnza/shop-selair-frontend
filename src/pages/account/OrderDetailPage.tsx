@@ -1,6 +1,7 @@
-import { CheckCircleIcon } from "@phosphor-icons/react"
+import { useCallback, useState } from "react"
 import { Link, useParams, useSearchParams } from "react-router-dom"
 import { toast } from "sonner"
+import { OrderPlacedModal } from "@/components/orders/OrderPlacedModal"
 import { OrderStatusBadge } from "@/components/orders/OrderStatusBadge"
 import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
@@ -17,8 +18,25 @@ import { formatPhpFromCents } from "@/lib/money"
 import { fileUrl } from "@/lib/api-base"
 export function OrderDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const [params] = useSearchParams()
+  const [params, setParams] = useSearchParams()
   const justPlaced = params.get("placed") === "1"
+  const [showPlaced, setShowPlaced] = useState(justPlaced)
+
+  /*
+   * Checkout lands here with ?placed=1. Drop the flag once the dialog is
+   * dismissed so a refresh, a Back, or a shared link shows the order plainly
+   * instead of congratulating someone on a purchase they made last week.
+   */
+  const dismissPlaced = useCallback(
+    (open: boolean) => {
+      setShowPlaced(open)
+      if (open) return
+      const next = new URLSearchParams(params)
+      next.delete("placed")
+      setParams(next, { replace: true })
+    },
+    [params, setParams]
+  )
 
   const { data: order, isLoading, isError } = useOrder(id)
   const cancel = useCancelOrder()
@@ -60,24 +78,11 @@ export function OrderDetailPage() {
         Back to orders
       </Link>
 
-      {justPlaced ? (
-        <div className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-          <CheckCircleIcon
-            size={24}
-            weight="fill"
-            className="mt-0.5 shrink-0 text-emerald-600"
-          />
-          <div>
-            <p className="text-base font-medium text-emerald-900">
-              Thank you! Your order is confirmed.
-            </p>
-            <p className="mt-0.5 text-base text-emerald-700">
-              We’ve received order {order.order_number}. A confirmation will
-              follow shortly.
-            </p>
-          </div>
-        </div>
-      ) : null}
+      <OrderPlacedModal
+        open={showPlaced}
+        onOpenChange={dismissPlaced}
+        order={order}
+      />
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">

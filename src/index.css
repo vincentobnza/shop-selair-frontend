@@ -1,52 +1,15 @@
 /*
- * Typography — one typeface for the whole system: Sharp Grotesk (Sharp Type).
+ * Typography — one typeface for the whole system: Valley Sans.
  *
- * Sharp Grotesk is a LICENSED, commercial typeface — it is what nuuly.com
- * serves, because they hold a licence for it. It is not on Google Fonts, and
- * its files must not be hotlinked from another site or pulled from a "free
- * font" mirror: those copies are unlicensed, and this is a commercial
- * storefront. To activate it:
+ * Valley Sans (Helsinki Type Studio, for Moomin Characters) is a variable
+ * grotesque on Google Fonts under the OFL, so it can simply be served — no
+ * licence to buy and no files to vendor. One axis, `wght` 100–900, with a true
+ * italic, which covers every weight the UI uses from one download.
  *
- *   1. Buy a webfont licence at https://sharptype.co (Sharp Grotesk).
- *   2. Drop the .woff2 files into `src/assets/fonts/`.
- *   3. Uncomment the @font-face block below and adjust the file names.
- *
- * Until then the stack falls back to Archivo — a free (OFL) grotesque with a
- * width axis, which is much closer to Sharp Grotesk's proportions than a
- * default system sans, so the layout will barely move when the real files land.
+ * Kept identical to the admin (`shop-selair-admin/src/index.css`) so the two
+ * apps read as one product. Change it in one place, change it in both.
  */
-@import url("https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,75..125,100..900;1,75..125,100..900&display=swap");
-
-/*
-@font-face {
-  font-family: "Sharp Grotesk";
-  src: url("./assets/fonts/SharpGrotesk-Book20.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Sharp Grotesk";
-  src: url("./assets/fonts/SharpGrotesk-Medium20.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Sharp Grotesk";
-  src: url("./assets/fonts/SharpGrotesk-SemiBold20.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Sharp Grotesk";
-  src: url("./assets/fonts/SharpGrotesk-Bold20.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-*/
+@import url("https://fonts.googleapis.com/css2?family=Valley+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -122,12 +85,9 @@
    * they exist so the display or wordmark voice can be re-pointed later without
    * touching every call site.
    */
-  --font-sans:
-    "Sharp Grotesk", "Archivo", ui-sans-serif, system-ui, sans-serif;
-  --font-heading:
-    "Sharp Grotesk", "Archivo", ui-sans-serif, system-ui, sans-serif;
-  --font-logo:
-    "Sharp Grotesk", "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Valley Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Valley Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-logo: "Valley Sans", ui-sans-serif, system-ui, sans-serif;
 
   --color-paper: var(--brand-paper);
   --color-pink-light: var(--brand-pink-light);
@@ -268,7 +228,7 @@
    * from an outline or a divider rule.
    */
   .overlay-surface {
-    @apply rounded-[1.75rem] border-0 bg-white p-5 text-base text-ink ring-0 shadow-[0_28px_70px_-30px_rgb(45_45_45/0.45)];
+    @apply rounded-[1.75rem] border-0 bg-white p-5 text-base text-ink shadow-[0_28px_70px_-30px_rgb(45_45_45/0.45)] ring-0;
   }
 
   /* A row inside an overlay: pill-shaped hover, roomy hit area, no divider. */
