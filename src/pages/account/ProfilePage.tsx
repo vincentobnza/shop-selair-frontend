@@ -6,6 +6,7 @@ import { ApiError, toUserMessage } from "@/features/auth/errors"
 import { useAuth } from "@/features/auth/hooks"
 import { useAuthStore } from "@/features/auth/store"
 import { updateProfile } from "@/features/users/api"
+import { AvatarPicker } from "@/components/account/AvatarPicker"
 export function ProfilePage() {
   const { user } = useAuth()
   const [name, setName] = useState(user?.name ?? "")
@@ -40,7 +41,15 @@ export function ProfilePage() {
   }
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-2xl space-y-6">
+      <section className="rounded-[1.75rem] bg-white p-6 sm:p-8">
+        <AvatarPicker
+          id={user?.id}
+          name={user?.name ?? ""}
+          avatarUrl={user?.avatar_url}
+        />
+      </section>
+
       <form
         onSubmit={onSubmit}
         className="space-y-6 rounded-[1.75rem] bg-white p-6 sm:p-8"

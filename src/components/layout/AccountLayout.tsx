@@ -60,7 +60,12 @@ export function AccountLayout() {
         <div className="grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-16 xl:gap-20">
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div className="flex items-center gap-4 rounded-[1.75rem] bg-white p-6">
-              <UserAvatar id={user?.id} name={name} size="lg" />
+              <UserAvatar
+                id={user?.id}
+                name={name}
+                src={user?.avatar_url}
+                size="lg"
+              />
               <div className="min-w-0">
                 <p className="truncate text-base font-semibold text-ink">
                   {name}

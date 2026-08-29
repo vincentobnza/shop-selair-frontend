@@ -23,6 +23,24 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+
+  /*
+   * Let the browser own the content type for uploads.
+   *
+   * The instance default is application/json, and axios takes that literally:
+   * given a JSON content type it serialises a FormData body through
+   * formDataToJSON, which turns a File into {} and posts {"file":{}}. The API
+   * then sees no multipart part at all and answers "No file was uploaded."
+   * Dropping the header here lets the browser set
+   * multipart/form-data; boundary=… — the only thing that can generate a valid
+   * boundary — for every upload, not just the one that surfaced the bug.
+   *
+   * Mirrors the same interceptor in the admin console.
+   */
+  if (typeof FormData !== "undefined" && config.data instanceof FormData) {
+    config.headers.delete("Content-Type")
+  }
+
   return config
 })
 

@@ -16,10 +16,15 @@ const Toaster = ({ className, toastOptions, ...props }: ToasterProps) => {
       className={cn("toaster group font-sans", className)}
       icons={{
         success: (
-          <CheckCircleIcon className="size-5 text-accent" weight="fill" />
+          <CheckCircleIcon
+            className="size-5 text-status-success"
+            weight="fill"
+          />
         ),
         info: <InfoIcon className="size-5 text-foreground" weight="regular" />,
-        warning: <WarningIcon className="size-5 text-nav-sale" weight="fill" />,
+        warning: (
+          <WarningIcon className="size-5 text-status-warning" weight="fill" />
+        ),
         error: (
           <XCircleIcon className="size-5 text-destructive" weight="fill" />
         ),
@@ -63,7 +68,7 @@ const Toaster = ({ className, toastOptions, ...props }: ToasterProps) => {
             toastOptions?.classNames?.closeButton
           ),
           success: cn(
-            "border-l-[3px] border-l-accent",
+            "border-l-[3px] border-l-status-success",
             toastOptions?.classNames?.success
           ),
           error: cn(
@@ -71,7 +76,7 @@ const Toaster = ({ className, toastOptions, ...props }: ToasterProps) => {
             toastOptions?.classNames?.error
           ),
           warning: cn(
-            "border-l-[3px] border-l-nav-sale",
+            "border-l-[3px] border-l-status-warning",
             toastOptions?.classNames?.warning
           ),
           info: cn(

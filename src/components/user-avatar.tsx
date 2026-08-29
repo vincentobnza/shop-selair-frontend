@@ -1,5 +1,6 @@
 import { useState } from "react"
 
+import { fileUrl } from "@/lib/api-base"
 import { avatarUrl, initialsOf } from "@/lib/avatar"
 import { cn } from "@/lib/utils"
 
@@ -8,6 +9,7 @@ const SIZES = {
   sm: "size-8 text-[0.7rem]",
   md: "size-10 text-base",
   lg: "size-14 text-xl",
+  xl: "size-20 text-2xl",
 } as const
 
 export type UserAvatarProps = {
@@ -15,6 +17,11 @@ export type UserAvatarProps = {
   id: string | null | undefined
   /** Used for the initials underneath and for the accessible name. */
   name: string
+  /**
+   * An uploaded picture. When present it wins over the generated avatar — a
+   * face someone chose beats one we invented for them.
+   */
+  src?: string | null
   size?: keyof typeof SIZES
   className?: string
 }
@@ -34,11 +41,27 @@ export type UserAvatarProps = {
 export function UserAvatar({
   id,
   name,
+  src,
   size = "md",
   className,
 }: UserAvatarProps) {
-  const [failed, setFailed] = useState(false)
-  const src = avatarUrl(id)
+  /*
+   * Which URL failed, rather than a boolean.
+   *
+   * A flag would have to be reset whenever the picture changes, and resetting
+   * state from an effect costs an extra render pass. Storing the URL makes the
+   * comparison below self-correcting: a new upload simply is not the one that
+   * failed, so it is attempted without anything having to clear a flag.
+   */
+  const [failedSrc, setFailedSrc] = useState<string | null>(null)
+  /*
+   * An uploaded picture first, a generated face second, initials last.
+   *
+   * Stored avatars come back as API-relative paths, so they go through
+   * `fileUrl` to reach the right origin. It passes absolute URLs — including
+   * the DiceBear one — through untouched.
+   */
+  const resolved = src ? fileUrl(src) : avatarUrl(id)
 
   return (
     <span
@@ -51,13 +74,13 @@ export function UserAvatar({
     >
       {initialsOf(name)}
 
-      {src && !failed ? (
+      {resolved && resolved !== failedSrc ? (
         <img
-          src={src}
+          src={resolved}
           alt=""
           loading="lazy"
           decoding="async"
-          onError={() => setFailed(true)}
+          onError={() => setFailedSrc(resolved)}
           className="absolute inset-0 size-full object-cover"
         />
       ) : null}

@@ -60,6 +60,23 @@
   --accent: var(--brand-pink-light);
   --accent-foreground: var(--brand-ink);
   --destructive: #b2372f;
+
+  /*
+   * Status colours — outcome, not brand.
+   *
+   * The pink scale cannot carry these: success was previously drawn in
+   * --accent (pink-light, #FBEDEC), which is near-white on a white toast, and
+   * a warning drawn in brand red is indistinguishable from an error. Values
+   * match the admin console so a confirmation means the same thing on both
+   * sides of the product. Muted enough to sit beside the pinks without
+   * shouting.
+   */
+  --status-success: #3f6b52;
+  --status-success-bg: #eaf1ec;
+  --status-warning: #8a6a2f;
+  --status-warning-bg: #f6efe2;
+  --status-danger: var(--destructive);
+  --status-danger-bg: #fbe7e5;
   --border: var(--brand-line);
   --input: #e3cdc9;
   --ring: var(--brand-red);
@@ -114,6 +131,12 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-status-success: var(--status-success);
+  --color-status-success-bg: var(--status-success-bg);
+  --color-status-warning: var(--status-warning);
+  --color-status-warning-bg: var(--status-warning-bg);
+  --color-status-danger: var(--status-danger);
+  --color-status-danger-bg: var(--status-danger-bg);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
