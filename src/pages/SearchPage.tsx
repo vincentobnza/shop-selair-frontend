@@ -20,6 +20,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { EmptyState } from "@/components/ui/empty-state"
 import { COLLECTIONS } from "@/config/brand"
 import { buildTitle } from "@/config/site"
 import {
@@ -334,38 +335,42 @@ export function SearchPage() {
                 ))}
               </div>
             ) : visible.length === 0 ? (
-              <div className="mx-auto max-w-2xl rounded-sm bg-pink-light px-6 py-16 text-center">
-                <p className="font-heading text-2xl font-medium text-ink">
-                  {results.length === 0
+              <EmptyState
+                art="search"
+                title={
+                  results.length === 0
                     ? `Nothing matches “${query}”`
-                    : "No pieces match those filters"}
-                </p>
-                <p className="mx-auto mt-2 max-w-sm text-base text-ink-soft">
-                  {results.length === 0
+                    : "No pieces match those filters"
+                }
+                description={
+                  results.length === 0
                     ? "Try a different keyword, or browse the collections."
-                    : "Clear a filter to widen the results."}
-                </p>
-                {results.length > 0 ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSizes([])
-                      setCollection(null)
-                      setAvailableOnly(false)
-                    }}
-                    className="mt-6 min-h-11 cursor-pointer text-base font-medium text-brand underline underline-offset-4"
-                  >
-                    Clear filters
-                  </button>
-                ) : (
-                  <Link
-                    to="/shop"
-                    className="mt-6 inline-flex min-h-11 items-center text-base font-medium text-brand underline underline-offset-4"
-                  >
-                    Browse all pieces
-                  </Link>
-                )}
-              </div>
+                    : "Clear a filter to widen the results."
+                }
+                action={
+                  results.length > 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSizes([])
+                        setCollection(null)
+                        setAvailableOnly(false)
+                      }}
+                      className="min-h-11 cursor-pointer text-base font-medium text-brand underline underline-offset-4"
+                    >
+                      Clear filters
+                    </button>
+                  ) : (
+                    <Link
+                      to="/shop"
+                      className="inline-flex min-h-11 items-center text-base font-medium text-brand underline underline-offset-4"
+                    >
+                      Browse all pieces
+                    </Link>
+                  )
+                }
+                className="mx-auto max-w-2xl"
+              />
             ) : (
               <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                 {visible.map((product) => (

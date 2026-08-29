@@ -16,7 +16,7 @@ import { PLAN_DETAILS, PLAN_HIGHLIGHTS, PRIMARY_CONTACT } from "@/config/brand"
 export function PlanSection() {
   return (
     <section id="how-it-works" className="bg-paper">
-      <div className="mx-auto max-w-2xl px-4 py-14 text-center sm:px-6 sm:py-20 lg:px-8">
+      <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-20 lg:px-8">
         <p className="eyebrow">How it works</p>{" "}
         <h2 className="mt-3 font-heading text-2xl font-medium text-ink sm:text-3xl">
           Rented for the date, styled for the occasion
@@ -42,7 +42,7 @@ export function PlanSection() {
         <Accordion type="single" collapsible className="mt-10 w-full text-left">
           {PLAN_DETAILS.map((item, i) => (
             <AccordionItem key={item.q} value={`plan-${i}`}>
-              <AccordionTrigger className="py-3.5 text-base font-semibold text-ink hover:no-underline">
+              <AccordionTrigger className="py-3.5 text-lg font-semibold text-ink hover:no-underline sm:text-2xl">
                 {item.q}
               </AccordionTrigger>
               <AccordionContent>

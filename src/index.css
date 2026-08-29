@@ -67,6 +67,9 @@
 :root {
   color-scheme: light;
 
+  /* Header row height — the hero pulls up by this to sit under the bar. */
+  --header-h: 4.25rem;
+
   /* Brand primitives */
   --brand-paper: #fdf8f7;
   --brand-pink-light: #fcf8f7;

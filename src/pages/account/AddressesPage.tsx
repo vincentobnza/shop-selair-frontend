@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { MapPinIcon, PlusIcon } from "@phosphor-icons/react"
+import { PlusIcon } from "@phosphor-icons/react"
 import { toast } from "sonner"
 import {
   AddressFields,
@@ -18,6 +18,7 @@ import {
   useUpdateAddress,
 } from "@/features/addresses/queries"
 import type { Address } from "@/features/addresses/types"
+import { EmptyState } from "@/components/ui/empty-state"
 export function AddressesPage() {
   const { data: addresses, isLoading } = useAddresses()
   const create = useCreateAddress()
@@ -130,13 +131,11 @@ export function AddressesPage() {
       ) : null}
       {!addresses || addresses.length === 0 ? (
         editing === null ? (
-          <div className="flex flex-col items-center rounded-sm bg-pink-light px-6 py-16 text-center">
-            <MapPinIcon size={40} className="text-line" />{" "}
-            <p className="mt-3 text-lg text-ink">No saved addresses</p>{" "}
-            <p className="mt-1 text-base text-ink-soft">
-              Add one to speed up checkout.
-            </p>
-          </div>
+          <EmptyState
+            art="pin"
+            title="No saved addresses"
+            description="Save an address to speed up checkout and delivery."
+          />
         ) : null
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2">

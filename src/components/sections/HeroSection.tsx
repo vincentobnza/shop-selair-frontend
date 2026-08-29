@@ -63,7 +63,10 @@ export function HeroSection() {
   }, [embla, stopAutoplay])
 
   return (
-    <section aria-label="Featured collections" className="bg-paper">
+    <section
+      aria-label="Featured collections"
+      className="-mt-(--header-h) bg-paper"
+    >
       <div className="relative">
         <div ref={emblaRef} className="overflow-hidden">
           <div className="flex touch-pan-y">
@@ -80,13 +83,13 @@ export function HeroSection() {
                       src={slide.image}
                       alt={slide.imageAlt}
                       priority={i === 0}
-                      className="h-[62vh] max-h-[38rem] min-h-[24rem] w-full object-cover"
+                      className="h-[85vh] min-h-[28rem] w-full object-cover"
                     />
                     <div
                       aria-hidden
                       className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/35 to-black/15"
                     />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center px-6 pt-(--header-h) text-center">
                       <h2 className="max-w-2xl font-heading text-3xl leading-tight font-medium text-white drop-shadow-sm sm:text-5xl lg:text-[3.25rem]">
                         {slide.title}
                       </h2>
@@ -106,7 +109,7 @@ export function HeroSection() {
                     <AppImage
                       src={slide.sideImage}
                       alt={slide.sideImageAlt}
-                      className="h-[62vh] max-h-[38rem] min-h-[24rem] w-full object-cover"
+                      className="h-[85vh] min-h-[28rem] w-full object-cover"
                     />
                   </div>
                 </div>

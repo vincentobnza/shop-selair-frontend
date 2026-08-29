@@ -7,9 +7,12 @@ import {
   StarIcon,
   UserIcon,
 } from "@phosphor-icons/react"
+import { format } from "date-fns"
 import { NavLink, Navigate, Outlet, useLocation } from "react-router-dom"
-import { useAuth } from "@/features/auth/hooks"
-import { useLogout } from "@/features/auth/hooks"
+
+import { PRIMARY_CONTACT } from "@/config/brand"
+import { useAuth, useLogout } from "@/features/auth/hooks"
+import { useMe } from "@/features/users/queries"
 import { cn } from "@/lib/utils"
 
 const NAV_ITEMS = [
@@ -21,10 +24,26 @@ const NAV_ITEMS = [
   { to: "/account/settings", label: "Settings", icon: GearSixIcon },
 ]
 
+/** Two letters from the name, so the avatar never needs a placeholder image. */
+function initialsOf(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return "?"
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+}
+
+/**
+ * Account shell: an identity card and section nav in a sticky left rail, with
+ * the section content beside it.
+ *
+ * The rail collapses to a horizontally scrolling row below `lg`, so a phone
+ * never has to scroll past six nav rows to reach the content.
+ */
 export function AccountLayout() {
   const { isAuthenticated, user } = useAuth()
   const location = useLocation()
   const { run: logout, pending } = useLogout()
+  const { data: me } = useMe(isAuthenticated)
 
   if (!isAuthenticated) {
     return (
@@ -32,52 +51,99 @@ export function AccountLayout() {
     )
   }
 
+  const name = user?.name ?? "Account"
+  const joined = me?.created_at ? new Date(me.created_at) : null
+
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-      <header className="mb-8">
-        <h1 className="text-2xl font-medium text-ink sm:text-3xl">
-          My Account
-        </h1>
-        {user ? (
-          <p className="mt-1 text-base text-ink-soft">
-            {user.name} · {user.email}
-          </p>
-        ) : null}
-      </header>
-      <div className="grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
-        <aside className="lg:sticky lg:top-28 lg:self-start">
-          <nav className="flex gap-1 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
-            {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
-              <NavLink
-                key={to}
-                to={to}
-                className={({ isActive }) =>
-                  cn(
-                    "flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-base font-medium transition",
-                    isActive
-                      ? "bg-ink text-white"
-                      : "text-ink-soft hover:bg-pink-light hover:text-ink"
-                  )
-                }
+    <main className="bg-paper">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+        <header className="mb-8">
+          <p className="eyebrow">My account</p>
+          <h1 className="mt-2 font-heading text-3xl leading-tight font-medium text-ink sm:text-4xl">
+            {name}
+          </h1>
+        </header>
+
+        <div className="grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-10">
+          <aside className="lg:sticky lg:top-24 lg:self-start">
+            <div className="flex items-center gap-4 rounded-[1.75rem] bg-white p-6">
+              <span
+                aria-hidden
+                className="flex size-14 shrink-0 items-center justify-center rounded-full bg-pink font-heading text-xl font-medium text-ink"
               >
-                <Icon size={18} weight="regular" />
-                {label}
-              </NavLink>
-            ))}
-            <button
-              type="button"
-              onClick={() => void logout()}
-              disabled={pending}
-              className="flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-base font-medium text-ink-soft transition hover:bg-pink-light hover:text-ink disabled:opacity-50"
+                {initialsOf(name)}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-base font-semibold text-ink">
+                  {name}
+                </p>
+                <p className="truncate text-base text-ink-soft">
+                  {user?.email}
+                </p>
+                {joined ? (
+                  <p className="mt-0.5 text-base text-ink-soft">
+                    Joined {format(joined, "MMM yyyy")}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+
+            <nav
+              aria-label="Account sections"
+              className="mt-4 no-scrollbar flex gap-1 overflow-x-auto rounded-[1.75rem] bg-white p-3 lg:flex-col lg:overflow-visible"
             >
-              <SignOutIcon size={18} weight="regular" />{" "}
-              {pending ? "Signing out…" : "Sign out"}
-            </button>
-          </nav>
-        </aside>
-        <section className="min-w-0">
-          <Outlet />
-        </section>
+              {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  className={({ isActive }) =>
+                    cn(
+                      "flex min-h-12 shrink-0 items-center gap-3 rounded-full px-4 text-base transition-colors",
+                      isActive
+                        ? "bg-pink-light font-semibold text-brand"
+                        : "text-ink hover:bg-pink-light/60"
+                    )
+                  }
+                >
+                  <Icon size={20} weight="regular" />
+                  {label}
+                </NavLink>
+              ))}
+
+              <button
+                type="button"
+                onClick={() => void logout()}
+                disabled={pending}
+                className="flex min-h-12 shrink-0 cursor-pointer items-center gap-3 rounded-full px-4 text-base text-ink-soft transition-colors hover:bg-pink-light/60 hover:text-ink disabled:opacity-50 lg:mt-1"
+              >
+                <SignOutIcon size={20} weight="regular" />
+                {pending ? "Signing out…" : "Sign out"}
+              </button>
+            </nav>
+
+            <div className="mt-4 hidden rounded-[1.75rem] bg-white p-6 lg:block">
+              <p className="text-base font-semibold text-ink">
+                Planning an occasion?
+              </p>
+              <p className="mt-1 text-base text-ink-soft">
+                Tell us the date and dress code and we will hold the pieces and
+                set up a fitting.
+              </p>
+              <a
+                href={PRIMARY_CONTACT.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex min-h-11 items-center text-base font-medium text-brand underline underline-offset-4"
+              >
+                {PRIMARY_CONTACT.label}
+              </a>
+            </div>
+          </aside>
+
+          <section className="min-w-0">
+            <Outlet />
+          </section>
+        </div>
       </div>
     </main>
   )

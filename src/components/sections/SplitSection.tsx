@@ -8,8 +8,8 @@ import { PERKS_PANEL } from "@/dummy/sampleData"
 export function SplitSection() {
   return (
     <section id="fittings" className="bg-paper">
-      <div className="mx-auto max-w-5xl px-4 pb-14 sm:px-6 sm:pb-20 lg:px-8">
-        <div className="grid overflow-hidden rounded-sm bg-white sm:grid-cols-2">
+      <div className="mx-auto max-w-7xl px-4 pb-14 sm:px-6 sm:pb-20 lg:px-8">
+        <div className="grid overflow-hidden rounded-4xl bg-white sm:grid-cols-2">
           <div className="bg-pink">
             <AppImage
               src={PERKS_PANEL.image}
@@ -17,7 +17,7 @@ export function SplitSection() {
               className="h-56 w-full object-cover sm:h-full sm:min-h-80"
             />
           </div>
-          <div className="flex flex-col justify-center gap-5 p-6 sm:p-10">
+          <div className="flex flex-col justify-center gap-5 p-6 sm:p-10 md:p-12">
             <h2 className="font-heading text-2xl font-medium text-ink sm:text-3xl">
               {PERKS_PANEL.title}
             </h2>

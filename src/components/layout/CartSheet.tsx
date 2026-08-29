@@ -3,13 +3,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom"
 import { LineReservationDates } from "@/components/cart/LineReservationDates"
 import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
+import { EmptyState } from "@/components/ui/empty-state"
 import { useAuth } from "@/features/auth/hooks"
 import { useCartStore } from "@/features/cart/cartStore"
 import { useCatalogProducts } from "@/features/products/queries"
 import { AnimatePresence, motion } from "motion/react"
 import { XIcon } from "@phosphor-icons/react"
 import type { ApiCartLine } from "@/features/cart/types"
-import EmptyStateImage from "@/assets/empty_shopping_cart.png"
 import { DotPulse } from "../ui/dot-pulse"
 
 type CartSheetProps = {
@@ -177,26 +177,25 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
               ) : (
                 <>
                   {showFullBagEmpty ? (
-                    <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center space-y-4">
-                      <AppImage
-                        src={EmptyStateImage}
-                        alt="Empty shopping cart"
-                        className="mb-8 h-24 w-24 sm:mb-12 md:mb-16"
-                      />{" "}
-                      <h2 className="text-center text-lg font-medium text-ink">
-                        Looks like your shopping bag is empty.
-                        {!isAuthenticated ? (
-                          <> Sign in to sync your cart across devices.</>
-                        ) : null}
-                      </h2>
-                      <Button
-                        variant="outline"
-                        className="mt-3 h-11 rounded-full px-8"
-                        onClick={handleContinueShopping}
-                      >
-                        Continue Shopping
-                      </Button>
-                    </div>
+                    <EmptyState
+                      art="bag"
+                      title="Your bag is empty"
+                      description={
+                        isAuthenticated
+                          ? "Reserve a piece and it will be held here for your dates."
+                          : "Reserve a piece and it will be held here. Sign in to keep your bag across devices."
+                      }
+                      action={
+                        <Button
+                          variant="pill"
+                          className="h-12 px-8 text-base"
+                          onClick={handleContinueShopping}
+                        >
+                          Browse pieces
+                        </Button>
+                      }
+                      className="my-6"
+                    />
                   ) : null}
 
                   {isAuthenticated && apiRows.length > 0 ? (

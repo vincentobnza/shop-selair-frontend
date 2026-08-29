@@ -1,5 +1,4 @@
 import { useMemo } from "react"
-import { StarIcon } from "@phosphor-icons/react"
 import { Link } from "react-router-dom"
 import { toast } from "sonner"
 import { StarRating } from "@/components/StarRating"
@@ -10,6 +9,7 @@ import { useCatalogProducts } from "@/features/products/queries"
 import { slugifyProductName } from "@/features/products/map"
 import { useDeleteReview, useMyReviews } from "@/features/reviews/queries"
 import { formatDate } from "@/features/orders/status"
+import { EmptyState } from "@/components/ui/empty-state"
 export function MyReviewsPage() {
   const { data: reviews, isLoading } = useMyReviews()
   const { data: catalog = [] } = useCatalogProducts()
@@ -32,16 +32,16 @@ export function MyReviewsPage() {
 
   if (!reviews || reviews.length === 0) {
     return (
-      <div className="flex flex-col items-center rounded-sm bg-pink-light px-6 py-16 text-center">
-        <StarIcon size={40} className="text-line" />{" "}
-        <p className="mt-3 text-lg text-ink">No reviews yet</p>{" "}
-        <p className="mt-1 max-w-sm text-base text-ink-soft">
-          Review the pieces you’ve ordered to help other renters choose.
-        </p>
-        <Button variant="outline" asChild className="mt-6 rounded-full px-8">
-          <Link to="/account/orders">View your orders</Link>
-        </Button>
-      </div>
+      <EmptyState
+        art="star"
+        title="No reviews yet"
+        description="Review the pieces you have rented to help other customers choose."
+        action={
+          <Button variant="pill" asChild className="h-12 px-8 text-base">
+            <Link to="/account/orders">View your orders</Link>
+          </Button>
+        }
+      />
     )
   }
 

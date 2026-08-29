@@ -35,7 +35,7 @@ export function AccountMenu({ signingOut, onSignOut }: AccountMenuProps) {
           aria-haspopup="dialog"
           title={user?.email ?? undefined}
           className={cn(
-            "inline-flex h-10 w-10 shrink-0 touch-manipulation items-center justify-center rounded p-0 text-ink",
+            "inline-flex h-10 w-10 shrink-0 touch-manipulation items-center justify-center rounded-full p-0 px-4! text-ink",
             "sm:h-auto sm:min-h-10 sm:w-auto sm:max-w-[min(46vw,13rem)] sm:justify-start sm:gap-2 sm:px-2.5 sm:py-2"
           )}
         >

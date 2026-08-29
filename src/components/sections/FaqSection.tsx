@@ -57,7 +57,7 @@ const FAQ_ITEMS = [
 export function FaqSection() {
   return (
     <section className="bg-pink-light" id="faq" aria-labelledby="faq-heading">
-      <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
         <p className="eyebrow text-center">Support</p>
         <h2
           id="faq-heading"
@@ -71,7 +71,7 @@ export function FaqSection() {
         <Accordion type="single" collapsible className="mt-10 w-full">
           {FAQ_ITEMS.map((item, i) => (
             <AccordionItem key={item.q} value={`faq-${i}`}>
-              <AccordionTrigger className="py-4 text-left text-base font-semibold text-ink hover:no-underline">
+              <AccordionTrigger className="py-4 text-left text-lg font-semibold text-ink hover:no-underline sm:text-2xl">
                 {item.q}
               </AccordionTrigger>
               <AccordionContent>

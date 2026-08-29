@@ -11,6 +11,7 @@ import {
   SHOP_FILTER_OPTIONS,
   shopFilterHref,
 } from "@/components/shop/shop-filters"
+import { EmptyState } from "@/components/ui/empty-state"
 import { buildTitle } from "@/config/site"
 import { COLLECTIONS } from "@/config/brand"
 import { useCatalogProducts } from "@/features/products/queries"
@@ -63,7 +64,7 @@ export function ShopPage() {
         </div>
         <nav
           aria-label="Collections"
-          className="mx-auto mt-8 no-scrollbar flex max-w-7xl gap-2 overflow-x-auto pb-1 sm:justify-center"
+          className="mx-auto mt-8 no-scrollbar flex w-full gap-2 overflow-x-auto pb-1 sm:justify-center"
         >
           {SHOP_FILTER_OPTIONS.map(({ id, label }) => {
             const active = activeFilter === id && !occasion
@@ -123,21 +124,19 @@ export function ShopPage() {
                 ))}
               </ul>
             ) : (
-              <div className="rounded-sm bg-pink-light px-6 py-16 text-center">
-                <p className="font-heading text-2xl font-medium text-ink">
-                  Nothing tagged here yet
-                </p>
-                <p className="mx-auto mt-2 max-w-sm text-base text-ink-soft">
-                  This collection has not been filled in yet. Browse everything
-                  we rent, or message us with your occasion and date.
-                </p>
-                <Link
-                  to="/shop"
-                  className="mt-6 inline-flex min-h-11 items-center text-base font-medium text-brand underline underline-offset-4"
-                >
-                  Browse all pieces
-                </Link>
-              </div>
+              <EmptyState
+                art="rack"
+                title="Nothing here yet"
+                description="This collection has not been filled in yet. Browse everything we rent, or message us with your occasion and date."
+                action={
+                  <Link
+                    to="/shop"
+                    className="inline-flex min-h-11 items-center text-base font-medium text-brand underline underline-offset-4"
+                  >
+                    Browse all pieces
+                  </Link>
+                }
+              />
             )}
           </div>
         )}

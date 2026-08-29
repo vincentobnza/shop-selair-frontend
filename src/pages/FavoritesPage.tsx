@@ -9,11 +9,11 @@ import {
   readLocalFavoriteIds,
   removeLocalFavoriteId,
 } from "@/features/favorites/local-favorites"
+import { EmptyState } from "@/components/ui/empty-state"
 import { useFavoriteStore } from "@/features/favorites/favoritesStore"
 import { slugifyProductName } from "@/features/products/map"
 import { useCatalogProducts } from "@/features/products/queries"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import EmptyStateImage from "@/assets/empty_favorite.png"
 
 const php = new Intl.NumberFormat("en-PH", {
   style: "currency",
@@ -105,24 +105,16 @@ export function FavoritesPage() {
             ))}
           </div>
         ) : ids.length === 0 ? (
-          <div className="px-6 py-16 text-center">
-            <AppImage
-              src={EmptyStateImage}
-              alt="Empty favorites"
-              className="mx-auto mb-8 h-24 w-24 sm:mb-12"
-            />
-            <p className="text-base text-ink sm:text-lg lg:text-xl">
-              You have not saved anything yet.
-            </p>
-
-            <Button
-              variant="outline"
-              asChild
-              className="mt-8 rounded-full px-8"
-            >
-              <Link to="/shop">Browse the shop</Link>
-            </Button>
-          </div>
+          <EmptyState
+            art="hanger"
+            title="Nothing saved yet"
+            description="Tap the hanger on any piece to keep it here while you decide."
+            action={
+              <Button variant="pill" asChild className="h-12 px-8 text-base">
+                <Link to="/shop">Browse pieces</Link>
+              </Button>
+            }
+          />
         ) : (
           <ul className="divide-y divide-black/10 border-t border-line">
             {rows.map(({ id, product }) => (

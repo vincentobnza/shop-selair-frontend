@@ -1,4 +1,3 @@
-import { PackageIcon } from "@phosphor-icons/react"
 import { Link } from "react-router-dom"
 import { OrderStatusBadge } from "@/components/orders/OrderStatusBadge"
 import { AppImage } from "@/components/ui/app-image"
@@ -7,6 +6,7 @@ import { DotPulse } from "@/components/ui/dot-pulse"
 import { useOrders } from "@/features/orders/queries"
 import { formatDate } from "@/features/orders/status"
 import { formatPhpFromCents } from "@/lib/money"
+import { EmptyState } from "@/components/ui/empty-state"
 export function OrdersPage() {
   const { data: orders, isLoading, isError } = useOrders()
 
@@ -28,16 +28,16 @@ export function OrdersPage() {
 
   if (!orders || orders.length === 0) {
     return (
-      <div className="flex flex-col items-center rounded-sm bg-pink-light px-6 py-16 text-center">
-        <PackageIcon size={48} className="text-line" />{" "}
-        <h2 className="mt-4 text-lg font-medium text-ink">No orders yet</h2>{" "}
-        <p className="mt-1 max-w-sm text-base text-ink-soft">
-          When you place an order it will appear here so you can track it.
-        </p>
-        <Button variant="outline" asChild className="mt-6 rounded-full px-8">
-          <Link to="/shop">Start shopping</Link>
-        </Button>
-      </div>
+      <EmptyState
+        art="parcel"
+        title="No orders yet"
+        description="When you reserve a piece it will appear here so you can track the dates and the return."
+        action={
+          <Button variant="pill" asChild className="h-12 px-8 text-base">
+            <Link to="/shop">Browse pieces</Link>
+          </Button>
+        }
+      />
     )
   }
 

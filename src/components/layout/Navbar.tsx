@@ -49,8 +49,16 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-line/70 bg-paper">
-        <div className="relative flex items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+      {/*
+       * Translucent header. It stays sticky rather than fixed so it starts
+       * below the promo bar and pins once that scrolls away; the hero pulls up
+       * by `--header-h` to sit underneath it, which is what gives the bar
+       * something to blur. The `supports-` fallback keeps it nearly opaque
+       * where backdrop-filter is unavailable, so the wordmark and links are
+       * never left sitting on raw imagery.
+       */}
+      <header className="sticky top-0 z-50 w-full border-b border-line/70 bg-paper/95 backdrop-blur-sm supports-backdrop-filter:bg-paper/70">
+        <div className="relative flex h-(--header-h) items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
           {/* Left: browse + search */}
           <div className="flex min-w-0 flex-1 items-center gap-1 sm:gap-4">
             <button
