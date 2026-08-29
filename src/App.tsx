@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import { useLocation } from "react-router-dom"
 import { AppRoutes } from "@/app/routes/AppRoutes"
+import { ChatWidget } from "@/components/chat/ChatWidget"
 import { ShoppingSync } from "@/components/ShoppingSync"
 import { RouteSeo } from "@/components/seo/RouteSeo"
 import { Toaster } from "@/components/ui/sonner"
@@ -15,6 +16,7 @@ export function App() {
       <ShoppingSync />
       <RouteSeo />
       <AppRoutes />
+      <ChatWidget />
       <Toaster position="bottom-center" />
     </>
   )

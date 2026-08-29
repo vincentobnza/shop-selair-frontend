@@ -10,6 +10,7 @@ import {
 import { format } from "date-fns"
 import { NavLink, Navigate, Outlet, useLocation } from "react-router-dom"
 
+import { UserAvatar } from "@/components/user-avatar"
 import { PRIMARY_CONTACT } from "@/config/brand"
 import { useAuth, useLogout } from "@/features/auth/hooks"
 import { useMe } from "@/features/users/queries"
@@ -23,14 +24,6 @@ const NAV_ITEMS = [
   { to: "/account/notifications", label: "Notifications", icon: BellIcon },
   { to: "/account/settings", label: "Settings", icon: GearSixIcon },
 ]
-
-/** Two letters from the name, so the avatar never needs a placeholder image. */
-function initialsOf(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean)
-  if (parts.length === 0) return "?"
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-}
 
 /**
  * Account shell: an identity card and section nav in a sticky left rail, with
@@ -67,12 +60,7 @@ export function AccountLayout() {
         <div className="grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-16 xl:gap-20">
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div className="flex items-center gap-4 rounded-[1.75rem] bg-white p-6">
-              <span
-                aria-hidden
-                className="flex size-14 shrink-0 items-center justify-center rounded-full bg-pink font-heading text-xl font-medium text-ink"
-              >
-                {initialsOf(name)}
-              </span>
+              <UserAvatar id={user?.id} name={name} size="lg" />
               <div className="min-w-0">
                 <p className="truncate text-base font-semibold text-ink">
                   {name}

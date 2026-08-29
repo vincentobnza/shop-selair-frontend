@@ -40,3 +40,42 @@ export function formatDate(value: string | null | undefined): string {
     day: "numeric",
   })
 }
+
+/** "2:45 PM" — the time a chat message was sent. */
+export function formatClockTime(value: string | null | undefined): string {
+  const date = parseApiDate(value)
+  if (!date) return ""
+  return date.toLocaleTimeString("en-PH", {
+    hour: "numeric",
+    minute: "2-digit",
+  })
+}
+
+/** Whether two timestamps fall on the same calendar day. */
+export function isSameDay(
+  a: string | null | undefined,
+  b: string | null | undefined
+): boolean {
+  const x = parseApiDate(a)
+  const y = parseApiDate(b)
+  if (!x || !y) return false
+  return (
+    x.getFullYear() === y.getFullYear() &&
+    x.getMonth() === y.getMonth() &&
+    x.getDate() === y.getDate()
+  )
+}
+
+/** "Today" / "Yesterday" / "Aug 31, 2026" — the divider between days. */
+export function formatDayDivider(value: string | null | undefined): string {
+  const date = parseApiDate(value)
+  if (!date) return ""
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const day = new Date(date)
+  day.setHours(0, 0, 0, 0)
+  const diff = Math.round((day.getTime() - today.getTime()) / 86_400_000)
+  if (diff === 0) return "Today"
+  if (diff === -1) return "Yesterday"
+  return formatDate(value)
+}

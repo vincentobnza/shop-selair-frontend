@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { SignOutIcon } from "@phosphor-icons/react"
 import { ACCOUNT_MENU_LINKS } from "@/components/layout/account-menu-config"
 import { Button } from "@/components/ui/button"
 import {
@@ -64,13 +63,15 @@ export function AccountMenu({ signingOut, onSignOut }: AccountMenuProps) {
           <button
             type="button"
             disabled={signingOut}
-            className={cn(itemClass, "mt-1 disabled:opacity-50")}
+            className={cn(
+              itemClass,
+              "mt-1 text-destructive disabled:opacity-50"
+            )}
             onClick={() => {
               void onSignOut()
               close()
             }}
           >
-            <SignOutIcon weight="regular" className="size-5" />
             {signingOut ? "Signing out…" : "Sign Out"}
           </button>
         </nav>
