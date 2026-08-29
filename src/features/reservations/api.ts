@@ -1,12 +1,26 @@
 import { apiPath } from "@/lib/api-base"
 import { api } from "@/lib/axios"
-import type { ApiReservationRow } from "./types"
+import type { ApiReservationRow, ProductAvailability } from "./types"
 
-export async function fetchReservationsByProduct(): Promise<
-  ApiReservationRow[]
-> {
-  const res = await api.get(apiPath("reservations"))
-  return res.data.data
+/**
+ * Dates a product is fully booked, across every customer.
+ *
+ * This is a public endpoint and deliberately anonymous — it returns date spans,
+ * not who booked them. It replaced a call to `GET /reservations`, which only
+ * ever returned the signed-in user's own bookings: guests saw no blocked dates
+ * at all, and a customer could double-book a piece someone else already had.
+ */
+export async function fetchProductAvailability(
+  productId: string
+): Promise<ProductAvailability> {
+  const res = await api.get(
+    apiPath(`products/public/${productId}/availability`)
+  )
+  return {
+    blocked: res.data.data ?? [],
+    stock: res.data.meta?.stock ?? 0,
+    durationDays: res.data.meta?.duration_days ?? 0,
+  }
 }
 
 export async function listReservations(): Promise<ApiReservationRow[]> {

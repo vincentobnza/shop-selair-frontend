@@ -7,6 +7,7 @@ import { useOrders } from "@/features/orders/queries"
 import { formatDate } from "@/features/orders/status"
 import { formatPhpFromCents } from "@/lib/money"
 import { EmptyState } from "@/components/ui/empty-state"
+import { fileUrl } from "@/lib/api-base"
 export function OrdersPage() {
   const { data: orders, isLoading, isError } = useOrders()
 
@@ -74,7 +75,7 @@ export function OrdersPage() {
                     >
                       {item.image_url ? (
                         <AppImage
-                          src={item.image_url}
+                          src={fileUrl(item.image_url)}
                           alt={item.product_name}
                           className="size-full object-cover"
                         />

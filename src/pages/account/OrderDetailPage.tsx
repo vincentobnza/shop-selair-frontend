@@ -14,6 +14,7 @@ import {
   PAYMENT_STATUS_LABEL,
 } from "@/features/orders/status"
 import { formatPhpFromCents } from "@/lib/money"
+import { fileUrl } from "@/lib/api-base"
 export function OrderDetailPage() {
   const { id } = useParams<{ id: string }>()
   const [params] = useSearchParams()
@@ -97,7 +98,7 @@ export function OrderDetailPage() {
                 <div className="size-16 shrink-0 overflow-hidden rounded-lg bg-pink-light">
                   {item.image_url ? (
                     <AppImage
-                      src={item.image_url}
+                      src={fileUrl(item.image_url)}
                       alt={item.product_name}
                       className="size-full object-cover"
                     />

@@ -23,6 +23,7 @@ import type { CreateOrderInput } from "@/features/orders/types"
 import { previewVoucher, type VoucherPreview } from "@/features/vouchers/api"
 import { formatPhpFromCents } from "@/lib/money"
 import { cn } from "@/lib/utils"
+import { fileUrl } from "@/lib/api-base"
 
 // Mirrors the backend pricing rules (common/domain/pricing.ts).
 const SHIPPING_FLAT_CENTS = 7900
@@ -376,7 +377,7 @@ export function CheckoutPage() {
                     <div className="size-14 shrink-0 overflow-hidden rounded-lg bg-pink-light">
                       {line.product?.images?.[0] ? (
                         <AppImage
-                          src={line.product.images[0]}
+                          src={fileUrl(line.product.images[0])}
                           alt=""
                           className="size-full object-cover"
                         />

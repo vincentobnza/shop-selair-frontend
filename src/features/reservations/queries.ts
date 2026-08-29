@@ -1,24 +1,24 @@
 import { useQuery } from "@tanstack/react-query"
 
 import * as reservationsApi from "./api"
-import type { ApiReservationRow } from "./types"
+import type { ProductAvailability } from "./types"
 
 export const reservationsKeys = {
   all: ["reservations"] as const,
-  byProduct: (productId: string) =>
-    [...reservationsKeys.all, "by-product", productId] as const,
+  availability: (productId: string) =>
+    [...reservationsKeys.all, "availability", productId] as const,
 }
 
-export function useReservationsByProduct(productId: string | undefined) {
+/** Blocked date ranges for a product, for the rental date picker. */
+export function useProductAvailability(productId: string | undefined) {
   const pid = productId ? String(productId) : undefined
   return useQuery({
-    queryKey: reservationsKeys.byProduct(pid ?? ""),
-    queryFn: async (): Promise<ApiReservationRow[]> => {
-      const rows = await reservationsApi.fetchReservationsByProduct()
-      if (!pid) return []
-      return rows.filter((r) => String(r.productId) === pid)
-    },
+    queryKey: reservationsKeys.availability(pid ?? ""),
+    queryFn: (): Promise<ProductAvailability> =>
+      reservationsApi.fetchProductAvailability(pid as string),
     enabled: Boolean(pid),
+    /* Availability moves whenever anyone books; do not serve it stale for long. */
+    staleTime: 30 * 1000,
   })
 }
 

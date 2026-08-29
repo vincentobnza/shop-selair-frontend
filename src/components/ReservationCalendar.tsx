@@ -6,7 +6,7 @@ import type { DateRange } from "react-day-picker"
 
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
-import { useReservationsByProduct } from "@/features/reservations/queries"
+import { useProductAvailability } from "@/features/reservations/queries"
 
 type ReservationCalendarProps = {
   range: DateRange | undefined
@@ -29,18 +29,25 @@ export function ReservationCalendar({
 }: ReservationCalendarProps) {
   const [open, setOpen] = useState(false)
 
-  const { data: reservations = [] } = useReservationsByProduct(
+  const { data: availability } = useProductAvailability(
     productId ? String(productId) : undefined
   )
 
-  const disabled = useMemo(
-    () =>
-      reservations.map((r) => ({
-        from: new Date(r.rentalStart),
-        to: new Date(r.rentalEnd),
-      })),
-    [reservations]
-  )
+  const disabled = useMemo(() => {
+    /* Yesterday and earlier can never be booked. */
+    const ranges: Array<{ from: Date; to: Date } | { before: Date }> = [
+      { before: new Date(new Date().setHours(0, 0, 0, 0)) },
+    ]
+
+    for (const r of availability?.blocked ?? []) {
+      ranges.push({
+        from: new Date(`${r.from}T00:00:00`),
+        to: new Date(`${r.to}T00:00:00`),
+      })
+    }
+
+    return ranges
+  }, [availability])
 
   const now = new Date()
   const startMonth = new Date(now.getFullYear(), now.getMonth(), 1)

@@ -1,4 +1,5 @@
 import type { ApiProductRow, CatalogProduct } from "./types"
+import { fileUrl } from "@/lib/api-base"
 
 export function slugifyProductName(name: string): string {
   return name
@@ -15,7 +16,7 @@ export function toCatalogProduct(row: ApiProductRow): CatalogProduct {
     id: String(row.id),
     name: row.name,
     brand: row.brand ?? "",
-    image: row.images ?? [],
+    image: (row.images ?? []).map(fileUrl),
     price: row.price_cents / 100,
     duration: row.duration_days ?? 4,
     description: row.highlights ?? [],

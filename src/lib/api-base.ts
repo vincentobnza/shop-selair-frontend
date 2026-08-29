@@ -32,3 +32,18 @@ export function apiUrl(path: string): string {
   const p = path.startsWith("/") ? path : `/${path}`
   return `${base}${p}`
 }
+
+/**
+ * Absolute URL for a file the API serves.
+ *
+ * Product images are stored root-relative (`/uploads/products/x.jpg`) so the
+ * origin can move without rewriting rows. Absolute URLs and data/blob URLs are
+ * passed through untouched, so seeded external images keep working.
+ */
+export function fileUrl(path: string): string {
+  if (!path) return ""
+  if (/^(https?:|data:|blob:)/i.test(path)) return path
+  const base = getApiBaseUrl()
+  const tail = path.startsWith("/") ? path : `/${path}`
+  return `${base}${tail}`
+}
