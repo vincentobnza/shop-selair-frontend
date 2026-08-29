@@ -50,10 +50,8 @@ export function SettingsPage() {
         />
       </div>
       <div className="rounded-xl border border-red-200 bg-red-50/40 p-5">
-        <h3 className="text-base font-medium text-red-900">
-          Deactivate account
-        </h3>{" "}
-        <p className="mt-1 text-base text-red-700/90">
+        <h3 className="text-lg font-bold text-red-800">Deactivate account</h3>{" "}
+        <p className="mt-1 text-sm text-red-700/90">
           This disables your account and signs you out. You can reactivate by
           contacting support.
         </p>
@@ -79,7 +77,7 @@ export function SettingsPage() {
         ) : (
           <Button
             variant="outline"
-            className="mt-4 rounded-full text-red-700 hover:bg-red-50"
+            className="mt-4 rounded-full bg-destructive text-sm text-white"
             onClick={() => setConfirming(true)}
           >
             Deactivate account

@@ -61,7 +61,7 @@ export function SignupPage() {
         <form onSubmit={onSubmit} className="auth-form mt-8 space-y-3">
           {displayError ? (
             <p
-              className="border-l-2 border-red-600 bg-red-50 px-3 py-2.5 text-base text-red-800"
+              className="border-l-3 border-red-600 bg-red-50 px-3 py-2.5 text-base text-red-800"
               role="alert"
             >
               {displayError}
