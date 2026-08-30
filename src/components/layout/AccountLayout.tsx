@@ -13,6 +13,7 @@ import { NavLink, Navigate, Outlet, useLocation } from "react-router-dom"
 import { UserAvatar } from "@/components/user-avatar"
 import { PRIMARY_CONTACT } from "@/config/brand"
 import { useAuth, useLogout } from "@/features/auth/hooks"
+import { useNotificationBadge } from "@/features/notifications/queries"
 import { useMe } from "@/features/users/queries"
 import { cn } from "@/lib/utils"
 
@@ -21,7 +22,12 @@ const NAV_ITEMS = [
   { to: "/account/orders", label: "Orders", icon: PackageIcon },
   { to: "/account/reviews", label: "Reviews", icon: StarIcon },
   { to: "/account/addresses", label: "Addresses", icon: MapPinIcon },
-  { to: "/account/notifications", label: "Notifications", icon: BellIcon },
+  {
+    to: "/account/notifications",
+    label: "Notifications",
+    icon: BellIcon,
+    badge: true,
+  },
   { to: "/account/settings", label: "Settings", icon: GearSixIcon },
 ]
 
@@ -37,6 +43,9 @@ export function AccountLayout() {
   const location = useLocation()
   const { run: logout, pending } = useLogout()
   const { data: me } = useMe(isAuthenticated)
+  /* Polls from anywhere in the account area, and refreshes the order queries
+     when the count rises — see useNotificationBadge. */
+  const { unread } = useNotificationBadge()
 
   if (!isAuthenticated) {
     return (
@@ -91,7 +100,7 @@ export function AccountLayout() {
               aria-label="Account sections"
               className="mt-4 no-scrollbar flex snap-x snap-mandatory scroll-p-3 gap-1 overflow-x-auto rounded-[1.75rem] bg-white p-3 lg:snap-none lg:flex-col lg:overflow-visible"
             >
-              {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+              {NAV_ITEMS.map(({ to, label, icon: Icon, badge }) => (
                 <NavLink
                   key={to}
                   to={to}
@@ -106,6 +115,17 @@ export function AccountLayout() {
                 >
                   <Icon size={20} weight="regular" />
                   {label}
+                  {badge && unread > 0 ? (
+                    /* The count is in the pill and repeated in the label, so
+                       "Notifications 3" is what a screen reader announces
+                       rather than an unexplained number. */
+                    <span
+                      className="ml-auto inline-flex min-w-6 items-center justify-center rounded-full bg-brand px-2 py-0.5 text-sm font-semibold text-white"
+                      aria-label={`${unread} unread`}
+                    >
+                      {unread > 99 ? "99+" : unread}
+                    </span>
+                  ) : null}
                 </NavLink>
               ))}
 
