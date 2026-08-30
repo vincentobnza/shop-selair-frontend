@@ -7,6 +7,7 @@ import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
 import { DotPulse } from "@/components/ui/dot-pulse"
 import { toUserMessage } from "@/features/auth/errors"
+import { useConfirm } from "@/hooks/useConfirm"
 import {
   useCancelOrder,
   useConfirmReceipt,
@@ -46,6 +47,7 @@ export function OrderDetailPage() {
 
   const { data: order, isLoading, isError } = useOrder(id)
   const cancel = useCancelOrder()
+  const { confirm, dialog: confirmDialog } = useConfirm()
   const confirmReceipt = useConfirmReceipt()
 
   if (isLoading) {
@@ -75,7 +77,25 @@ export function OrderDetailPage() {
     })
   }
 
-  const onCancel = () => {
+  /**
+   * Cancelling ends the booking, so it is asked about rather than done.
+   *
+   * The dates go back on sale the moment this lands and there is no undo — for
+   * a rental that can mean losing a piece someone else takes within the hour.
+   * The copy names the order and says the dates are released, so the customer
+   * is agreeing to the actual consequence and not just to the word "cancel".
+   */
+  const onCancel = async () => {
+    const confirmed = await confirm({
+      title: `Cancel order ${order.order_number}?`,
+      description:
+        "Your reserved dates are released and the pieces go back on sale. This cannot be undone — you would need to book again, and the dates may not still be free.",
+      confirmLabel: "Yes, cancel it",
+      cancelLabel: "Keep my order",
+      destructive: true,
+    })
+    if (!confirmed) return
+
     cancel.mutate(order.id, {
       onSuccess: () => toast.success("Order cancelled."),
       onError: (e) => toast.error(toUserMessage(e)),
@@ -99,6 +119,8 @@ export function OrderDetailPage() {
         onOpenChange={dismissPlaced}
         order={order}
       />
+
+      {confirmDialog}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
@@ -252,7 +274,7 @@ export function OrderDetailPage() {
           {buyerCan(order, "cancelled") ? (
             <Button
               variant="outline"
-              onClick={onCancel}
+              onClick={() => void onCancel()}
               disabled={cancel.isPending}
               className="w-full rounded-full text-red-700 hover:bg-red-50"
             >
