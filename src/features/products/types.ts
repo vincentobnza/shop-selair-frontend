@@ -41,6 +41,12 @@ export type CatalogProduct = {
   purchaseOnly: boolean
   shopTags: string[]
   sizes: { label: string; available: boolean }[]
+  /**
+   * Units the shop holds. Zero is "out of stock" and is a different state from
+   * every size being booked out — see `availability.ts`, which is the only
+   * place that distinction is made.
+   */
+  stock: number
   ratingAvg: number
   ratingCount: number
 }

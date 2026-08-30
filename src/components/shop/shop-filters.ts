@@ -1,4 +1,5 @@
 import { COLLECTIONS, OCCASIONS } from "@/config/brand"
+import { isProductAvailable } from "@/features/products/availability"
 import type { CatalogProduct } from "@/features/products/types"
 
 export type ShopProduct = CatalogProduct
@@ -57,11 +58,6 @@ function tagsOf(p: ShopProduct): Set<string> {
   return new Set(p.shopTags.map((t) => t.toLowerCase()))
 }
 
-function hasAvailableSize(p: ShopProduct): boolean {
-  if (p.sizes.length === 0) return true
-  return p.sizes.some((s) => s.available)
-}
-
 export function productMatchesShopFilter(
   p: ShopProduct,
   filterId: ShopFilterId
@@ -70,7 +66,9 @@ export function productMatchesShopFilter(
 
   const t = tagsOf(p)
 
-  if (filterId === "available") return hasAvailableSize(p)
+  /* Same predicate the tile greys itself out with, so "Available Now" can
+     never list a piece the grid is about to stamp "Out of stock". */
+  if (filterId === "available") return isProductAvailable(p)
   if (filterId === "new") return t.has("new-arrivals") || t.has("new")
 
   const accepted = FILTER_TAGS[filterId] ?? [filterId]

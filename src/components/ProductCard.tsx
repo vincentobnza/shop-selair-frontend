@@ -4,6 +4,10 @@ import type { ShopProduct } from "@/components/shop/shop-filters"
 import { AppImage } from "@/components/ui/app-image"
 import { BRAND } from "@/config/brand"
 import { useFavorite } from "@/features/favorites/useFavorite"
+import {
+  availabilityLabel,
+  productAvailability,
+} from "@/features/products/availability"
 import { slugifyProductName } from "@/features/products/map"
 import { cn } from "@/lib/utils"
 
@@ -34,8 +38,22 @@ export function ProductCard({
   const to = `/products/${slugifyProductName(product.name)}`
   const { saved, toggle } = useFavorite(product.id)
   const hasSwap = !compact && Boolean(product.image?.[1])
-  const bookable =
-    product.sizes.length === 0 || product.sizes.some((s) => s.available)
+
+  const availability = productAvailability(product)
+  const unavailableLabel = availabilityLabel(availability)
+  const unavailable = unavailableLabel !== null
+
+  /*
+   * Drain the colour from an unavailable piece.
+   *
+   * The scrim and the label say it in words; the desaturation is what makes it
+   * legible while scanning a grid at speed, before anyone reads anything. It
+   * sits on the image only — the name and price below stay full contrast, so
+   * the tile is still readable rather than uniformly dimmed.
+   */
+  const imageTone = unavailable
+    ? "grayscale opacity-75 transition-[filter,opacity] duration-300"
+    : ""
 
   return (
     <article
@@ -55,26 +73,47 @@ export function ProductCard({
                 <AppImage
                   src={product.image?.[0]}
                   alt={product.name}
-                  className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-out group-hover:opacity-0"
+                  className={cn(
+                    "absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-out group-hover:opacity-0",
+                    imageTone
+                  )}
                 />
                 <AppImage
                   src={product.image![1]}
                   alt={`${product.name}, alternate view`}
-                  className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100"
+                  className={cn(
+                    "absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100",
+                    imageTone
+                  )}
                 />
               </>
             ) : (
               <AppImage
                 src={product.image?.[0]}
                 alt={product.name}
-                className="absolute inset-0 h-full w-full object-cover"
+                className={cn(
+                  "absolute inset-0 h-full w-full object-cover",
+                  imageTone
+                )}
               />
             )}
 
-            {!bookable ? (
-              <span className="absolute bottom-2 left-2 rounded-full bg-white/90 px-2.5 py-1 text-base font-semibold text-ink">
-                Fully booked
-              </span>
+            {unavailable ? (
+              /*
+               * The overlay covers the image, not the caption: the name and
+               * price stay legible, because someone deciding whether to wait
+               * for a piece to come back still needs to know what it is and
+               * what it costs.
+               *
+               * `pointer-events-none` keeps the whole tile clickable — an
+               * unavailable piece is still worth opening and saving, and an
+               * overlay that swallowed the click would read as a broken card.
+               */
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white/35">
+                <span className="rounded-full bg-white/95 px-4 py-2 text-base font-semibold tracking-wide text-ink uppercase shadow-sm">
+                  {unavailableLabel}
+                </span>
+              </div>
             ) : null}
           </div>
         </Link>

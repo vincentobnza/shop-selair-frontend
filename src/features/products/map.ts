@@ -32,6 +32,9 @@ export function toCatalogProduct(row: ApiProductRow): CatalogProduct {
     purchaseOnly: (row.shop_tags ?? []).includes(PURCHASE_ONLY_COLLECTION),
     shopTags: row.shop_tags ?? [],
     sizes: row.sizes ?? [],
+    // Absent or malformed reads as none held, so a tile fails to "out of
+    // stock" rather than inviting a booking the shop cannot fulfil.
+    stock: Number.isFinite(row.stock) ? row.stock : 0,
     ratingAvg: row.rating_avg ?? 0,
     ratingCount: row.rating_count ?? 0,
   }
