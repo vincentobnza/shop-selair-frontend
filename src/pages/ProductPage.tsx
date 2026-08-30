@@ -8,6 +8,7 @@ import { toast } from "sonner"
 import { ProductCard } from "@/components/ProductCard"
 import { ProductSizePicker } from "@/components/ProductSizePicker"
 import { ReservationCalendar } from "@/components/ReservationCalendar"
+import { ProductDescription } from "@/components/product/ProductDescription"
 import { ReviewsSection } from "@/components/product/ReviewsSection"
 import { FaqSection } from "@/components/sections/FaqSection"
 import { PlanSection } from "@/components/sections/PlanSection"
@@ -464,6 +465,9 @@ export function ProductPage() {
           ) : null}
         </div>
       </div>
+
+      {/* The shop's account of the piece, then everyone else's. */}
+      <ProductDescription html={product.descriptionHtml} />
 
       {/* Ratings sit below the piece itself: they answer "should I trust
           this?", a question that only arises once someone is interested. */}

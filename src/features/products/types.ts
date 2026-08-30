@@ -26,7 +26,10 @@ export type CatalogProduct = {
   image: string[]
   price: number
   duration: number
+  /** Bulleted facts shown under "The details" — mapped from `highlights`. */
   description: string[]
+  /** The shop's own write-up, as HTML from the admin editor. */
+  descriptionHtml: string | null
   shopTags: string[]
   sizes: { label: string; available: boolean }[]
   ratingAvg: number

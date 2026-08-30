@@ -20,6 +20,7 @@ export function toCatalogProduct(row: ApiProductRow): CatalogProduct {
     price: row.price_cents / 100,
     duration: row.duration_days ?? 4,
     description: row.highlights ?? [],
+    descriptionHtml: row.description,
     shopTags: row.shop_tags ?? [],
     sizes: row.sizes ?? [],
     ratingAvg: row.rating_avg ?? 0,

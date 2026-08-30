@@ -122,7 +122,9 @@ export function ReviewsSection({
             <p className="text-base text-ink-soft">Loading reviews…</p>
           ) : reviews.length === 0 ? (
             <div className="rounded-sm bg-pink-light px-6 py-14 text-center">
-              <p className="text-base font-medium text-ink">No reviews yet</p>
+              <p className="text-lg font-medium text-ink sm:text-2xl">
+                No reviews yet
+              </p>
               <p className="mt-1 text-base text-ink-soft">
                 {eligibility?.can_review
                   ? "You have worn this piece — yours would be the first."
@@ -158,7 +160,7 @@ export function ReviewsSection({
                         title="This customer rented this piece"
                       >
                         <SealCheckIcon
-                          className="size-3.5 text-brand"
+                          className="size-3.5 text-blue-600"
                           weight="fill"
                           aria-hidden
                         />
