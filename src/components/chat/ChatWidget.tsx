@@ -4,11 +4,13 @@ import {
   PaperPlaneRightIcon,
   XIcon,
 } from "@phosphor-icons/react"
+import { useLocation } from "react-router-dom"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { BRAND } from "@/config/brand"
 import { useAuth } from "@/features/auth/store"
+import { useMediaQuery } from "@/hooks/useMediaQuery"
 import { toUserMessage } from "@/features/auth/errors"
 import {
   useChatThread,
@@ -35,13 +37,20 @@ const GROUP_WINDOW_MS = 5 * 60 * 1000
  */
 export function ChatWidget() {
   const { isAuthenticated } = useAuth()
+  const { pathname } = useLocation()
+  const isMobile = useMediaQuery("(max-width: 639.98px)")
   const [open, setOpen] = useState(false)
 
   // The badge is only worth fetching while the panel is shut; once it is open
   // the thread itself is the source of truth.
   const { data: unread = 0 } = useChatUnread(!open)
 
-  if (!isAuthenticated) {
+  // The landing page on a phone is one screen of first impression, and a dark
+  // bubble parked over it is one more thing asking to be looked at. The bubble
+  // is back on every other page, where a question is likelier than a first
+  // look — and the widget unmounts rather than hiding, so an open panel does
+  // not linger without its close button.
+  if (!isAuthenticated || (isMobile && pathname === "/")) {
     return null
   }
 

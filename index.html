@@ -7,8 +7,32 @@
     <link rel="preconnect" href="https://api.dicebear.com" crossorigin />
     <link rel="preconnect" href="https://www.google.com" />
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!--
+      Sharp Grotesk is self-hosted, so there is no font CDN to preconnect to.
+      The two faces below are the entire roman set — 400 for body copy, 500 for
+      every heading, button and price — so between them they draw all of first
+      paint. Preloading starts the fetch with the HTML rather than after the
+      stylesheet has been downloaded and parsed, roughly one round trip earlier.
+      The italic is reached only from product copy well below the fold and is
+      left to load on demand. `crossorigin` is required even same-origin: fonts
+      are fetched in CORS mode, and without it the preload is discarded and the
+      file is requested a second time.
+    -->
+    <link
+      rel="preload"
+      href="/src/assets/fonts/sharp-grotesk-400.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/src/assets/fonts/sharp-grotesk-500.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <meta
       name="description"
       content="Sselair — rent modern and classic Filipiniana, Barong Tagalog, boleros, pearls and kids' formal wear. Reserved by the date, fitted before you wear it, cleaning included."

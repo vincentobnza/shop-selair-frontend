@@ -1,15 +1,18 @@
 /*
- * Typography — one typeface for the whole system: Valley Sans.
+ * Typography — one typeface for the whole storefront: Sharp Grotesk.
  *
- * Valley Sans (Helsinki Type Studio, for Moomin Characters) is a variable
- * grotesque on Google Fonts under the OFL, so it can simply be served — no
- * licence to buy and no files to vendor. One axis, `wght` 100–900, with a true
- * italic, which covers every weight the UI uses from one download.
+ * A licensed grotesque from Sharp Type, self-hosted rather than served from a
+ * font CDN: no third-party connection on the critical path, our own cache
+ * headers, and nothing for a blocked CDN to take down. Only the faces the UI
+ * actually calls for are shipped — Book (400), Medium (500) and one italic, all
+ * at width 20 — which is 86 KB of WOFF2 in total. The @font-face block and the
+ * reasoning behind that selection live in ./styles/fonts.css.
  *
  * Kept identical to the admin (`shop-selair-admin/src/index.css`) so the two
- * apps read as one product. Change it in one place, change it in both.
+ * apps read as one product: same three faces, same weight ceiling, same
+ * fallback metrics. Change it in one place, change it in both.
  */
-@import url("https://fonts.googleapis.com/css2?family=Valley+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+@import "./styles/fonts.css";
 
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -32,6 +35,15 @@
 
   /* Header row height — the hero pulls up by this to sit under the bar. */
   --header-h: 4.25rem;
+
+  /*
+   * The type stack. "Sharp Grotesk Fallback" is the metric-matched Arial
+   * defined in ./styles/fonts.css and must sit directly after the real family,
+   * otherwise the swap on first paint reflows the page.
+   */
+  --brand-font:
+    "Sharp Grotesk", "Sharp Grotesk Fallback", ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   /* Brand primitives */
   --brand-paper: #fdf8f7;
@@ -102,9 +114,31 @@
    * they exist so the display or wordmark voice can be re-pointed later without
    * touching every call site.
    */
-  --font-sans: "Valley Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Valley Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-logo: "Valley Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--brand-font);
+  --font-heading: var(--brand-font);
+  --font-logo: var(--brand-font);
+
+  /*
+   * Medium is this storefront's bold.
+   *
+   * Sharp Grotesk 20 sets dark and wide, and its SemiBold and Bold are heavier
+   * than the brand wants anywhere — the emphasis ceiling is Medium, full stop.
+   * Rather than rewrite the ~90 `font-semibold` / `font-bold` call sites and
+   * rely on nobody reaching for them again, both weights are re-pointed here,
+   * so the utilities keep their familiar names and simply stop above 500.
+   *
+   * This matters beyond the shipped face: the utilities now emit `500`, so the
+   * metric-matched fallback also paints at 500 and the swap does not flash a
+   * heavier weight. Getting the same effect from the @font-face ranges alone
+   * would not have fixed the fallback.
+   *
+   * If real bold is ever wanted, this is the one place to undo — and it comes
+   * with a new WOFF2 in src/assets/fonts.
+   */
+  --font-weight-semibold: 500;
+  --font-weight-bold: 500;
+  --font-weight-extrabold: 500;
+  --font-weight-black: 500;
 
   --color-paper: var(--brand-paper);
   --color-pink-light: var(--brand-pink-light);
@@ -179,6 +213,16 @@
   h3,
   .font-heading {
     letter-spacing: -0.02em;
+  }
+  /*
+   * The UA stylesheet gives <strong> and <b> `bolder`, which resolves to 700 —
+   * above this storefront's emphasis ceiling. The `--font-weight-*` remap above
+   * only reaches Tailwind utilities, so unclassed markup (sanitised product
+   * copy, anything rendered through dangerouslySetInnerHTML) needs pinning too.
+   */
+  strong,
+  b {
+    font-weight: 500;
   }
 }
 

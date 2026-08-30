@@ -128,12 +128,15 @@ export function Navbar() {
                 ))}
               </ul>
             </nav>
+            {/* A phone's bar has room for browse, search, the bag and the
+                account before it starts to crowd; favourites stay one tap away
+                from the footer. */}
             <TooltipComponent side="bottom" content="Favorites">
               <Button
                 asChild
                 variant="ghost"
                 size="icon"
-                className="relative size-12 shrink-0 rounded-full text-ink sm:size-11"
+                className="relative size-12 shrink-0 rounded-full text-ink max-sm:hidden sm:size-11"
               >
                 <Link
                   to="/favorites"
@@ -146,7 +149,10 @@ export function Navbar() {
                   {/* Bigger below `sm`: a 20px glyph in a 44px target is hard
                       to read on a phone held at arm's length, and this row is
                       the only navigation a mobile visitor gets. */}
-                  <CoatHangerIcon weight="regular" className="size-6 sm:size-5" />
+                  <CoatHangerIcon
+                    weight="regular"
+                    className="size-6 sm:size-5"
+                  />
                   {favoriteCount > 0 ? (
                     <span className="absolute -top-1 -right-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-brand px-1.5 text-base leading-none font-semibold text-white">
                       {favoriteCount}

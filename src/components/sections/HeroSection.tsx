@@ -117,11 +117,14 @@ export function HeroSection() {
             ))}
           </div>
         </div>
+        {/* The chevrons are for pointers. On a phone they sit on top of the
+            headline, and the slide is already a swipe or a dot away — so from
+            `sm` up only, where there is room beside the copy for them. */}
         <button
           type="button"
           onClick={scrollPrev}
           aria-label="Previous slide"
-          className="absolute top-1/2 left-3 z-10 flex size-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/75 text-ink backdrop-blur-sm transition hover:bg-white sm:left-5"
+          className="absolute top-1/2 left-3 z-10 hidden size-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/75 text-ink backdrop-blur-sm transition hover:bg-white sm:left-5 sm:flex"
         >
           <CaretLeftIcon size={18} weight="bold" />
         </button>
@@ -129,7 +132,7 @@ export function HeroSection() {
           type="button"
           onClick={scrollNext}
           aria-label="Next slide"
-          className="absolute top-1/2 right-3 z-10 flex size-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/75 text-ink backdrop-blur-sm transition hover:bg-white sm:right-5"
+          className="absolute top-1/2 right-3 z-10 hidden size-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/75 text-ink backdrop-blur-sm transition hover:bg-white sm:right-5 sm:flex"
         >
           <CaretRightIcon size={18} weight="bold" />
         </button>
