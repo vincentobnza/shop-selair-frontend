@@ -11,6 +11,10 @@ function mapUser(raw: unknown): AuthUser {
     id: String(u.id ?? ""),
     name: String(u.name ?? ""),
     email: String(u.email ?? ""),
+    /* The API has always sent this and `AuthUser` has always declared it; it
+       was simply dropped here, so an uploaded profile picture never reached
+       the header and every account fell back to a generated face. */
+    avatar_url: typeof u.avatar_url === "string" ? u.avatar_url : null,
   }
 }
 

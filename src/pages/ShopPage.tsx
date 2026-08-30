@@ -11,15 +11,26 @@ import {
   SHOP_FILTER_OPTIONS,
   shopFilterHref,
 } from "@/components/shop/shop-filters"
+import { ShopFilterBar } from "@/components/shop/ShopFilterBar"
+import {
+  applyRefinements,
+  availableSizes,
+  countActiveRefinements,
+  parseRefinements,
+  priceBounds,
+  REFINEMENT_KEYS,
+  type ShopRefinements,
+} from "@/components/shop/shop-refinements"
 import { EmptyState } from "@/components/ui/empty-state"
 import { buildTitle } from "@/config/site"
 import { COLLECTIONS } from "@/config/brand"
 import { useCatalogProducts } from "@/features/products/queries"
 import { cn } from "@/lib/utils"
 export function ShopPage() {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const activeFilter = parseShopFilter(searchParams.get("filter"))
   const occasion = parseOccasion(searchParams.get("occasion"))
+  const refinements = parseRefinements(searchParams)
 
   const { data: products = [], isPending, isError } = useCatalogProducts()
 
@@ -27,10 +38,64 @@ export function ShopPage() {
      stays responsive while a large catalog re-lays out. */
   const deferredFilter = useDeferredValue(activeFilter)
   const deferredOccasion = useDeferredValue(occasion)
-  const visible = useMemo(
+  const deferredRefinements = useDeferredValue(refinements)
+
+  /* Collection and occasion first, then price/size/sort on what survives. The
+     order matters for the facet options below: sizes and price bounds are drawn
+     from the collection in view, so "Barong Tagalog" never offers a size only a
+     gown comes in. */
+  const inCollection = useMemo(
     () => filterShopProducts(products, deferredFilter, deferredOccasion),
     [products, deferredFilter, deferredOccasion]
   )
+  const visible = useMemo(
+    () => applyRefinements(inCollection, deferredRefinements),
+    [inCollection, deferredRefinements]
+  )
+
+  const sizes = useMemo(() => availableSizes(inCollection), [inCollection])
+  const bounds = useMemo(() => priceBounds(inCollection), [inCollection])
+  const activeRefinementCount = countActiveRefinements(refinements)
+
+  /**
+   * Write refinements back to the URL, leaving `filter` and `occasion` alone.
+   *
+   * `replace` so a run of adjustments does not bury the page someone arrived
+   * from under a dozen history entries — the back button should leave the shop,
+   * not undo filters one at a time.
+   */
+  const updateRefinements = (next: Partial<ShopRefinements>) => {
+    const merged = { ...refinements, ...next }
+    const params = new URLSearchParams(searchParams)
+
+    const write = (key: string, value: string | null) => {
+      if (value === null || value === "") params.delete(key)
+      else params.set(key, value)
+    }
+
+    write(
+      REFINEMENT_KEYS.min,
+      merged.minPrice === null ? null : String(merged.minPrice)
+    )
+    write(
+      REFINEMENT_KEYS.max,
+      merged.maxPrice === null ? null : String(merged.maxPrice)
+    )
+    write(REFINEMENT_KEYS.sizes, merged.sizes.join(","))
+    write(REFINEMENT_KEYS.stock, merged.inStockOnly ? "1" : null)
+    write(
+      REFINEMENT_KEYS.sort,
+      merged.sort === "featured" ? null : merged.sort
+    )
+
+    setSearchParams(params, { replace: true })
+  }
+
+  const clearRefinements = () => {
+    const params = new URLSearchParams(searchParams)
+    for (const key of Object.values(REFINEMENT_KEYS)) params.delete(key)
+    setSearchParams(params, { replace: true })
+  }
 
   const filterLabel = labelForShopFilter(activeFilter)
   const collectionBlurb = COLLECTIONS.find((c) => c.id === activeFilter)?.blurb
@@ -85,6 +150,17 @@ export function ShopPage() {
             )
           })}
         </nav>
+
+        <div className="mt-5">
+          <ShopFilterBar
+            refinements={refinements}
+            onChange={updateRefinements}
+            onClear={clearRefinements}
+            sizes={sizes}
+            bounds={bounds}
+            resultCount={visible.length}
+          />
+        </div>
       </header>
 
       <section
@@ -123,6 +199,28 @@ export function ShopPage() {
                   </li>
                 ))}
               </ul>
+            ) : activeRefinementCount > 0 ? (
+              /*
+               * Refinements emptied it, not the catalogue. Saying "this
+               * collection has not been filled in yet" here would be a lie
+               * about the shop and would send someone away from pieces that are
+               * one relaxed filter from view — so the way out is to clear them,
+               * not to leave.
+               */
+              <EmptyState
+                art="rack"
+                title="No pieces match these filters"
+                description="Try a wider price range, another size, or clear the filters to see the whole collection."
+                action={
+                  <button
+                    type="button"
+                    onClick={clearRefinements}
+                    className="inline-flex min-h-11 cursor-pointer items-center text-base font-medium text-brand underline underline-offset-4"
+                  >
+                    Clear filters
+                  </button>
+                }
+              />
             ) : (
               <EmptyState
                 art="rack"

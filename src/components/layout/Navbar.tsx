@@ -87,19 +87,19 @@ export function Navbar() {
               aria-expanded={browseOpen}
               aria-controls="browse-drawer"
               onClick={() => setBrowseOpen(true)}
-              className="inline-flex size-11 shrink-0 rounded-full text-ink sm:hidden"
+              className="inline-flex size-12 shrink-0 rounded-full text-ink sm:hidden"
             >
-              <ListIcon size={22} weight="bold" />
+              <ListIcon weight="bold" className="size-6" />
             </Button>
 
             <Button
               asChild
               variant="ghost"
               size="icon"
-              className="inline-flex size-11 shrink-0 rounded-full text-ink sm:hidden"
+              className="inline-flex size-12 shrink-0 rounded-full text-ink sm:hidden"
             >
               <Link to="/search" aria-label="Search">
-                <MagnifyingGlassIcon size={22} weight="regular" />
+                <MagnifyingGlassIcon weight="regular" className="size-6" />
               </Link>
             </Button>
           </div>
@@ -133,7 +133,7 @@ export function Navbar() {
                 asChild
                 variant="ghost"
                 size="icon"
-                className="relative size-11 shrink-0 rounded-full text-ink"
+                className="relative size-12 shrink-0 rounded-full text-ink sm:size-11"
               >
                 <Link
                   to="/favorites"
@@ -143,11 +143,10 @@ export function Navbar() {
                       : "Favorites"
                   }
                 >
-                  <CoatHangerIcon
-                    size={22}
-                    weight="regular"
-                    className="size-5"
-                  />
+                  {/* Bigger below `sm`: a 20px glyph in a 44px target is hard
+                      to read on a phone held at arm's length, and this row is
+                      the only navigation a mobile visitor gets. */}
+                  <CoatHangerIcon weight="regular" className="size-6 sm:size-5" />
                   {favoriteCount > 0 ? (
                     <span className="absolute -top-1 -right-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-brand px-1.5 text-base leading-none font-semibold text-white">
                       {favoriteCount}
@@ -168,9 +167,9 @@ export function Navbar() {
               aria-expanded={cartOpen}
               aria-controls="cart-sheet"
               onClick={() => setCartOpen(true)}
-              className="relative size-11 shrink-0 rounded-full text-ink"
+              className="relative size-12 shrink-0 rounded-full text-ink sm:size-11"
             >
-              <CartIcon size={22} weight="regular" className="size-5" />
+              <CartIcon weight="regular" className="size-6 sm:size-5" />
               {cartItemCount > 0 ? (
                 <span className="absolute -top-1 -right-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-brand px-1.5 text-base leading-none font-semibold text-white">
                   {cartItemCount}
@@ -189,10 +188,10 @@ export function Navbar() {
                     asChild
                     variant="ghost"
                     size="icon"
-                    className="hidden size-11 shrink-0 rounded-full text-ink sm:inline-flex"
+                    className="inline-flex size-12 shrink-0 rounded-full text-ink sm:size-11"
                   >
                     <Link to="/login" aria-label="Sign in">
-                      <UserIcon size={22} weight="regular" className="size-5" />
+                      <UserIcon weight="regular" className="size-6 sm:size-5" />
                     </Link>
                   </Button>
                 </TooltipComponent>

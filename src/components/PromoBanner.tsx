@@ -69,7 +69,7 @@ export function PromoBanner() {
 
       <p
         aria-live="polite"
-        className="flex min-w-0 flex-wrap items-center justify-center gap-x-2 text-center text-base font-semibold sm:text-base"
+        className="flex min-w-0 flex-wrap items-center justify-center gap-x-2 text-center text-xs font-semibold sm:text-sm md:text-base"
       >
         <span className="truncate sm:whitespace-normal">{promo.text}</span>
         <Link

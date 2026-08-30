@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 import { ACCOUNT_MENU_LINKS } from "@/components/layout/account-menu-config"
 import { Button } from "@/components/ui/button"
+import { UserAvatar } from "@/components/user-avatar"
 import {
   Popover,
   PopoverContent,
@@ -34,10 +35,27 @@ export function AccountMenu({ signingOut, onSignOut }: AccountMenuProps) {
           aria-haspopup="dialog"
           title={user?.email ?? undefined}
           className={cn(
-            "inline-flex h-10 w-10 shrink-0 touch-manipulation items-center justify-center rounded-full p-0 px-4! text-ink",
-            "sm:h-auto sm:min-h-10 sm:w-auto sm:max-w-[min(46vw,13rem)] sm:justify-start sm:gap-2 sm:px-2.5 sm:py-2"
+            "inline-flex size-12 shrink-0 touch-manipulation items-center justify-center rounded-full p-0! text-ink",
+            "sm:h-auto sm:min-h-10 sm:w-auto sm:max-w-[min(46vw,13rem)] sm:justify-start sm:gap-2 sm:px-2.5! sm:py-2"
           )}
         >
+          {/*
+            The avatar is the trigger on mobile.
+            
+            This button used to contain nothing but the `sm:inline` email span,
+            so below `sm` it rendered as an empty circle — a control that was
+            present, focusable and completely invisible. The face is what makes
+            it findable at a glance, and it stays on at every width because the
+            email beside it is truncated to a few characters on a narrow header
+            anyway.
+          */}
+          <UserAvatar
+            id={user?.id}
+            name={user?.name ?? user?.email ?? "Account"}
+            src={user?.avatar_url}
+            size="md"
+            className="sm:size-8"
+          />
           <span className="hidden min-w-0 flex-1 truncate text-left text-base font-medium text-ink sm:inline">
             {user?.email}
           </span>
