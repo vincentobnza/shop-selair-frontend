@@ -166,6 +166,22 @@ export function CheckoutPage() {
     createOrder.mutate(payload, {
       onSuccess: async (order) => {
         await load() // refresh the (now empty) cart
+
+        /*
+         * An online order is placed but not yet paid — the API no longer
+         * pretends otherwise — so it hands off to the payment page rather than
+         * to an order page that would show "pending" with no way to settle it.
+         *
+         * A route, not an overlay on this screen: placing the order empties the
+         * cart, and every guard here keys off that, so anything rendered in
+         * place would be swallowed by "your bag is empty". `replace` keeps Back
+         * out of a checkout whose cart is already gone.
+         */
+        if (paymentMethod === "online") {
+          navigate(`/checkout/payment/${order.id}`, { replace: true })
+          return
+        }
+
         toast.success("Order placed!")
         navigate(`/account/orders/${order.id}?placed=1`, { replace: true })
       },

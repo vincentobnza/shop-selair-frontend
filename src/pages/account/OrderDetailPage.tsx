@@ -188,6 +188,27 @@ export function OrderDetailPage() {
               {paymentMethodLabel(order.payment_method)} ·{" "}
               {PAYMENT_STATUS_LABEL[order.payment_status]}
             </p>
+
+            {/*
+              The way back to an unpaid QR.
+
+              Leaving the payment screen does not void the order — it stays
+              payable until its code lapses — so without this the customer
+              would have an order they owe money on and no route to settle it.
+            */}
+            {order.payment_method === "online" &&
+            order.payment_status === "pending" &&
+            order.status !== "cancelled" ? (
+              <Button
+                variant="pill"
+                className="mt-4 h-12 w-full text-base font-semibold"
+                asChild
+              >
+                <Link to={`/checkout/payment/${order.id}`}>
+                  Pay {formatPhpFromCents(order.total_cents)}
+                </Link>
+              </Button>
+            ) : null}
           </div>
           <div className="rounded-sm bg-white p-5">
             <h3 className="text-base font-medium text-ink">Delivery</h3>{" "}

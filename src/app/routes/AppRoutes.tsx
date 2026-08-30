@@ -14,7 +14,9 @@ import { EssentialsPage } from "@/pages/EssentialsPage"
 import { FavoritesPage } from "@/pages/FavoritesPage"
 import { HomePage } from "@/pages/HomePage"
 import { LoginPage } from "@/pages/LoginPage"
+import { PaymentPage } from "@/pages/PaymentPage"
 import { ProductPage } from "@/pages/ProductPage"
+import { QrPaymentTestPage } from "@/pages/QrPaymentTestPage"
 import { RentPage } from "@/pages/RentPage"
 import { SearchPage } from "@/pages/SearchPage"
 import { ShopPage } from "@/pages/ShopPage"
@@ -46,6 +48,14 @@ export function AppRoutes() {
       <Route path="login" element={<LoginPage />} />{" "}
       <Route path="signup" element={<SignupPage />} />{" "}
       <Route path="checkout" element={<CheckoutPage />} />{" "}
+      {/* Outside AppShell: paying is a focused step, with no nav to wander off
+          into and nothing to distract from the code being scanned. */}
+      <Route path="checkout/payment/:orderId" element={<PaymentPage />} />{" "}
+      {/* Development harness for the payment screen. Excluded from production
+          builds entirely, so it cannot be reached on the deployed storefront. */}
+      {import.meta.env.DEV ? (
+        <Route path="qr-test" element={<QrPaymentTestPage />} />
+      ) : null}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
