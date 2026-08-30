@@ -1,9 +1,19 @@
+import { RecaptchaUnavailableError } from "@/lib/recaptcha"
+
 type LaravelErrorBody = {
   message?: string
   errors?: Record<string, string[]>
 }
 
 export function toUserMessage(error: unknown): string {
+  /*
+   * The security check could not run in this browser — nothing reached the
+   * API. Naming the usual cause is the difference between a visitor fixing it
+   * in ten seconds and one who cannot sign in at all.
+   */
+  if (error instanceof RecaptchaUnavailableError) {
+    return "We could not complete the security check. If you use an ad or script blocker, allow google.com for this site and try again."
+  }
   if (error instanceof ApiError) {
     const msgs = error.flatMessages()
     return msgs[0] ?? "Something went wrong."

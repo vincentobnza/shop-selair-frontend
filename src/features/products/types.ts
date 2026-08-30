@@ -30,6 +30,15 @@ export type CatalogProduct = {
   description: string[]
   /** The shop's own write-up, as HTML from the admin editor. */
   descriptionHtml: string | null
+  /**
+   * Bought outright rather than hired — accessories.
+   *
+   * A brooch or a set of pearls does not come back, so it has no rental
+   * window, no fitting and no return: it is simply bought. Every surface that
+   * would otherwise ask for dates reads this instead of testing the tag
+   * itself, so "what is rentable" is decided in exactly one place.
+   */
+  purchaseOnly: boolean
   shopTags: string[]
   sizes: { label: string; available: boolean }[]
   ratingAvg: number

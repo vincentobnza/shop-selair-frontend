@@ -186,8 +186,10 @@ function ProductPurchasePanel({
         return
       }
 
+      /* An accessory is bought, so it never carries a hire window — even if
+         dates are somehow still in the URL from a previous piece. */
       const rental =
-        range?.from && range?.to
+        !product.purchaseOnly && range?.from && range?.to
           ? {
               start: formatDateForURL(range.from),
               end: formatDateForURL(range.to),
@@ -216,7 +218,15 @@ function ProductPurchasePanel({
         })
         .finally(() => setAddingCart(false))
     },
-    [addToCart, needsSize, openCart, product.id, range, size]
+    [
+      addToCart,
+      needsSize,
+      openCart,
+      product.id,
+      product.purchaseOnly,
+      range,
+      size,
+    ]
   )
 
   return (
@@ -229,77 +239,118 @@ function ProductPurchasePanel({
       />
 
       <div className="mt-8">
-        <p className="text-base text-ink">
-          <span className="font-semibold">Your dates:</span>{" "}
-          <span className="text-ink-soft">
-            {range?.from
-              ? `${format(range.from, "d MMM yyyy")}${
-                  range.to ? ` — ${format(range.to, "d MMM yyyy")}` : ""
-                }`
-              : "Choose when you need it"}
-          </span>
-        </p>
-        <div className="mt-3">
-          <ReservationCalendar
-            productId={product.id}
-            range={range}
-            setRange={onRangeChange}
-          />
-        </div>
-        <dl className="mt-4 rounded-sm bg-white p-4">
-          <div className="flex items-baseline justify-between gap-4">
-            <dt className="text-base text-ink-soft">
-              {currencyFormatter.format(Math.round(dailyRate))} / day
-              {rentalDays > 0
-                ? ` × ${rentalDays} day${rentalDays > 1 ? "s" : ""}`
-                : ""}
-            </dt>
-            <dd className="text-xl font-semibold text-ink">
-              {rentalDays > 0
-                ? currencyFormatter.format(Math.round(totalRate))
-                : currencyFormatter.format(product.price)}
-            </dd>
-          </div>
-          {rentalDays === 0 ? (
+        {product.purchaseOnly ? (
+          <dl className="rounded-sm bg-white p-4">
+            <div className="flex items-baseline justify-between gap-4">
+              <dt className="text-base text-ink-soft">Price</dt>
+              <dd className="text-xl font-semibold text-ink">
+                {currencyFormatter.format(product.price)}
+              </dd>
+            </div>
             <p className="mt-1 text-base text-ink-soft">
-              Base rate for a {product.duration}-day rental. Pick your dates to
-              see the total.
+              Yours to keep — accessories are bought, not hired, so there are no
+              dates to pick and nothing to send back.
             </p>
-          ) : null}
-        </dl>
+          </dl>
+        ) : (
+          <>
+            <p className="text-base text-ink">
+              <span className="font-semibold">Your dates:</span>{" "}
+              <span className="text-ink-soft">
+                {range?.from
+                  ? `${format(range.from, "d MMM yyyy")}${
+                      range.to ? ` — ${format(range.to, "d MMM yyyy")}` : ""
+                    }`
+                  : "Choose when you need it"}
+              </span>
+            </p>
+            <div className="mt-3">
+              <ReservationCalendar
+                productId={product.id}
+                range={range}
+                setRange={onRangeChange}
+              />
+            </div>
+            <dl className="mt-4 rounded-sm bg-white p-4">
+              <div className="flex items-baseline justify-between gap-4">
+                <dt className="text-base text-ink-soft">
+                  {currencyFormatter.format(Math.round(dailyRate))} / day
+                  {rentalDays > 0
+                    ? ` × ${rentalDays} day${rentalDays > 1 ? "s" : ""}`
+                    : ""}
+                </dt>
+                <dd className="text-xl font-semibold text-ink">
+                  {rentalDays > 0
+                    ? currencyFormatter.format(Math.round(totalRate))
+                    : currencyFormatter.format(product.price)}
+                </dd>
+              </div>
+              {rentalDays === 0 ? (
+                <p className="mt-1 text-base text-ink-soft">
+                  Base rate for a {product.duration}-day rental. Pick your dates
+                  to see the total.
+                </p>
+              ) : null}
+            </dl>
+          </>
+        )}
       </div>
 
       <div className="mt-5 flex flex-col gap-2">
-        <Button
-          type="button"
-          variant="pill"
-          disabled={addingCart}
-          onClick={(event) => {
-            triggerRef.current = event.currentTarget
-            submit(true)
-          }}
-          className="h-14 w-full text-base font-semibold sm:h-15 sm:text-base"
-        >
-          {addingCart ? (
-            <DotPulse label="Reserving" className="min-h-[1.25em]" />
-          ) : (
-            "Reserve These Dates"
-          )}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          disabled={addingCart}
-          onClick={(event) => {
-            triggerRef.current = event.currentTarget
-            submit(false)
-          }}
-          className="h-14 w-full rounded-full border-ink/20 text-base font-semibold text-ink sm:h-15 sm:text-base"
-        >
-          Add to Bag
-        </Button>
+        {product.purchaseOnly ? (
+          /* One action, because there is only one thing to do with it. */
+          <Button
+            type="button"
+            variant="pill"
+            disabled={addingCart}
+            onClick={(event) => {
+              triggerRef.current = event.currentTarget
+              submit(false)
+            }}
+            className="h-14 w-full text-base font-semibold sm:h-15 sm:text-base"
+          >
+            {addingCart ? (
+              <DotPulse label="Adding" className="min-h-[1.25em]" />
+            ) : (
+              "Add to Bag"
+            )}
+          </Button>
+        ) : (
+          <>
+            <Button
+              type="button"
+              variant="pill"
+              disabled={addingCart}
+              onClick={(event) => {
+                triggerRef.current = event.currentTarget
+                submit(true)
+              }}
+              className="h-14 w-full text-base font-semibold sm:h-15 sm:text-base"
+            >
+              {addingCart ? (
+                <DotPulse label="Reserving" className="min-h-[1.25em]" />
+              ) : (
+                "Reserve These Dates"
+              )}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={addingCart}
+              onClick={(event) => {
+                triggerRef.current = event.currentTarget
+                submit(false)
+              }}
+              className="h-14 w-full rounded-full border-ink/20 text-base font-semibold text-ink sm:h-15 sm:text-base"
+            >
+              Add to Bag
+            </Button>
+          </>
+        )}
         <p className="text-center text-base text-ink-soft">
-          Rates and fitting slots are confirmed with you before payment.
+          {product.purchaseOnly
+            ? "Delivered with your order — nothing to return."
+            : "Rates and fitting slots are confirmed with you before payment."}
         </p>
       </div>
     </>
@@ -440,7 +491,8 @@ export function ProductPage() {
             onRangeChange={handleRangeChange}
           />
 
-          <HowRentingWorksCard />
+          {/* Fittings and returns are a hire's story, not a purchase's. */}
+          {product.purchaseOnly ? null : <HowRentingWorksCard />}
 
           {product.description.length > 0 ? (
             <Accordion type="single" collapsible className="mt-8">
@@ -547,8 +599,9 @@ function ProductHeader({ product }: { product: CatalogProduct }) {
           </Link>
         ) : null}
         <span className="text-ink-soft">
-          From {currencyFormatter.format(product.price)} · {product.duration}
-          -day rental
+          {product.purchaseOnly
+            ? currencyFormatter.format(product.price)
+            : `From ${currencyFormatter.format(product.price)} · ${product.duration}-day rental`}
         </span>
       </p>
     </header>

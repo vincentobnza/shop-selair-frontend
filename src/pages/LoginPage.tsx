@@ -1,10 +1,12 @@
-import { type ChangeEvent, type FormEvent, useId, useState } from "react"
+import { type ChangeEvent, type FormEvent, useEffect, useId, useState } from "react"
 import { Link } from "react-router-dom"
 import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout"
 import { FloatingLabelInput } from "@/components/auth/FloatingLabelInput"
+import { RecaptchaNotice } from "@/components/auth/RecaptchaNotice"
 import { Button } from "@/components/ui/button"
 import { DotPulse } from "@/components/ui/dot-pulse"
 import { useLogin } from "@/features/auth/hooks"
+import { preloadRecaptcha } from "@/lib/recaptcha"
 import { SAMPLE_DATA } from "@/dummy/sampleData"
 export function LoginPage() {
   const { run: submitLogin, error, pending, clearError } = useLogin()
@@ -17,6 +19,12 @@ export function LoginPage() {
     password: "",
     remember: true,
   })
+
+  /* Fetch Google's script while the visitor is still typing, so minting the
+     token at submit time costs nothing they can feel. */
+  useEffect(() => {
+    preloadRecaptcha()
+  }, [])
 
   const onChange =
     (field: "email" | "password") => (event: ChangeEvent<HTMLInputElement>) => {
@@ -110,6 +118,9 @@ export function LoginPage() {
             )}
           </Button>
         </form>
+
+        <RecaptchaNotice className="mt-6 text-center" />
+
         <p className="mt-8 text-center text-base text-ink-soft sm:text-lg">
           New to Selair?{" "}
           <Link

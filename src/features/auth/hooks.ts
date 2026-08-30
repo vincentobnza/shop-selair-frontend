@@ -21,10 +21,13 @@ export function useLogin() {
         await login(email, password)
         navigate("/", { replace: true })
       } catch (e) {
-        setError(toUserMessage(e))
-        toast.error(toUserMessage(e), {
-          description: "Invalid credentials",
-        })
+        const message = toUserMessage(e)
+        setError(message)
+        /* No fixed description: the same path now carries "invalid
+           credentials", "we could not verify this request" and "the security
+           check could not run", and asserting one of them for all three sends
+           people looking in the wrong place. */
+        toast.error(message)
       } finally {
         setPending(false)
       }
@@ -56,10 +59,13 @@ export function useRegister() {
         await register(input)
         navigate("/", { replace: true })
       } catch (e) {
-        setError(toUserMessage(e))
-        toast.error(toUserMessage(e), {
-          description: "Invalid credentials",
-        })
+        const message = toUserMessage(e)
+        setError(message)
+        /* No fixed description: the same path now carries "invalid
+           credentials", "we could not verify this request" and "the security
+           check could not run", and asserting one of them for all three sends
+           people looking in the wrong place. */
+        toast.error(message)
       } finally {
         setPending(false)
       }

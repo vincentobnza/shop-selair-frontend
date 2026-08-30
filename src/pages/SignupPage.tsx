@@ -1,10 +1,12 @@
-import { type FormEvent, useId, useState } from "react"
+import { type FormEvent, useEffect, useId, useState } from "react"
 import { Link } from "react-router-dom"
 import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout"
 import { FloatingLabelInput } from "@/components/auth/FloatingLabelInput"
+import { RecaptchaNotice } from "@/components/auth/RecaptchaNotice"
 import { Button } from "@/components/ui/button"
 import { DotPulse } from "@/components/ui/dot-pulse"
 import { useRegister } from "@/features/auth/hooks"
+import { preloadRecaptcha } from "@/lib/recaptcha"
 import { SAMPLE_DATA } from "@/dummy/sampleData"
 export function SignupPage() {
   const { run: submitRegister, error, pending, clearError } = useRegister()
@@ -20,6 +22,12 @@ export function SignupPage() {
     confirm: "",
   })
   const [clientError, setClientError] = useState<string | null>(null)
+
+  /* Fetch Google's script while the visitor is still typing, so minting the
+     token at submit time costs nothing they can feel. */
+  useEffect(() => {
+    preloadRecaptcha()
+  }, [])
 
   const displayError = clientError ?? error
 
@@ -147,6 +155,9 @@ export function SignupPage() {
             )}
           </Button>
         </form>
+
+        <RecaptchaNotice className="mt-6 text-center" />
+
         <p className="mt-8 text-center text-base text-ink-soft sm:text-lg">
           Already have an account?{" "}
           <Link

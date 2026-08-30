@@ -18,6 +18,7 @@ import { toUserMessage } from "@/features/auth/errors"
 import { useAddresses } from "@/features/addresses/queries"
 import { useAuth } from "@/features/auth/hooks"
 import { useCartStore } from "@/features/cart/cartStore"
+import { useCatalogProducts } from "@/features/products/queries"
 import { useCreateOrder } from "@/features/orders/queries"
 import type { CreateOrderInput } from "@/features/orders/types"
 import { previewVoucher, type VoucherPreview } from "@/features/vouchers/api"
@@ -89,7 +90,11 @@ export function CheckoutPage() {
     }
   }, [addresses])
 
-  const items = apiCart?.items ?? []
+  /* Memoised because the missing-dates check depends on it: a fresh []
+     each render would re-run that scan on every keystroke in the form. */
+  const items = useMemo(() => apiCart?.items ?? [], [apiCart])
+  /* The catalogue tells checkout which lines are hires and which are bought. */
+  const { data: catalog = [] } = useCatalogProducts()
   const subtotalCents = apiCart?.subtotal_cents ?? 0
   const discountCents = voucher?.discount_cents ?? 0
   const shippingCents = computeShipping(subtotalCents)
@@ -118,6 +123,23 @@ export function CheckoutPage() {
     setVoucherError(null)
   }
 
+  /**
+   * Hires that reached checkout without dates.
+   *
+   * Accessories are exempt by design — they are bought, so they have no window
+   * to pick. Everything else does, and an order placed without one would leave
+   * the shop holding a gown with no idea when it is wanted.
+   */
+  const missingDates = useMemo(() => {
+    return items.filter((line) => {
+      const product = catalog.find((p) => p.id === String(line.product_id))
+      if (!product || product.purchaseOnly) return false
+      const key = `${line.product_id}::${line.size_label ?? ""}`
+      const reserved = reservationByProductKey[key]
+      return !reserved?.start || !reserved?.end
+    })
+  }, [items, catalog, reservationByProductKey])
+
   const buildRentals = (): CreateOrderInput["rentals"] => {
     const rentals: NonNullable<CreateOrderInput["rentals"]> = []
     for (const line of items) {
@@ -136,6 +158,15 @@ export function CheckoutPage() {
 
   const placeOrder = async (e: FormEvent) => {
     e.preventDefault()
+
+    if (missingDates.length > 0) {
+      const first = missingDates[0]
+      toast.error(
+        `${first.product?.name ?? "One piece"} still needs rental dates.`,
+        { description: "Open the piece and choose when you need it." }
+      )
+      return
+    }
 
     const payload: CreateOrderInput = {
       payment_method: paymentMethod,

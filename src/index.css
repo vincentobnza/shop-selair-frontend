@@ -259,6 +259,22 @@
     @apply flex min-h-12 w-full cursor-pointer items-center gap-3 rounded-full px-4 text-left text-base text-ink transition-colors hover:bg-pink-light;
   }
 
+  /*
+   * Hide the floating reCAPTCHA badge.
+   *
+   * It is pinned bottom-right of the viewport, where it sits over the auth
+   * photograph on desktop and the submit button on mobile. Google permits
+   * hiding it only while the branding appears in the user flow instead, which
+   * is what <RecaptchaNotice /> is for — the two travel together.
+   *
+   * `visibility` rather than `display: none`: the badge is the anchor the
+   * script uses for any challenge it decides to show, and removing it from
+   * layout has been known to break that.
+   */
+  .grecaptcha-badge {
+    visibility: hidden;
+  }
+
   /* Override Chrome/Safari autofill tint so auth fields stay white */
   .auth-form input:-webkit-autofill,
   .auth-form input:-webkit-autofill:hover,
