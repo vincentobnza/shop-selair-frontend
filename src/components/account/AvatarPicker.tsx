@@ -106,13 +106,7 @@ export function AvatarPicker({ id, name, avatarUrl }: AvatarPickerProps) {
           the buttons about 110px, and "Upload photo" cannot shrink that far. */}
       <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-5">
         <div className="relative">
-          <UserAvatar
-            id={id}
-            name={name}
-            src={avatarUrl}
-            size="xl"
-            className="ring-2 ring-line"
-          />
+          <UserAvatar id={id} name={name} src={avatarUrl} size="xl" />
           {/*
             The camera badge is decoration on top of the real button below —
             it is aria-hidden so a screen reader gets one clear control, not

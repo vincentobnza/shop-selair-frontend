@@ -40,21 +40,20 @@ export function AccountMenu({ signingOut, onSignOut }: AccountMenuProps) {
           )}
         >
           {/*
-            The avatar is the trigger on mobile.
-            
+            The avatar is the trigger on mobile, and only on mobile.
+
             This button used to contain nothing but the `sm:inline` email span,
             so below `sm` it rendered as an empty circle — a control that was
-            present, focusable and completely invisible. The face is what makes
-            it findable at a glance, and it stays on at every width because the
-            email beside it is truncated to a few characters on a narrow header
-            anyway.
+            present, focusable and completely invisible. From `sm` up the email
+            is the label and carries the identity on its own, so the face would
+            only be decoration there.
           */}
           <UserAvatar
             id={user?.id}
             name={user?.name ?? user?.email ?? "Account"}
             src={user?.avatar_url}
             size="md"
-            className="sm:size-8"
+            className="sm:hidden"
           />
           <span className="hidden min-w-0 flex-1 truncate text-left text-base font-medium text-ink sm:inline">
             {user?.email}

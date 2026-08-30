@@ -78,7 +78,12 @@ function NewsletterBand() {
         </div>
         <form
           onSubmit={onSubmit}
-          className="flex w-full max-w-md flex-col gap-3 sm:flex-row sm:items-end"
+          /*
+           * The 28rem cap only applies from `sm`, where the form sits beside
+           * the copy and should not sprawl. Below that it is stacked and alone
+           * on the row, so capping it just left a ragged gap down the right.
+           */
+          className="flex w-full flex-col gap-3 sm:max-w-md sm:flex-row sm:items-end"
         >
           <div className="flex-1">
             <label htmlFor={emailId} className="sr-only">
@@ -97,7 +102,10 @@ function NewsletterBand() {
           <Button
             type="submit"
             variant="pill"
-            className="h-11 px-8 text-base font-semibold"
+            /* Full width while stacked, intrinsic once it sits next to the
+               field. Stated rather than left to `align-items: stretch`, so a
+               later change to the form's alignment cannot quietly shrink it. */
+            className="h-11 w-full px-8 text-base font-semibold sm:w-auto"
           >
             Submit
           </Button>
