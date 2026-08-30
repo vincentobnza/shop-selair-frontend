@@ -1,6 +1,12 @@
 import { apiPath } from "@/lib/api-base"
 import { api } from "@/lib/axios"
-import type { ProductReviews, Review, ReviewInput } from "./types"
+import type {
+  PendingReview,
+  ProductReviews,
+  Review,
+  ReviewEligibility,
+  ReviewInput,
+} from "./types"
 
 export async function fetchProductReviews(
   productId: string,
@@ -44,4 +50,20 @@ export async function fetchMyReviews(): Promise<Review[]> {
 
 export async function deleteReview(reviewId: string): Promise<void> {
   await api.delete(apiPath(`reviews/${reviewId}`))
+}
+
+export async function fetchReviewEligibility(
+  productId: string
+): Promise<ReviewEligibility> {
+  const res = await api.get<{ data: ReviewEligibility }>(
+    apiPath(`products/${productId}/reviews/eligibility`)
+  )
+  return res.data.data
+}
+
+export async function fetchPendingReviews(): Promise<PendingReview[]> {
+  const res = await api.get<{ data: PendingReview[] }>(
+    apiPath("reviews/pending")
+  )
+  return res.data.data
 }

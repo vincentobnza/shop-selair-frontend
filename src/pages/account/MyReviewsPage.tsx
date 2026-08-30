@@ -10,6 +10,7 @@ import { slugifyProductName } from "@/features/products/map"
 import { useDeleteReview, useMyReviews } from "@/features/reviews/queries"
 import { formatDate } from "@/features/orders/status"
 import { EmptyState } from "@/components/ui/empty-state"
+import { PendingReviewPrompts } from "@/components/reviews/PendingReviewPrompts"
 export function MyReviewsPage() {
   const { data: reviews, isLoading } = useMyReviews()
   const { data: catalog = [] } = useCatalogProducts()
@@ -32,22 +33,27 @@ export function MyReviewsPage() {
 
   if (!reviews || reviews.length === 0) {
     return (
-      <EmptyState
-        art="star"
-        title="No reviews yet"
-        description="Review the pieces you have rented to help other customers choose."
-        action={
-          <Button variant="pill" asChild className="h-12 px-8 text-base">
-            <Link to="/account/orders">View your orders</Link>
-          </Button>
-        }
-      />
+      <div className="space-y-5">
+        {/* Someone with no reviews yet is exactly who the prompt is for. */}
+        <PendingReviewPrompts />
+        <EmptyState
+          art="star"
+          title="No reviews yet"
+          description="Review the pieces you have rented to help other customers choose."
+          action={
+            <Button variant="pill" asChild className="h-12 px-8 text-base">
+              <Link to="/account/orders">View your orders</Link>
+            </Button>
+          }
+        />
+      </div>
     )
   }
 
   return (
     <div className="space-y-5">
       <h2 className="text-xl font-medium text-ink">Your reviews</h2>{" "}
+      <PendingReviewPrompts />
       <ul className="space-y-4">
         {reviews.map((r) => {
           const product = productById.get(r.product_id)

@@ -1,202 +1,184 @@
-import { useEffect, useState, type FormEvent } from "react"
+import { useState } from "react"
 import { Link } from "react-router-dom"
-import { toast } from "sonner"
+import { PencilSimpleIcon, SealCheckIcon } from "@phosphor-icons/react"
+
 import { StarRating } from "@/components/StarRating"
+import { ReviewComposerSheet } from "@/components/reviews/ReviewComposerSheet"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { toUserMessage } from "@/features/auth/errors"
 import { useAuth } from "@/features/auth/hooks"
 import { formatDate } from "@/features/orders/status"
 import {
-  useMyReviewForProduct,
   useProductReviews,
-  useUpsertReview,
+  useReviewEligibility,
 } from "@/features/reviews/queries"
-export function ReviewsSection({ productId }: { productId: string }) {
+
+/**
+ * What other customers said — and nothing else.
+ *
+ * This section is for reading. The composer used to sit in a column beside the
+ * reviews, which asked every visitor to write one (most of them cannot) and
+ * halved the width available to the thing they actually came for. Writing now
+ * happens in a sheet, opened by the one person on the page entitled to: someone
+ * whose hire has finished.
+ */
+export function ReviewsSection({
+  productId,
+  productName,
+}: {
+  productId: string
+  productName: string
+}) {
   const { isAuthenticated } = useAuth()
   const { data, isLoading } = useProductReviews(productId)
-  const { data: myReview } = useMyReviewForProduct(productId, isAuthenticated)
-  const upsert = useUpsertReview(productId)
-
-  const [rating, setRating] = useState(0)
-  const [title, setTitle] = useState("")
-  const [body, setBody] = useState("")
-
-  // Prefill when the user's existing review loads.
-  useEffect(() => {
-    if (myReview) {
-      setRating(myReview.rating)
-      setTitle(myReview.title ?? "")
-      setBody(myReview.body ?? "")
-    }
-  }, [myReview])
+  const { data: eligibility } = useReviewEligibility(productId, isAuthenticated)
+  const [composerOpen, setComposerOpen] = useState(false)
 
   const summary = data?.summary
   const reviews = data?.data ?? []
-
-  const submit = (e: FormEvent) => {
-    e.preventDefault()
-    if (rating < 1) {
-      toast.error("Please select a star rating.")
-      return
-    }
-    upsert.mutate(
-      {
-        rating,
-        title: title.trim() || undefined,
-        body: body.trim() || undefined,
-      },
-      {
-        onSuccess: () => toast.success("Thanks for your review!"),
-        onError: (err) => toast.error(toUserMessage(err)),
-      }
-    )
-  }
+  const count = summary?.count ?? 0
 
   return (
     <section
       id="reviews"
       aria-labelledby="reviews-heading"
-      className="mx-auto max-w-7xl scroll-mt-20 px-4 py-14 sm:px-6 lg:px-8"
+      className="scroll-mt-20 border-t border-line py-12 sm:py-16"
     >
-      <h2
-        id="reviews-heading"
-        className="font-heading text-2xl font-medium text-ink sm:text-3xl"
-      >
-        Ratings &amp; reviews
-      </h2>
-
-      <div className="mt-6 grid gap-10 lg:grid-cols-[280px_minmax(0,1fr)]">
-        {/* Summary + form */}
-        <div className="space-y-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <div className="flex items-end gap-3">
-              <span className="text-4xl font-semibold text-ink">
-                {summary && summary.count > 0
-                  ? summary.average.toFixed(1)
-                  : "—"}
+            <h2
+              id="reviews-heading"
+              className="font-heading text-2xl font-medium text-ink sm:text-3xl"
+            >
+              Ratings &amp; reviews
+            </h2>
+            <p className="mt-1 text-base text-ink-soft">
+              {count > 0
+                ? `${count} ${count === 1 ? "review" : "reviews"} from customers who wore this piece.`
+                : "Only customers who have worn this piece can review it."}
+            </p>
+          </div>
+
+          {eligibility?.can_review ? (
+            <Button
+              type="button"
+              variant="pill"
+              onClick={() => setComposerOpen(true)}
+              className="h-12 px-6 text-base font-semibold"
+            >
+              <PencilSimpleIcon className="size-5" aria-hidden />
+              {eligibility.has_reviewed
+                ? "Update your review"
+                : "Write a review"}
+            </Button>
+          ) : null}
+        </header>
+
+        {count > 0 && summary ? (
+          <div className="mt-8 flex flex-col gap-8 rounded-sm bg-white p-6 sm:flex-row sm:items-center sm:gap-12">
+            <div className="flex shrink-0 items-center gap-4">
+              <span className="font-heading text-5xl font-semibold text-ink">
+                {summary.average.toFixed(1)}
               </span>
-              <div className="pb-1">
-                <StarRating value={summary?.average ?? 0} size={16} />
+              <div>
+                <StarRating value={summary.average} size={18} />
                 <p className="mt-1 text-base text-ink-soft">
-                  {summary?.count ?? 0}{" "}
-                  {(summary?.count ?? 0) === 1 ? "review" : "reviews"}
+                  out of 5 · {count} {count === 1 ? "review" : "reviews"}
                 </p>
               </div>
             </div>
 
-            {summary && summary.count > 0 ? (
-              <div className="mt-4 space-y-1.5">
-                {[5, 4, 3, 2, 1].map((star) => {
-                  const count = summary.distribution[String(star) as "1"] ?? 0
-                  const pct =
-                    summary.count > 0 ? (count / summary.count) * 100 : 0
-                  return (
-                    <div
-                      key={star}
-                      className="flex items-center gap-2 text-base text-ink-soft"
-                    >
-                      <span className="w-3 tabular-nums">{star}</span>{" "}
-                      <StarRating value={1} size={10} className="shrink-0" />{" "}
-                      <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-pink-light">
-                        <span
-                          className="block h-full rounded-full bg-amber-400"
-                          style={{ width: `${pct}%` }}
-                        />
-                      </span>
-                      <span className="w-5 text-right tabular-nums">
-                        {count}
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
-            ) : null}
-          </div>
-
-          {/* Write review */}
-          {isAuthenticated ? (
-            <form
-              onSubmit={submit}
-              className="space-y-3 rounded-sm bg-white p-4"
-            >
-              <p className="text-base font-medium text-ink">
-                {myReview ? "Update your review" : "Write a review"}
-              </p>
-              <StarRating
-                value={rating}
-                onChange={setRating}
-                ariaLabel="Your rating"
-              />
-              <Input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Title (optional)"
-                className="h-10"
-              />
-              <textarea
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                rows={3}
-                placeholder="Share your experience (optional)"
-                className="min-h-20 w-full resize-y rounded-sm bg-pink-light px-3 py-2 text-base text-ink outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-              />
-              <Button
-                type="submit"
-                disabled={upsert.isPending}
-                className="rounded-full px-6"
-              >
-                {upsert.isPending
-                  ? "Submitting…"
-                  : myReview
-                    ? "Update review"
-                    : "Submit review"}
-              </Button>
-              <p className="text-base text-ink-soft">
-                Only customers who ordered this item can review it.
-              </p>
-            </form>
-          ) : (
-            <div className="rounded-sm bg-white p-4 text-base text-ink-soft">
-              <Link
-                to="/login"
-                className="font-medium text-ink hover:underline"
-              >
-                Sign in
-              </Link>{" "}
-              to write a review.
+            {/* The distribution reads across the full width now, so the bars
+                are long enough to compare at a glance. */}
+            <div className="min-w-0 flex-1 space-y-1.5">
+              {[5, 4, 3, 2, 1].map((star) => {
+                const starCount = summary.distribution[String(star) as "1"] ?? 0
+                const pct = count > 0 ? (starCount / count) * 100 : 0
+                return (
+                  <div
+                    key={star}
+                    className="flex items-center gap-3 text-base text-ink-soft"
+                  >
+                    <span className="w-3 tabular-nums">{star}</span>
+                    <StarRating value={1} size={11} className="shrink-0" />
+                    <span className="h-2 flex-1 overflow-hidden rounded-full bg-pink-light">
+                      <span
+                        className="block h-full rounded-full bg-amber-400"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </span>
+                    <span className="w-6 text-right tabular-nums">
+                      {starCount}
+                    </span>
+                  </div>
+                )
+              })}
             </div>
-          )}
-        </div>
+          </div>
+        ) : null}
 
-        {/* Review list */}
-        <div>
+        <div className="mt-8">
           {isLoading ? (
             <p className="text-base text-ink-soft">Loading reviews…</p>
           ) : reviews.length === 0 ? (
-            <div className="rounded-sm bg-pink-light px-6 py-12 text-center text-base text-ink-soft">
-              No reviews yet — be the first to share your experience.
+            <div className="rounded-sm bg-pink-light px-6 py-14 text-center">
+              <p className="text-base font-medium text-ink">No reviews yet</p>
+              <p className="mt-1 text-base text-ink-soft">
+                {eligibility?.can_review
+                  ? "You have worn this piece — yours would be the first."
+                  : "Reviews appear here once customers have worn this piece."}
+              </p>
+              {!isAuthenticated ? (
+                <Link
+                  to="/login"
+                  className="mt-3 inline-block text-base font-medium text-ink underline"
+                >
+                  Sign in
+                </Link>
+              ) : null}
             </div>
           ) : (
-            <ul className="divide-y divide-line">
-              {reviews.map((r) => (
-                <li key={r.id} className="py-5 first:pt-0">
-                  <div className="flex items-center gap-2">
-                    <StarRating value={r.rating} size={14} />
+            /* Two columns on a wide screen: full-bleed single-column reviews
+               leave a paragraph of text stretched across a desktop, which is
+               harder to read, not easier. */
+            <ul className="grid gap-x-12 gap-y-8 md:grid-cols-2">
+              {reviews.map((review) => (
+                <li
+                  key={review.id}
+                  className="border-t border-line pt-5 first:border-t-0 first:pt-0 md:first:border-t md:first:pt-5"
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <StarRating value={review.rating} size={14} />
                     <span className="text-base font-medium text-ink">
-                      {r.reviewer_name}
+                      {review.reviewer_name}
                     </span>
+                    {review.verified ? (
+                      <span
+                        className="inline-flex items-center gap-1 rounded-full bg-pink-light px-2 py-0.5 text-xs font-medium text-ink-soft"
+                        title="This customer rented this piece"
+                      >
+                        <SealCheckIcon
+                          className="size-3.5 text-brand"
+                          weight="fill"
+                          aria-hidden
+                        />
+                        Verified rental
+                      </span>
+                    ) : null}
                   </div>
-                  {r.title ? (
+
+                  {review.title ? (
                     <p className="mt-2 text-base font-medium text-ink">
-                      {r.title}
+                      {review.title}
                     </p>
                   ) : null}
-                  {r.body ? (
-                    <p className="mt-1 text-base text-ink-soft">{r.body}</p>
-                  ) : null}{" "}
+                  {review.body ? (
+                    <p className="mt-1 text-base leading-relaxed text-ink-soft">
+                      {review.body}
+                    </p>
+                  ) : null}
                   <p className="mt-2 text-base text-ink-soft">
-                    {formatDate(r.created_at)}
+                    {formatDate(review.created_at)}
                   </p>
                 </li>
               ))}
@@ -204,6 +186,16 @@ export function ReviewsSection({ productId }: { productId: string }) {
           )}
         </div>
       </div>
+
+      {eligibility?.can_review ? (
+        <ReviewComposerSheet
+          open={composerOpen}
+          onOpenChange={setComposerOpen}
+          productId={productId}
+          productName={productName}
+          orderNumber={eligibility.order_number}
+        />
+      ) : null}
     </section>
   )
 }

@@ -1,5 +1,11 @@
-import type { ImgHTMLAttributes } from "react"
-export type AppImageProps = ImgHTMLAttributes<HTMLImageElement> & {
+import type { ComponentProps } from "react"
+
+/*
+ * `ComponentProps<"img">` rather than `ImgHTMLAttributes` so a caller can pass
+ * `ref`: the zoom loupe reads `naturalWidth`/`naturalHeight` off the element,
+ * and the photo sheet drives its transform on it imperatively.
+ */
+export type AppImageProps = ComponentProps<"img"> & {
   /** Above-the-fold / LCP: eager load + high fetch priority */
   priority?: boolean
 }

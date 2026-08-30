@@ -8,6 +8,7 @@ import { toast } from "sonner"
 import { ProductCard } from "@/components/ProductCard"
 import { ProductSizePicker } from "@/components/ProductSizePicker"
 import { ReservationCalendar } from "@/components/ReservationCalendar"
+import { ReviewsSection } from "@/components/product/ReviewsSection"
 import { FaqSection } from "@/components/sections/FaqSection"
 import { PlanSection } from "@/components/sections/PlanSection"
 import {
@@ -463,6 +464,13 @@ export function ProductPage() {
           ) : null}
         </div>
       </div>
+
+      {/* Ratings sit below the piece itself: they answer "should I trust
+          this?", a question that only arises once someone is interested. */}
+      <ReviewsSection
+        productId={String(product.id)}
+        productName={product.name}
+      />
 
       {relatedProducts.length > 0 ? (
         <section

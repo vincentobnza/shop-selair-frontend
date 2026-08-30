@@ -20,6 +20,8 @@ import {
 } from "@/features/orders/status"
 import { formatPhpFromCents } from "@/lib/money"
 import { fileUrl } from "@/lib/api-base"
+import { ArrowArcLeftIcon } from "@phosphor-icons/react"
+
 export function OrderDetailPage() {
   const { id } = useParams<{ id: string }>()
   const [params, setParams] = useSearchParams()
@@ -86,8 +88,9 @@ export function OrderDetailPage() {
     <div className="space-y-6">
       <Link
         to="/account/orders"
-        className="mb-10 inline-flex items-center gap-1.5 text-base text-ink-soft underline hover:text-ink"
+        className="mb-10 inline-flex items-center gap-2 text-base text-ink-soft hover:text-ink"
       >
+        <ArrowArcLeftIcon className="size-5" />
         Back to orders
       </Link>
 
