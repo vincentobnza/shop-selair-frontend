@@ -191,7 +191,7 @@ export function CartSheet({
             transition={{
               duration: 0.26,
             }}
-            className="fixed top-0 right-0 z-99 flex h-svh w-full max-w-md flex-col rounded-l-[1.75rem] bg-white sm:w-md"
+            className="fixed top-0 right-0 z-99 flex h-svh w-full max-w-md flex-col bg-white max-sm:rounded-none sm:w-md sm:rounded-l-[1.75rem]"
           >
             <header className="flex items-center justify-between px-6 py-5">
               <div>
