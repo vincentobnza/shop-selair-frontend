@@ -16,6 +16,7 @@ import { HomePage } from "@/pages/HomePage"
 import { LoginPage } from "@/pages/LoginPage"
 import { PaymentPage } from "@/pages/PaymentPage"
 import { ProductPage } from "@/pages/ProductPage"
+import { ReviewsPage } from "@/pages/ReviewsPage"
 import { QrPaymentTestPage } from "@/pages/QrPaymentTestPage"
 import { RentPage } from "@/pages/RentPage"
 import { SearchPage } from "@/pages/SearchPage"
@@ -30,6 +31,7 @@ export function AppRoutes() {
         <Route path="rent" element={<RentPage />} />{" "}
         <Route path="shop" element={<ShopPage />} />{" "}
         <Route path="search" element={<SearchPage />} />{" "}
+        <Route path="reviews" element={<ReviewsPage />} />{" "}
         <Route path="favorites" element={<FavoritesPage />} />{" "}
         <Route path="essentials" element={<EssentialsPage />} />{" "}
         <Route path="account" element={<AccountLayout />}>

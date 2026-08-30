@@ -51,3 +51,41 @@ export type PendingReview = {
   order_number: string
   finished_at: string
 }
+
+/** A review shown away from its product page, so it carries the piece with it. */
+export type FeaturedReview = Review & {
+  product: {
+    id: string
+    name: string
+    /** First photograph only — a thumbnail, not the gallery. */
+    image: string | null
+  }
+}
+
+export type FeaturedReviews = {
+  data: FeaturedReview[]
+  /**
+   * How many reviews clear `min_rating` in total — not how many came back.
+   * The home row shows three; this is what tells it whether a "View all" has
+   * anything behind it.
+   */
+  total: number
+  /**
+   * Across EVERY review, not only the ones in `data`. An average taken from the
+   * filtered set would read as the shop's score while being arithmetic on a
+   * hand-picked sample.
+   */
+  summary: RatingSummary
+  /** The floor the returned reviews were filtered to. */
+  min_rating: number
+}
+
+/** One page of the full, unfiltered review list. */
+export type AllReviews = {
+  data: FeaturedReview[]
+  total: number
+  current_page: number
+  last_page: number
+  per_page: number
+  summary: RatingSummary
+}

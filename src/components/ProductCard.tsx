@@ -20,7 +20,13 @@ const currencyFormatter = new Intl.NumberFormat(BRAND.locale, {
 export type ProductCardProps = {
   product: ShopProduct
   className?: string
-  /** Narrow rail variant: tighter type, single image, no hover swap. */
+  /**
+   * Narrow rail variant: tighter type and a smaller price.
+   *
+   * Density only. It used to suppress the hover image swap as well, which meant
+   * the same piece behaved one way on the shop grid and another in a home rail
+   * for no reason a customer could see.
+   */
   compact?: boolean
 }
 
@@ -37,7 +43,9 @@ export function ProductCard({
 }: ProductCardProps) {
   const to = `/products/${slugifyProductName(product.name)}`
   const { saved, toggle } = useFavorite(product.id)
-  const hasSwap = !compact && Boolean(product.image?.[1])
+  /* Every card that has a second photograph swaps on hover, in every rail and
+     grid. The only thing that disables it is the catalog not supplying one. */
+  const hasSwap = Boolean(product.image?.[1])
 
   const availability = productAvailability(product)
   const unavailableLabel = availabilityLabel(availability)
@@ -78,9 +86,18 @@ export function ProductCard({
                     imageTone
                   )}
                 />
+                {/*
+                  * Low priority: it sits in the viewport under the primary
+                  * photograph, so `loading="lazy"` will not defer it — but it
+                  * is invisible until someone hovers, and must not compete for
+                  * bandwidth with the images actually on screen. This matters
+                  * most on the home page, where a rail can hold a dozen cards.
+                  */}
                 <AppImage
                   src={product.image![1]}
-                  alt={`${product.name}, alternate view`}
+                  alt=""
+                  aria-hidden
+                  fetchPriority="low"
                   className={cn(
                     "absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100",
                     imageTone

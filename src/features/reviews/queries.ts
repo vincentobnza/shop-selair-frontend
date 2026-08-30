@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query"
 
 import { catalogKeys } from "@/features/products/queries"
 import * as reviewsApi from "./api"
@@ -14,6 +19,10 @@ export const reviewKeys = {
   eligibility: (productId: string) =>
     [...reviewKeys.all, "eligibility", productId] as const,
   pending: () => [...reviewKeys.all, "pending"] as const,
+  featured: (minRating: number, limit: number) =>
+    [...reviewKeys.all, "featured", minRating, limit] as const,
+  allReviews: (rating: number | null) =>
+    [...reviewKeys.all, "all", rating] as const,
 }
 
 /**
@@ -93,5 +102,41 @@ export function useDeleteReview() {
   return useMutation({
     mutationFn: (reviewId: string) => reviewsApi.deleteReview(reviewId),
     onSuccess: () => qc.invalidateQueries({ queryKey: reviewKeys.all }),
+  })
+}
+
+/**
+ * Well-rated reviews for the home page.
+ *
+ * Public, identical for every visitor and changing at the pace people write
+ * reviews — so it is cached generously rather than refetched on every return to
+ * the home page.
+ */
+export function useFeaturedReviews(minRating = 4, limit = 6) {
+  return useQuery({
+    queryKey: reviewKeys.featured(minRating, limit),
+    queryFn: () => reviewsApi.fetchFeaturedReviews(minRating, limit),
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
+const REVIEWS_PER_PAGE = 12
+
+/**
+ * The full review list, a page at a time behind a "View more".
+ *
+ * Infinite rather than numbered pages: this is a reading surface, not a data
+ * table — nobody wants to be on page 4 of the reviews, they want to keep
+ * scrolling until they have read enough.
+ */
+export function useAllReviews(rating: number | null) {
+  return useInfiniteQuery({
+    queryKey: reviewKeys.allReviews(rating),
+    queryFn: ({ pageParam }) =>
+      reviewsApi.fetchAllReviews(pageParam, REVIEWS_PER_PAGE, rating),
+    initialPageParam: 1,
+    getNextPageParam: (last) =>
+      last.current_page < last.last_page ? last.current_page + 1 : undefined,
+    staleTime: 5 * 60 * 1000,
   })
 }

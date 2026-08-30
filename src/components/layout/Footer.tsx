@@ -127,11 +127,11 @@ export function Footer() {
           <div>
             <Link
               to="/"
-              className="font-logo text-2xl leading-none font-bold tracking-[-0.04em] text-ink"
+              className="font-logo text-2xl leading-none font-bold tracking-[-0.04em] text-black"
             >
               {BRAND.wordmark.toLowerCase()}
             </Link>
-            <p className="mt-4 max-w-xs text-base leading-relaxed text-ink-soft">
+            <p className="mt-4 max-w-xs text-base leading-relaxed text-black">
               {BRAND.positioning}
             </p>
 
@@ -162,7 +162,7 @@ export function Footer() {
                   <li key={link.label}>
                     <Link
                       to={link.to}
-                      className="text-base text-brand underline-offset-4 hover:underline"
+                      className="text-base text-black underline-offset-4 hover:underline"
                     >
                       {link.label}
                     </Link>
@@ -175,9 +175,9 @@ export function Footer() {
         {/* Decorative keyline strip, mirroring the reference footer. */}
         <div
           aria-hidden
-          className="flex overflow-hidden bg-pink py-2 select-none"
+          className="flex overflow-hidden bg-pink/20 py-2 select-none"
         >
-          <p className="text-base font-bold whitespace-nowrap text-white/85">
+          <p className="text-base font-bold whitespace-nowrap text-primary">
             {`${BRAND.wordmark.toLowerCase()} `.repeat(40)}
           </p>
         </div>

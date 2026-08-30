@@ -1,4 +1,5 @@
 import { CollectionRail } from "@/components/sections/CollectionRail"
+import { CustomerReviews } from "@/components/sections/CustomerReviews"
 import { EditorialTiles } from "@/components/sections/EditorialTiles"
 import { FaqSection } from "@/components/sections/FaqSection"
 import { FollowInstagram } from "@/components/sections/FollowInstagram"
@@ -18,6 +19,7 @@ export default function HomePageBody() {
       <PlanSection />
       <SplitSection />
       <FaqSection />
+      <CustomerReviews />
       <FollowInstagram />
     </>
   )

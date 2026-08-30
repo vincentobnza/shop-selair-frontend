@@ -1,6 +1,8 @@
 import { apiPath } from "@/lib/api-base"
 import { api } from "@/lib/axios"
 import type {
+  AllReviews,
+  FeaturedReviews,
   PendingReview,
   ProductReviews,
   Review,
@@ -66,4 +68,35 @@ export async function fetchPendingReviews(): Promise<PendingReview[]> {
     apiPath("reviews/pending")
   )
   return res.data.data
+}
+
+/** Recent well-rated reviews across the catalogue, for the home page. */
+export async function fetchFeaturedReviews(
+  minRating = 4,
+  limit = 6
+): Promise<FeaturedReviews> {
+  const res = await api.get<FeaturedReviews>(apiPath("reviews/featured"), {
+    params: { min_rating: minRating, limit },
+  })
+  return res.data
+}
+
+/**
+ * One page of every review, newest first.
+ *
+ * `rating` narrows to a single star band; omitted, nothing is filtered out.
+ */
+export async function fetchAllReviews(
+  page = 1,
+  perPage = 12,
+  rating?: number | null
+): Promise<AllReviews> {
+  const res = await api.get<AllReviews>(apiPath("reviews"), {
+    params: {
+      page,
+      per_page: perPage,
+      ...(rating ? { rating } : {}),
+    },
+  })
+  return res.data
 }

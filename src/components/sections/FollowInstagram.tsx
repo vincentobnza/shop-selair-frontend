@@ -12,7 +12,7 @@ const CHANNELS = [
  */
 export function FollowInstagram() {
   return (
-    <section id="follow-us" className="bg-paper">
+    <section id="follow-us" className="border-t border-border bg-paper">
       <div className="mx-auto max-w-4xl px-4 pb-16 text-center sm:px-6 sm:pb-20 lg:px-8">
         <div className="rounded-sm bg-pink-light px-6 py-12 sm:px-10">
           <p className="eyebrow">Stay close</p>{" "}
