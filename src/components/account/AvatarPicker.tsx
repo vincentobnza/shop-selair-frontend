@@ -102,7 +102,9 @@ export function AvatarPicker({ id, name, avatarUrl }: AvatarPickerProps) {
 
   return (
     <>
-      <div className="flex items-center gap-5">
+      {/* Stacked on a small phone: side by side, the avatar and the gap leave
+          the buttons about 110px, and "Upload photo" cannot shrink that far. */}
+      <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-5">
         <div className="relative">
           <UserAvatar
             id={id}

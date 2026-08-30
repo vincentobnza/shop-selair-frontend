@@ -58,7 +58,13 @@ export function AccountLayout() {
         </header>
 
         <div className="grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-16 xl:gap-20">
-          <aside className="lg:sticky lg:top-24 lg:self-start">
+          {/*
+            min-w-0 is what makes the nav below scroll instead of stretching:
+            a grid item defaults to min-width:auto, so without it the rail is
+            as wide as its widest content — six nav pills in a row — and drags
+            the whole account page off the side of a phone.
+          */}
+          <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
             <div className="flex items-center gap-4 rounded-[1.75rem] bg-white p-6">
               <UserAvatar
                 id={user?.id}
@@ -83,7 +89,7 @@ export function AccountLayout() {
 
             <nav
               aria-label="Account sections"
-              className="mt-4 no-scrollbar flex gap-1 overflow-x-auto rounded-[1.75rem] bg-white p-3 lg:flex-col lg:overflow-visible"
+              className="mt-4 no-scrollbar flex snap-x snap-mandatory scroll-p-3 gap-1 overflow-x-auto rounded-[1.75rem] bg-white p-3 lg:snap-none lg:flex-col lg:overflow-visible"
             >
               {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
                 <NavLink
@@ -91,7 +97,7 @@ export function AccountLayout() {
                   to={to}
                   className={({ isActive }) =>
                     cn(
-                      "flex min-h-12 shrink-0 items-center gap-3 rounded-full px-4 text-base transition-colors",
+                      "flex min-h-12 shrink-0 snap-start items-center gap-3 rounded-full px-4 text-base transition-colors",
                       isActive
                         ? "bg-pink-light font-semibold text-brand"
                         : "text-ink hover:bg-pink-light/60"
