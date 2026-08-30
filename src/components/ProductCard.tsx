@@ -52,7 +52,7 @@ export function ProductCard({
    * the tile is still readable rather than uniformly dimmed.
    */
   const imageTone = unavailable
-    ? "grayscale opacity-75 transition-[filter,opacity] duration-300"
+    ? "grayscale opacity-90 transition-[filter,opacity] duration-300"
     : ""
 
   return (
@@ -109,8 +109,11 @@ export function ProductCard({
                * unavailable piece is still worth opening and saving, and an
                * overlay that swallowed the click would read as a broken card.
                */
-              <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white/35">
-                <span className="rounded-full bg-white/95 px-4 py-2 text-base font-semibold tracking-wide text-ink uppercase shadow-sm">
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white/20">
+                {/* Solid, not translucent: many of these pieces photograph on
+                    a white ground, and a see-through pill on a pale garment is
+                    the one place this stops being readable. */}
+                <span className="rounded-full bg-white px-4 py-2 text-base font-semibold tracking-wide text-ink uppercase shadow-md ring-1 ring-ink/10">
                   {unavailableLabel}
                 </span>
               </div>
