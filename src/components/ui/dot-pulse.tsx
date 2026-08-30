@@ -28,7 +28,7 @@ export function DotPulse({
         <span
           key={i}
           className={cn(
-            "animate-dot-pulse shrink-0 bg-current",
+            "animate-dot-pulse shrink-0 rounded-full bg-current",
             size === "sm" ? "size-1.5" : size === "md" ? "size-2" : "size-2.5"
           )}
           style={{ animationDelay: `${delay}ms` }}
