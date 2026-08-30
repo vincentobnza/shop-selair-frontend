@@ -138,10 +138,6 @@ export function SignupPage() {
             minLength={8}
           />
 
-          <p className="text-base leading-relaxed text-ink-soft sm:text-base">
-            By signing up, you agree to our terms and privacy practices.
-          </p>
-
           <Button
             type="submit"
             size="lg"
