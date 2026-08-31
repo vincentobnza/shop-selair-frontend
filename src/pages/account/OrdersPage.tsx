@@ -180,7 +180,11 @@ export function OrdersPage() {
                     {formatPhpFromCents(order.total_cents)}
                   </p>
                 </div>
-                <Button variant="outline" asChild className="rounded-full">
+                <Button
+                  variant="outline"
+                  asChild
+                  className="h-10! rounded-full px-6! text-sm"
+                >
                   <Link to={`/account/orders/${order.id}`}>View order</Link>
                 </Button>
               </div>
